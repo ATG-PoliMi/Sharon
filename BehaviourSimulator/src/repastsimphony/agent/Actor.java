@@ -13,14 +13,14 @@ import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.SimUtilities;
 
-public class Elder {
+public class Actor {
 	
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 	private GridPoint Target = new GridPoint(11, 11);
 	
 	
-	public Elder (ContinuousSpace<Object> space, Grid<Object> grid) {
+	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space=space;
 		this.grid=grid;	
 	}
@@ -29,5 +29,8 @@ public class Elder {
 	public void step() {
 	
 		GridPoint pt = grid.getLocation(this);		
-	}	
+	}
+
+	
+	
 }

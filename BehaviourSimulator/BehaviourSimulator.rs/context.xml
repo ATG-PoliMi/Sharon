@@ -2,4 +2,5 @@
 	xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context">
 	<projection id="space" type="continuous space"></projection>
 	<projection id="grid" type="grid"></projection>
+	<projection id="walls" type="value layer"></projection>
 </context>
