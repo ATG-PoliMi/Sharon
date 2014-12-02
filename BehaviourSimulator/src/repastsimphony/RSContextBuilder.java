@@ -71,7 +71,6 @@ public class RSContextBuilder implements ContextBuilder<Object> {
 				final Wall cell = new Wall(i, j);
 				context.add(cell); // First add it to the context
 				grid.moveTo(cell, i, j);
-				System.out.println("X: "+i+" Y: "+j+" Value: "+worldMap[i][j]);
 				structureLayer.set(worldMap[i][j], i, j);
 			}
 		}
