@@ -17,7 +17,7 @@ public class Actor {
 	
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private GridPoint Target = new GridPoint(11, 11);
+	
 	
 	
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {

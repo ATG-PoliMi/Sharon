@@ -12,7 +12,7 @@ public class Wall {
 	private final int x, y;
 
 	Map m;
-	private int worldMap[][] = new int [30][30];
+	private int worldMap[][];
 
 	/**
 	 * Creates a new instance of <code>HabitatCell</code>.
@@ -51,13 +51,6 @@ public class Wall {
 					"Cannot locate value layer with ID="
 							+ repastsimphony.common.Constants.STRUCTURE_LAYER_ID + ".");
 		}
-		ValueLayer.set(1, x, y);
-	}
-	
-	public double getFoodAvailability() {
-		
-		if (worldMap[x][y] >0){
-			return 1;
-		} else { return 0;}
+		//ValueLayer.set(1, x, y);
 	}
 }

@@ -23,12 +23,20 @@ import repast.simphony.valueLayer.GridValueLayer;
 import repastsimphony.agent.Actor;
 import repastsimphony.agent.Wall;
 import repastsimphony.common.Constants;
+import repastsimphony.common.Map;
+
+
 
 public class RSContextBuilder implements ContextBuilder<Object> {
 
+	private int worldMap[][];
+	
 	@Override
 	public Context build(Context<Object> context) {
 		context.setId("BehaviourSimulator");
+		
+		//Retrieving map
+		worldMap = Map.getInstance().getWorldMap();		
 		
 		//Continuous Space declaration
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder
@@ -58,12 +66,13 @@ public class RSContextBuilder implements ContextBuilder<Object> {
 
 		// Fill up the context with cells, and set the initial food values for
 		// the new layer. Also add them to the created grid.
-		for (int i = 0; i < Constants.mapSizeW; ++i) {
-			for (int j = 0; j < Constants.mapSizeH; ++j) {
+		for (int i = 0; i < Constants.mapSizeW; i++) {
+			for (int j = 0; j < Constants.mapSizeH; j++) {
 				final Wall cell = new Wall(i, j);
 				context.add(cell); // First add it to the context
 				grid.moveTo(cell, i, j);
-				structureLayer.set(0.5, i, j);
+				System.out.println("X: "+i+" Y: "+j+" Value: "+worldMap[i][j]);
+				structureLayer.set(worldMap[i][j], i, j);
 			}
 		}
 		for (Object obj : context) {
