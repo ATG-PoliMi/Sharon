@@ -1,9 +1,20 @@
 package dijsktra;
 
-class Edge
-{
-    public final Vertex target;
-    public final double weight;
-    public Edge(Vertex argTarget, double argWeight)
-    { target = argTarget; weight = argWeight; }
+public class Edge {
+	public Vertex destination;
+	public int weight;
+	public Edge() {
+		destination = null;
+		weight = 1;
+	}
+	public Edge(Vertex d, int w) {
+		destination = d;
+		weight = w;
+	}
+	public int getWeight() {
+		return weight;
+	}
+	public Vertex getDestination() {
+		return destination;
+	}
 }
