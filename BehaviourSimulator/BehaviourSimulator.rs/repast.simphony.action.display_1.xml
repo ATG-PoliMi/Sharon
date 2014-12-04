@@ -1,5 +1,5 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>GRID</name>
+  <name>GRID_COLOR</name>
   <type>2D</type>
   <styles>
     <entry>
@@ -23,7 +23,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>760855061</hashCode>
+    <hashCode>-1768027955</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>grid</layoutProjection>
@@ -78,5 +78,8 @@
     <blue>255</blue>
     <alpha>255</alpha>
   </backgroundColor>
-  <valueLayers/>
+  <valueLayerStyleName>repastsimphony.style.HomeStructureLayerStyleOGL2D</valueLayerStyleName>
+  <valueLayers>
+    <string>walls</string>
+  </valueLayers>
 </repast.simphony.visualization.engine.CartesianDisplayDescriptor>

@@ -31,7 +31,8 @@ public class Actor {
 		this.space=space;
 		this.grid=grid;	
 	}
-
+	
+//TODO: Cleanup method step()
 	@ScheduledMethod(start = 1, interval = 1, priority=0)
 	public void step() {	
 		GridPoint pt = grid.getLocation(this);
@@ -62,7 +63,7 @@ public class Actor {
 
 	@ScheduledMethod(start = 1, interval = 60, priority=1)
 	public void newTarget() {
-		DE = new DijkstraEngine();
+		DE = new DijkstraEngine();		
 
 		worldMapMatrix = Map.getInstance().getWorldMap();
 		DE.buildAdjacencyMatrix(worldMapMatrix);

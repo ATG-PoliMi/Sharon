@@ -60,6 +60,7 @@ public class Map {
 			map[10][28]=2;
 			map[15][28]=2;
 			map[55][28]=2;
+			
 		} else if (Constants.mapID == 2) {
 			for (int i=0; i<Constants.mapSizeW;i++) {
 				map[i][0]=1;
@@ -68,6 +69,10 @@ public class Map {
 			for (int i=0; i<Constants.mapSizeH;i++) {
 				map[0][i]=1;
 				map[Constants.mapSizeW-1][i]=1;				
+			}
+			for (int i=10; i<31; i++) {
+				map[20][i]=1;
+				map[i][20]=1;
 			}
 		}
 	}
