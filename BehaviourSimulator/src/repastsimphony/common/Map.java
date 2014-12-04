@@ -1,8 +1,11 @@
 package repastsimphony.common;
 
+import repastsimphony.agent.Sensor;
+
 public class Map {
 
 	private int map [][] = new int [Constants.mapSizeW][Constants.mapSizeH];
+	Sensor[] s;
 
 	private static Map instance;
 	@SuppressWarnings("unused")
@@ -31,36 +34,41 @@ public class Map {
 			for (int i=0; i<40;i++) {
 				map[i][18]=1;			
 			}
+
 			map[14][18]=0;
 			map[15][18]=0;
 			map[16][18]=0;
-			
+
 			map[22][18]=0;
 			map[23][18]=0;
 			map[24][18]=0;
-			
+
 			map[32][18]=0;
 			map[33][18]=0;
 			map[34][18]=0;
-			
-			map[3][10]=2;
-			map[18][2]=2;
-			map[25][2]=2;
-			map[28][10]=2;
-			map[28][12]=2;
-			map[28][14]=2;			
-			map[42][2]=2;
-			map[44][2]=2;
-			map[48][2]=2;
-			map[15][18]=2;
-			map[23][18]=2;
-			map[33][18]=2;
-			map[38][20]=2;
-			
-			map[10][28]=2;
-			map[15][28]=2;
-			map[55][28]=2;
-			
+
+			s = new Sensor [Constants.SENSORSNUMBER];
+			s[0] = new Sensor ("one",2,3,10);
+			s[1] = new Sensor ("two",2,18,2);
+			s[2] = new Sensor ("three",2,25,2);
+			s[3] = new Sensor ("four",2,28,10);
+			s[4] = new Sensor ("five",2,28,12);
+			s[5] = new Sensor ("six",2,28,14);
+			s[6] = new Sensor ("seven",2,42,2);
+			s[7] = new Sensor ("eight",2,44,2);
+			s[8] = new Sensor ("nine",2,48,2);
+			s[9] = new Sensor ("ten",2,15,18);
+			s[10] = new Sensor ("eleven",2,23,18);
+			s[11] = new Sensor ("twelve",2,33,18);
+			s[12] = new Sensor ("thirtheen",2,38,20);
+			s[13] = new Sensor ("fourteen",2,10,28);
+			s[14] = new Sensor ("fiveteen",2,15,28);
+			s[15] = new Sensor ("sixteen",2,55,28);
+
+			for (int i=0; i<s.length;i++) {
+				map[s[i].getX()][s[i].getY()]=2;
+			}			
+
 		} else if (Constants.mapID == 2) {
 			for (int i=0; i<Constants.mapSizeW;i++) {
 				map[i][0]=1;
@@ -75,6 +83,13 @@ public class Map {
 				map[i][20]=1;
 			}
 		}
+	}
+	public Sensor[] getS() {
+		return s;
+	}
+
+	public void setS(Sensor[] s) {
+		this.s = s;
 	}
 
 	public static synchronized Map getInstance() {

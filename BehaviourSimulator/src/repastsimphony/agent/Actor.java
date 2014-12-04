@@ -14,6 +14,7 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.SimUtilities;
+import repastsimphony.common.Constants;
 import repastsimphony.common.Map;
 
 public class Actor {
@@ -63,10 +64,15 @@ public class Actor {
 
 	@ScheduledMethod(start = 1, interval = 60, priority=1)
 	public void newTarget() {
-		DE = new DijkstraEngine();		
-
+		DE = new DijkstraEngine();
 		worldMapMatrix = Map.getInstance().getWorldMap();
 		DE.buildAdjacencyMatrix(worldMapMatrix);
+		
+		int index = RandomHelper.nextIntFromTo(0, Constants.SENSORSNUMBER-1);
+		
+		Sensor [] s= Map.getInstance().getS();
+		
+		Target = new GridPoint(s[index].getX(), s[index].getY());
 
 		System.out.println("INVIO!!"+(int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
 		// Start point:
