@@ -22,7 +22,7 @@ public class ADL {
 	
 	public ADL(int id, String name, ArrayList<Integer> days, int weather, int tmean,
 			int tvariability, int mandatory, int bestTime, int type,
-			int cyclicalityD) {
+			int cyclicalityD, ArrayList<String> needs, ArrayList<ADLEffect> effects) {
 		super();
 		this.id = id;
 		this.name = name;

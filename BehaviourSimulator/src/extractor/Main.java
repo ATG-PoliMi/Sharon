@@ -9,7 +9,12 @@ import java.util.Comparator;
 public class Main {
 
 	static ArrayList <ADL> adl= new ArrayList<ADL>();
-	static ADL badl = new ADL (0, "Foo", new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7)), 0, 0, 0, 0, 0, 0, 1);
+	//TODO: correct the definition of badl
+	static ADL badl = new ADL (0, "Foo", new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7)), 
+			0, 0, 0, 0, 0, 0, 1, 
+			new ArrayList<String>(Arrays.asList("hunger", "energy")),
+			new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.3), new ADLEffect("energy", -0.3))));
+
 	static int day, minute;
 	static int usedTime;
 	static int positionBadl;
@@ -108,10 +113,16 @@ public class Main {
 		for (ADL a : adl) {
 			a.setRank((double) ((a.getCyclicalityN() / a.getCyclicalityD()) + 
 					a.isMandatory() + 
-					1.0 + 
+					needsEffort() + 
 					(1- (Math.abs(minute - a.getBestTime()))/100)));
 		}
 
+	}
+
+
+	private static int needsEffort() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 
@@ -119,38 +130,84 @@ public class Main {
 		ArrayList <Integer> days = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7));
 		ArrayList <Integer> marketDays = new ArrayList<Integer>(Arrays.asList(4,6));
 
-		//ID, NAME, DAYS, WEATHER, TMEAN, TVARIABILITY, MANDATORY, BESTTIME, TYPE, CYCLICALITY
+		//ID, NAME, DAYS, WEATHER, TMEAN, TVARIABILITY, MANDATORY, BESTTIME, TYPE, CYCLICALITY, CATEGORY, EFFECTS
 		//Morning
-		adl.add(new ADL (101, "Breakfast", days, 0, 10*60, 5*60, 1, 8*3600, 0, 1));
-		adl.add(new ADL (102, "MorningSitcom1", days, 0, 60*60, 10*60, 1, 9*3600, 0, 1));
-		adl.add(new ADL (103, "MorningSitcom2", days, 0, 30*60, 10*60, 1, 10*3600, 0, 1));
-		adl.add(new ADL (104, "Shopping", days, 0, 120*60, 60*60, 1, 9*3600, 0, 1));
-		adl.add(new ADL (105, "Garden", days, 3, 180*60, 60*60, 1, 10*3600, 0, 1));
-		adl.add(new ADL (106, "Shower", days, 0, 20*60, 10*60, 1, 11*3600, 0, 1));
-		adl.add(new ADL (107, "TakeAWalk", days, 3, 60*60, 15*60, 1, 10*3600, 0, 1));
-		adl.add(new ADL (108, "MARKET", marketDays, 3, 60*60, 15*60, 1, 9*3600, 0, 1));
-		adl.add(new ADL (108, "Launder", days, 3, 60*60, 15*60, 1, 9*3600, 0, 7));
+		adl.add(new ADL (101, "Breakfast", days, 0, 10*60, 5*60, 1, 8*3600, 0, 1,  
+				new ArrayList<String>(Arrays.asList("hunger")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.3), new ADLEffect("bladder", +0.3)))));
+		adl.add(new ADL (102, "MorningSitcom1", days, 0, 60*60, 10*60, 1, 9*3600, 0, 1, 
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.2), new ADLEffect("fun", -0.3)))));
+		adl.add(new ADL (103, "MorningSitcom2", days, 0, 30*60, 10*60, 1, 10*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.2), new ADLEffect("fun", -0.3)))));
+		adl.add(new ADL (104, "Shopping", days, 0, 120*60, 60*60, 1, 9*3600, 0, 1,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", +0.3), new ADLEffect("hygiene", +0.3)))));
+		adl.add(new ADL (105, "Garden", days, 3, 180*60, 60*60, 1, 10*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", +0.3), new ADLEffect("energy", +0.3), new ADLEffect("hygiene", +0.3)))));
+		adl.add(new ADL (106, "Shower", days, 0, 20*60, 10*60, 1, 11*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("hygiene")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hygiene", -0.5)))));
+		adl.add(new ADL (107, "TakeAWalk", days, 3, 60*60, 15*60, 1, 10*3600, 0, 1,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", +0.3), new ADLEffect("energy", +0.3), new ADLEffect("hygiene", +0.3)))));
+		adl.add(new ADL (108, "MARKET", marketDays, 3, 60*60, 15*60, 1, 9*3600, 0, 1,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", +0.1), new ADLEffect("energy", +0.3), new ADLEffect("hygiene", +0.1)))));
+		adl.add(new ADL (108, "Launder", days, 3, 60*60, 15*60, 1, 9*3600, 0, 7,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", +0.2)))));
 
 
-		adl.add(new ADL (100, "Lunch", days, 0, 40*60, 10*60, 1, 12*3600, 0, 1));
+		adl.add(new ADL (100, "Lunch", days, 0, 40*60, 10*60, 1, 12*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("hunger")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.5), new ADLEffect("energy", +0.1)))));
 		//Afternoon		
 
-		adl.add(new ADL (201, "Sitcom1", days, 0, 60*60, 10*60, 0, 16*3600, 0, 1));
-		adl.add(new ADL (202, "Sitcom2", days, 0, 60*60, 10*60, 0, 14*3600, 0, 1));
-		adl.add(new ADL (203, "Tea", days, 0, 20*60, 5*60, 1, 17*3600, 0, 1));
-		adl.add(new ADL (204, "Garden", days, 3, 120*60, 60*60, 1, 16*3600, 0, 1));
-		adl.add(new ADL (205, "ReadBook", days, 0, 30*60, 20*60, 1, 15*3600, 0, 1));
-		adl.add(new ADL (206, "Shower", days, 0, 20*60, 10*60, 1, 17*3600, 0, 1));
-		adl.add(new ADL (207, "WashingMachine", days, 1, 10*60, 5*60, 1, 15*3600, 0, 1));
-		adl.add(new ADL (208, "TakeAWalk", days, 3, 60*60, 15*60, 1, 16*3600, 0, 1));
+		adl.add(new ADL (201, "Sitcom1", days, 0, 60*60, 10*60, 0, 16*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.2), new ADLEffect("fun", -0.3)))));
+		adl.add(new ADL (202, "Sitcom2", days, 0, 60*60, 10*60, 0, 14*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.2), new ADLEffect("fun", -0.3)))));
+		adl.add(new ADL (203, "Tea", days, 0, 20*60, 5*60, 1, 17*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("hunger", "energy")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.2), new ADLEffect("energy", -0.1)))));
+		adl.add(new ADL (204, "Garden", days, 3, 120*60, 60*60, 1, 16*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", +0.3), new ADLEffect("energy", +0.3), new ADLEffect("hygiene", +0.3)))));
+		adl.add(new ADL (205, "ReadBook", days, 0, 30*60, 20*60, 1, 15*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3)))));
+		adl.add(new ADL (206, "Shower", days, 0, 20*60, 10*60, 1, 17*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("hygiene")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hygiene", -0.5)))));
+		adl.add(new ADL (207, "WashingMachine", days, 1, 10*60, 5*60, 1, 15*3600, 0, 1,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", +0.2)))));
+		adl.add(new ADL (208, "TakeAWalk", days, 3, 60*60, 15*60, 1, 16*3600, 0, 1,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", +0.3), new ADLEffect("energy", +0.3), new ADLEffect("hygiene", +0.3)))));
 
-		adl.add(new ADL (200, "Dinner", days, 0, 50*60, 10*60, 1, 19*3600, 0, 1));
+		adl.add(new ADL (200, "Dinner", days, 0, 50*60, 10*60, 1, 19*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("hunger")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.5), new ADLEffect("energy", +0.1)))));
 		//Evening
 
-		adl.add(new ADL (301, "Cinema", days, 0, 180*60, 60*60, 1, 20*3600, 0, 1));
-		adl.add(new ADL (302, "EveningTV", days, 0, 180*60, 30*60, 1, 21*3600, 0, 1));
-		adl.add(new ADL (303, "ReadBook", days, 0, 180*60, 60*60, 1, 20*3600, 0, 1));
+		adl.add(new ADL (301, "Cinema", days, 0, 180*60, 60*60, 1, 20*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3)))));
+		adl.add(new ADL (302, "EveningTV", days, 0, 180*60, 30*60, 1, 21*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3)))));
+		adl.add(new ADL (303, "ReadBook", days, 0, 180*60, 60*60, 1, 20*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("comfort", "fun")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3)))));
 
-		adl.add(new ADL (300, "Sleep", days, 0, 480*60, 120*60, 1, 21*3600, 0, 1));
+		adl.add(new ADL (300, "Sleep", days, 0, 480*60, 120*60, 1, 21*3600, 0, 1,
+				new ArrayList<String>(Arrays.asList("energy")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -0.8)))));
 	}
 }
