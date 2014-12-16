@@ -12,7 +12,8 @@ public class ADL {
 	private int mandatory;
 	private int bestTime;
 	private int type;
-	private int cyclicality;
+	private int cyclicalityN;
+	private int cyclicalityD;
 	
 	private double rank;
 	private int doneToday;
@@ -21,7 +22,7 @@ public class ADL {
 	
 	public ADL(int id, String name, ArrayList<Integer> days, int weather, int tmean,
 			int tvariability, int mandatory, int bestTime, int type,
-			int cyclicality) {
+			int cyclicalityD) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -32,7 +33,8 @@ public class ADL {
 		this.mandatory = mandatory;
 		this.bestTime = bestTime;
 		this.type = type;
-		this.cyclicality = cyclicality;
+		this.cyclicalityD = cyclicalityD;
+		this.cyclicalityN = 0;
 	}
 	
 	
@@ -90,11 +92,17 @@ public class ADL {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public int getCyclicality() {
-		return cyclicality;
+	public int getCyclicalityN() {
+		return cyclicalityN;
 	}
-	public void setCyclicality(int cyclicality) {
-		this.cyclicality = cyclicality;
+	public void setCyclicalityN(int cyclicalityN) {
+		this.cyclicalityN = cyclicalityN;
+	}
+	public int getCyclicalityD() {
+		return cyclicalityD;
+	}
+	public void setCyclicalityD(int cyclicalityD) {
+		this.cyclicalityD = cyclicalityD;
 	}
 	public double getRank() {
 		return rank;
@@ -107,5 +115,6 @@ public class ADL {
 	}
 	public void setDoneToday(int doneToday) {
 		this.doneToday = doneToday;
+		cyclicalityN = 0;
 	}
 }
