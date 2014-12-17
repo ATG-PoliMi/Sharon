@@ -52,6 +52,13 @@ public class Main {
 				completeADL(positionBadl);
 				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
 				System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" time: "+ (int)usedTime/60);
+				System.out.printf ("Needs: Hu:%.2f", Needs.getInstance().getHunger());
+				System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+				System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+				System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+				System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+				System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+				System.out.println();
 				updateNeeds((int) usedTime/3600);
 				minute+= (int) usedTime/60;
 			}			
@@ -69,14 +76,21 @@ public class Main {
 	 * Updates the needs of the user 
 	 */
 	private static void updateNeeds(int times) {
-		for (int i=0; i<times; i++) {
-			Needs.getInstance().setHunger(Needs.getInstance().getHunger()+0.1);
-			Needs.getInstance().setComfort(Needs.getInstance().getComfort()+0.1);
-			Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+0.1);
-			Needs.getInstance().setBladder(Needs.getInstance().getBladder()+0.1);
-			Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+0.1);
-			Needs.getInstance().setFun(Needs.getInstance().getFun()+0.1);
-		}		
+
+		for (int i=0; i<=times; i++) {
+			if (Needs.getInstance().getHunger() < 1.0) 
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 	+ 0.1);
+			if (Needs.getInstance().getComfort() < 1.0) 
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort() + 0.1);
+			if (Needs.getInstance().getHygiene() < 1.0) 
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()	+ 0.1);
+			if (Needs.getInstance().getBladder() < 1.0) 
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()	+ 0.1);
+			if (Needs.getInstance().getEnergy() < 1.0) 
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()	+ 0.1);
+			if (Needs.getInstance().getFun() < 1.0) 
+				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ 0.1);
+		}
 	}
 
 
@@ -87,21 +101,20 @@ public class Main {
 	private static void completeADL(int ADLindex) {
 		Iterator<ADLEffect> x = adl.get(positionBadl).getEffects().iterator();
 		while (x.hasNext()) {
-			String name;
-			name = x.next().getName();
-	//TODO: Substitute the value of the ADL with the 0 of the setNeed  
-			if (name.equals("hunger")) 
-				Needs.getInstance().setHunger(0);
-			if (name.equals("comfort")) 
-				Needs.getInstance().setComfort(0);
-			if (name.equals("hygiene")) 
-				Needs.getInstance().setHygiene(0);
-			if (name.equals("bladder")) 
-				Needs.getInstance().setBladder(0);
-			if (name.equals("energy")) 
-				Needs.getInstance().setEnergy(0);
-			if (name.equals("fun")) 
-				Needs.getInstance().setFun(0);
+			ADLEffect badl;
+			badl = x.next();
+			if (badl.getName().equals("hunger")) 
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger()+badl.getEffect());
+			if (badl.getName().equals("comfort")) 
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort()+badl.getEffect());
+			if (badl.getName().equals("hygiene")) 
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+badl.getEffect());
+			if (badl.getName().equals("bladder")) 
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()+badl.getEffect());
+			if (badl.getName().equals("energy")) 
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+badl.getEffect());
+			if (badl.getName().equals("fun")) 
+				Needs.getInstance().setFun(Needs.getInstance().getFun()+badl.getEffect());
 		}
 		adl.get(positionBadl).setDoneToday(1);
 	}
@@ -192,7 +205,6 @@ public class Main {
 			} 
 		}
 		return ADLeffort;
-
 	}
 
 
@@ -268,16 +280,16 @@ public class Main {
 
 		adl.add(new ADL (301, "Cinema", days, 0, 180*60, 60*60, 1, 20*3600, 0, 1,
 				new ArrayList<String>(Arrays.asList("comfort", "fun")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3))), 2.0,5.0));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.5), new ADLEffect("fun", -0.3))), 2.0,5.0));
 		adl.add(new ADL (302, "EveningTV", days, 0, 180*60, 30*60, 1, 21*3600, 0, 1,
 				new ArrayList<String>(Arrays.asList("comfort", "fun")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3))), 2.0,5.0));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.5), new ADLEffect("fun", -0.3))), 2.0,5.0));
 		adl.add(new ADL (303, "ReadBook", days, 0, 180*60, 60*60, 1, 20*3600, 0, 1,
 				new ArrayList<String>(Arrays.asList("comfort", "fun")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3))), 2.0,5.0));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.5), new ADLEffect("fun", -0.3))), 2.0,5.0));
 
 		adl.add(new ADL (300, "Sleep", days, 0, 480*60, 120*60, 1, 21*3600, 0, 1,
 				new ArrayList<String>(Arrays.asList("energy")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -0.8))), 2.0,5.0));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -1.0), new ADLEffect("comfort", -1.0))), 2.0,5.0));
 	}
 }
