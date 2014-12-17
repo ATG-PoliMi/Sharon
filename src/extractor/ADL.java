@@ -14,6 +14,7 @@ public class ADL {
 	private int type;
 	private int cyclicalityN;
 	private int cyclicalityD;
+	private double activationShapeA, activationShapeB; //Params for the Beta distribution
 	
 	private double rank;
 	private int doneToday;
@@ -24,7 +25,8 @@ public class ADL {
 	
 	public ADL(int id, String name, ArrayList<Integer> days, int weather, int tmean,
 			int tvariability, int mandatory, int bestTime, int type,
-			int cyclicalityD, ArrayList<String> needs, ArrayList<ADLEffect> effects) {
+			int cyclicalityD, ArrayList<String> needs, ArrayList<ADLEffect> effects, 
+			double activationShapeA, double activationShapeB) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -39,9 +41,22 @@ public class ADL {
 		this.cyclicalityN = 0;
 		this.needs = needs;
 		this.effects = effects;
+		this.activationShapeA = activationShapeA;
+		this.activationShapeB = activationShapeB;
 	}
 	
-	
+	public double getActivationShapeA() {
+		return activationShapeA;
+	}
+	public void setActivationShapeA(int activationShapeA) {
+		this.activationShapeA = activationShapeA;
+	}
+	public double getActivationShapeB() {
+		return activationShapeB;
+	}
+	public void setActivationShapeB(int activationShapeB) {
+		this.activationShapeB = activationShapeB;
+	}
 	public int getId() {
 		return id;
 	}
