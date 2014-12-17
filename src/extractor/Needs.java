@@ -13,12 +13,12 @@ public class Needs {
 
 
 	private Needs(){
-		this.hunger=0.0;
-		this.comfort=0.0;
-		this.hygiene=0.0;
-		this.bladder=0.0;
-		this.energy=0.0;
-		this.fun=0.0;	
+		this.hunger	=	1.0;
+		this.comfort=	1.0;
+		this.hygiene=	1.0;
+		this.bladder=	1.0;
+		this.energy	=	1.0;
+		this.fun	=	1.0;	
 	}
 	
 	public double getHunger() {

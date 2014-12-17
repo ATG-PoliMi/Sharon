@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 public class Main {
 
@@ -45,8 +46,8 @@ public class Main {
 						badl=a;
 						positionBadl = adl.indexOf(a);
 					}
-				}
-				adl.get(positionBadl).setDoneToday(1);
+				}				
+				completeADL(positionBadl);
 				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
 				System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" time: "+ (int)usedTime/60);
 
@@ -64,25 +65,52 @@ public class Main {
 	}
 
 
+	/**
+	 * Actions to perform when the ADL has been completed
+	 * @param ADLindex: Index of the ADL just executed
+	 */
+	private static void completeADL(int ADLindex) {
+		Iterator<ADLEffect> x = adl.get(positionBadl).getEffects().iterator();
+		while (x.hasNext()) {
+			String name;
+			name = x.next().getName();
+			
+			if (name.equals("hunger")) 
+				Needs.getInstance().setHunger(0);
+			if (name.equals("comfort")) 
+				Needs.getInstance().setComfort(0);
+			if (name.equals("hygiene")) 
+				Needs.getInstance().setHygiene(0);
+			if (name.equals("bladder")) 
+				Needs.getInstance().setBladder(0);
+			if (name.equals("energy")) 
+				Needs.getInstance().setEnergy(0);
+			if (name.equals("fun")) 
+				Needs.getInstance().setFun(0);
+
+		}		
+	}
+
+
 	private static void newDay() {
 		Day.getInstance().nextDay();
 		System.out.print("Today is ");
 		switch (Day.getInstance().getWeekDay()) {
-			case 1: System.out.print("Monday"); break;
-			case 2: System.out.print("Tuesday"); break;
-			case 3: System.out.print("Wednsday"); break;
-			case 4: System.out.print("Thursday"); break;
-			case 5: System.out.print("Friday"); break;
-			case 6: System.out.print("Saturday"); break;
-			case 7: System.out.print("Sunday"); break;
-			default: System.out.print("Error");
+		case 1: System.out.print("Monday"); break;
+		case 2: System.out.print("Tuesday"); break;
+		case 3: System.out.print("Wednsday"); break;
+		case 4: System.out.print("Thursday"); break;
+		case 5: System.out.print("Friday"); break;
+		case 6: System.out.print("Saturday"); break;
+		case 7: System.out.print("Sunday"); break;
+		default: System.out.print("Error");
 		}
 		System.out.print(" and the weather is ");
 		switch (Day.getInstance().getWeather()) {
-			case 1: System.out.print("Rainy\n"); break;
-			case 2: System.out.print("Cloudy\n"); break;
-			case 3: System.out.print("Sunny\n"); break;
-			default: System.out.print("Error\n");
+		case 1: System.out.print("Rainy\n"); break;
+		case 2: System.out.print("Cloudy\n"); break;
+		case 3: System.out.print("Sunny\n"); break;
+		default: System.out.print("Error\n");
 		}
 	}
 
@@ -122,25 +150,26 @@ public class Main {
 
 	private static double needsEffort(ADL a) {
 		double ADLeffort = 0.0;
-		if (a.getNeeds().contains("hunger")) {
-			ADLeffort += Needs.getInstance().getHunger();
+		if (a.getNeeds() != null) {
+			if (a.getNeeds().contains("hunger")) {
+				ADLeffort += Needs.getInstance().getHunger();
+			}
+			if (a.getNeeds().contains("comfort")) {
+				ADLeffort += Needs.getInstance().getComfort();
+			}
+			if (a.getNeeds().contains("hygiene")) {
+				ADLeffort += Needs.getInstance().getHygiene();
+			} 
+			if (a.getNeeds().contains("bladder")) {
+				ADLeffort += Needs.getInstance().getBladder();
+			} 
+			if (a.getNeeds().contains("energy")) {
+				ADLeffort += Needs.getInstance().getEnergy();
+			} 
+			if (a.getNeeds().contains("fun")) {
+				ADLeffort += Needs.getInstance().getFun();
+			} 
 		}
-		if (a.getNeeds().contains("comfort")) {
-			ADLeffort += Needs.getInstance().getComfort();
-		}
-		if (a.getNeeds().contains("hygiene")) {
-			ADLeffort += Needs.getInstance().getHygiene();
-		} 
-		if (a.getNeeds().contains("bladder")) {
-			ADLeffort += Needs.getInstance().getBladder();
-		} 
-		if (a.getNeeds().contains("energy")) {
-			ADLeffort += Needs.getInstance().getEnergy();
-		} 
-		if (a.getNeeds().contains("fun")) {
-			ADLeffort += Needs.getInstance().getFun();
-		} 
-		
 		return ADLeffort;
 
 	}
