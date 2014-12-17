@@ -52,7 +52,7 @@ public class Main {
 				completeADL(positionBadl);
 				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
 				System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" time: "+ (int)usedTime/60);
-
+				updateNeeds((int) usedTime/3600);
 				minute+= (int) usedTime/60;
 			}			
 			System.out.println("ENDDAY!");
@@ -63,6 +63,20 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Updates the needs of the user 
+	 */
+	private static void updateNeeds(int times) {
+		for (int i=0; i<times; i++) {
+			Needs.getInstance().setHunger(Needs.getInstance().getHunger()+0.1);
+			Needs.getInstance().setComfort(Needs.getInstance().getComfort()+0.1);
+			Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+0.1);
+			Needs.getInstance().setBladder(Needs.getInstance().getBladder()+0.1);
+			Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+0.1);
+			Needs.getInstance().setFun(Needs.getInstance().getFun()+0.1);
+		}		
 	}
 
 
