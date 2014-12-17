@@ -17,6 +17,8 @@ public class ADL {
 	
 	private double rank;
 	private int doneToday;
+	private ArrayList<String> needs = new ArrayList <String>();
+	private ArrayList<ADLEffect> effects = new ArrayList <ADLEffect>();
 	
 	
 	
@@ -35,6 +37,8 @@ public class ADL {
 		this.type = type;
 		this.cyclicalityD = cyclicalityD;
 		this.cyclicalityN = 0;
+		this.needs = needs;
+		this.effects = effects;
 	}
 	
 	
@@ -116,5 +120,20 @@ public class ADL {
 	public void setDoneToday(int doneToday) {
 		this.doneToday = doneToday;
 		cyclicalityN = 0;
+	}	
+	public ArrayList<String> getNeeds() {
+		return needs;
+	}
+	public void setNeeds(ArrayList<String> needs) {
+		this.needs = needs;
+	}
+	public ArrayList<ADLEffect> getEffects() {
+		return effects;
+	}
+	public void setEffects(ArrayList<ADLEffect> effects) {
+		this.effects = effects;
+	}
+	public int getMandatory() {
+		return mandatory;
 	}
 }

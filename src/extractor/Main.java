@@ -113,16 +113,36 @@ public class Main {
 		for (ADL a : adl) {
 			a.setRank((double) ((a.getCyclicalityN() / a.getCyclicalityD()) + 
 					a.isMandatory() + 
-					needsEffort() + 
+					needsEffort(a) + 
 					(1- (Math.abs(minute - a.getBestTime()))/100)));
 		}
 
 	}
 
 
-	private static int needsEffort() {
-		// TODO Auto-generated method stub
-		return 0;
+	private static double needsEffort(ADL a) {
+		double ADLeffort = 0.0;
+		if (a.getNeeds().contains("hunger")) {
+			ADLeffort += Needs.getInstance().getHunger();
+		}
+		if (a.getNeeds().contains("comfort")) {
+			ADLeffort += Needs.getInstance().getComfort();
+		}
+		if (a.getNeeds().contains("hygiene")) {
+			ADLeffort += Needs.getInstance().getHygiene();
+		} 
+		if (a.getNeeds().contains("bladder")) {
+			ADLeffort += Needs.getInstance().getBladder();
+		} 
+		if (a.getNeeds().contains("energy")) {
+			ADLeffort += Needs.getInstance().getEnergy();
+		} 
+		if (a.getNeeds().contains("fun")) {
+			ADLeffort += Needs.getInstance().getFun();
+		} 
+		
+		return ADLeffort;
+
 	}
 
 
@@ -130,7 +150,7 @@ public class Main {
 		ArrayList <Integer> days = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7));
 		ArrayList <Integer> marketDays = new ArrayList<Integer>(Arrays.asList(4,6));
 
-		//ID, NAME, DAYS, WEATHER, TMEAN, TVARIABILITY, MANDATORY, BESTTIME, TYPE, CYCLICALITY, CATEGORY, EFFECTS
+		//ID, NAME, DAYS, WEATHER, TMEAN, TVARIABILITY, MANDATORY, BESTTIME, TYPE, CYCLICALITY, NEEDS, EFFECTS
 		//Morning
 		adl.add(new ADL (101, "Breakfast", days, 0, 10*60, 5*60, 1, 8*3600, 0, 1,  
 				new ArrayList<String>(Arrays.asList("hunger")),
