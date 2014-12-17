@@ -1,16 +1,16 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>GRID_COLOR</name>
+  <name>GRID</name>
   <type>2D</type>
   <styles>
     <entry>
       <string>repastsimphony.agent.Actor</string>
-      <string>repast.simphony.visualizationOGL2D.DefaultStyleOGL2D</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
       <string>repastsimphony.agent.Actor</string>
-      <null/>
+      <string>repastsimphony.agent.Actor.style_3.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -23,7 +23,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1768027955</hashCode>
+    <hashCode>928016364</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>grid</layoutProjection>
