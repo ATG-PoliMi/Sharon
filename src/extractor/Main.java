@@ -48,7 +48,8 @@ public class Main {
 						positionBadl = adl.indexOf(a);						
 					}
 				}
-				System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" time: "+ (int)usedTime/60);
+				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+				System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" minutes required: "+ (int)usedTime/60);
 				System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 				System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
 				System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
@@ -67,7 +68,7 @@ public class Main {
 				System.out.printf (", F:%.2f", Needs.getInstance().getFun());
 				System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
 				System.out.println();
-				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+				
 
 				updateNeeds((int) usedTime/3600);
 				minute+= (int) usedTime/60;
@@ -294,7 +295,7 @@ public class Main {
 		adl.add(new ADL (105, "Garden", days, 3, 180*60, 60*60, 1, 10*3600, 2*3600, 3,
 				new ArrayList<String>(Arrays.asList("fun")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", +0.3), new ADLEffect("energy", +0.3), new ADLEffect("hygiene", +0.3))), 2.0,5.0));
-		adl.add(new ADL (106, "Shower", days, 0, 20*60, 10*60, 1, 11*3600, 2*3600, 2,
+		adl.add(new ADL (106, "Shower", days, 0, 40*60, 10*60, 1, 11*3600, 2*3600, 2,
 				new ArrayList<String>(Arrays.asList("hygiene")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hygiene", -1.0))), 2.0,5.0));
 		adl.add(new ADL (107, "TakeAWalk", days, 3, 60*60, 15*60, 1, 10*3600, 2*3600, 3,
@@ -309,10 +310,19 @@ public class Main {
 		adl.add(new ADL (109, "CleanUp", days, 0, 80*60, 20*60, 1, 10*3600, 2*3600, 5,
 				null,
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", +0.2))), 2.0,5.0));
+		adl.add(new ADL (110, "Toilet", days, 0, 5*60, 1*60, 1, 9*3600, 2*3600, 1,
+				new ArrayList<String>(Arrays.asList("bladder")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("bladder", -1.0))), 2.0,5.0));
+		adl.add(new ADL (110, "Toilet", days, 0, 5*60, 1*60, 1, 11*3600, 1*3600, 1,
+				new ArrayList<String>(Arrays.asList("bladder")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("bladder", -1.0))), 2.0,5.0));
+		adl.add(new ADL (111, "Phone", days, 0, 5*60, 1*60, 1, 10*3600, 2*3600, 1,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("fun", -0.1))), 2.0,5.0));
 
-		adl.add(new ADL (100, "Lunch", days, 0, 40*60, 10*60, 1, 12*3600, 2*3600, 1,
+		adl.add(new ADL (100, "Lunch", days, 0, 50*60, 5*60, 1, 12*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("hunger")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.8), new ADLEffect("energy", +0.1))), 4.0,1.0));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.8), new ADLEffect("energy", +0.1))), 10.0,1.0));
 		//Afternoon		
 
 		adl.add(new ADL (201, "Sitcom1", holidays, 0, 60*60, 10*60, 0, 16*3600, 2*3600, 3,
@@ -330,7 +340,7 @@ public class Main {
 		adl.add(new ADL (205, "ReadBook", days, 0, 30*60, 20*60, 1, 15*3600, 2*3600, 2,
 				new ArrayList<String>(Arrays.asList("comfort", "fun")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.3), new ADLEffect("fun", -0.3))), 2.0,5.0));
-		adl.add(new ADL (206, "Shower", days, 0, 20*60, 10*60, 1, 17*3600, 2*3600, 1,
+		adl.add(new ADL (206, "Shower", days, 0, 40*60, 10*60, 1, 17*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("hygiene")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hygiene", -1.0))), 2.0,5.0));
 		adl.add(new ADL (207, "WashingMachine", days, 1, 10*60, 5*60, 1, 15*3600, 2*3600, 4,
@@ -342,10 +352,16 @@ public class Main {
 		adl.add(new ADL (209, "CleanUp", days, 0, 80*60, 20*60, 1, 15*3600, 2*3600, 5,
 				null,
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", +0.1),new ADLEffect("hygiene", +0.1))), 2.0,5.0));
+		adl.add(new ADL (210, "Toilet", days, 0, 5*60, 1*60, 1, 18*3600, 2*3600, 1,
+				new ArrayList<String>(Arrays.asList("bladder")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("bladder", -1.0))), 2.0,5.0));
+		adl.add(new ADL (210, "Phone", days, 0, 5*60, 1*60, 1, 16*3600, 2*3600, 1,
+				null,
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("fun", -0.1))), 2.0,5.0));
 
-		adl.add(new ADL (200, "Dinner", days, 0, 50*60, 10*60, 1, 20*3600, 2*3600, 1,
+		adl.add(new ADL (200, "Dinner", days, 0, 50*60, 5*60, 1, 20*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("hunger")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.5), new ADLEffect("energy", +0.1))), 2.0,5.0));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.8), new ADLEffect("energy", +0.1))), 10.0,1.0));
 
 		//Evening
 
