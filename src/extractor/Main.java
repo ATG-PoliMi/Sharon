@@ -37,21 +37,34 @@ public class Main {
 			usedTime=0;
 			for (minute=0; minute <=1440; minute ++) {
 				if (usedTime <=0) {
-				minute += minute == 0 ? wake() : 0; 
-				
-				computeADLValue(minute*60);
-				//badl.setRank(-1000);
-				for (ADL a:adl) {
-					if ((a.getDoneToday()==0) && 
-							(a.getRank() > badl.getRank()) &&
-							(Day.getInstance().getWeather() >= a.getWeather()) &&
-							(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
-						badl=a;
-						positionBadl = adl.indexOf(a);						
+					minute += minute == 0 ? wake() : 0; 
+
+					computeADLValue(minute*60);
+					//badl.setRank(-1000);
+					for (ADL a:adl) {
+						if ((a.getDoneToday()==0) && 
+								(a.getRank() > badl.getRank()) &&
+								(Day.getInstance().getWeather() >= a.getWeather()) &&
+								(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
+							badl=a;
+							positionBadl = adl.indexOf(a);						
+						}
 					}
-				}
-				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
-				Logs(1);
+					if ((int) (Math.random()*100) < 10) {
+						System.out.println("PREEMPTION!!!");
+						/*for (ADL a:adl) {
+							if ((a.getDoneToday()==0) && 
+									(a.getRank() > badl.getRank()) &&
+									(Day.getInstance().getWeather() >= a.getWeather()) &&
+									(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
+								badl=a;
+								positionBadl = adl.indexOf(a);						
+							}
+						}*/
+					} else {
+						usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+						Logs(1);
+					}
 				} 
 				minute += Math.min((int) usedTime/60, 10);
 				usedTime -= 10*60;
@@ -84,7 +97,7 @@ public class Main {
 			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
 			System.out.println();				
 			break;
-			
+
 		case 2:
 			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
@@ -96,7 +109,7 @@ public class Main {
 			System.out.println();
 			break;
 		}
-		
+
 	}
 
 	/**
