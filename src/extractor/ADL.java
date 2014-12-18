@@ -11,7 +11,7 @@ public class ADL {
 	private int tvariability;
 	private int mandatory;
 	private int bestTime;
-	private int type;
+	private int rangeTime;
 	private double cyclicalityN;
 	private double cyclicalityD;
 	private double activationShapeA, activationShapeB; //Params for the Beta distribution
@@ -24,7 +24,7 @@ public class ADL {
 	
 	
 	public ADL(int id, String name, ArrayList<Integer> days, int weather, int tmean,
-			int tvariability, int mandatory, int bestTime, int type,
+			int tvariability, int mandatory, int bestTime, int rangeTime,
 			int cyclicalityD, ArrayList<String> needs, ArrayList<ADLEffect> effects, 
 			double activationShapeA, double activationShapeB) {
 		super();
@@ -36,7 +36,7 @@ public class ADL {
 		this.tvariability = tvariability;
 		this.mandatory = mandatory;
 		this.bestTime = bestTime;
-		this.type = type;
+		this.rangeTime = rangeTime;
 		this.cyclicalityD = cyclicalityD;
 		this.cyclicalityN = 0;
 		this.needs = needs;
@@ -105,11 +105,11 @@ public class ADL {
 	public void setBestTime(int bestTime) {
 		this.bestTime = bestTime;
 	}
-	public int getType() {
-		return type;
+	public int getRangeTime() {
+		return rangeTime;
 	}
-	public void setType(int type) {
-		this.type = type;
+	public void setRangeTime(int type) {
+		this.rangeTime = type;
 	}
 	public double getCyclicalityN() {
 		return cyclicalityN;
