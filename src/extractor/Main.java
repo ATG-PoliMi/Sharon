@@ -31,15 +31,17 @@ public class Main {
 
 		RandomGaussian gaussian = new RandomGaussian();
 
-		for (day=0; day>-1; day++) {
+		for (day=0; day > -1; day++) {
 			newDay();
 			dayInitADL();
+			usedTime=0;
 			for (minute=0; minute <=1440; minute ++) {
+				if (usedTime <=0) {
 				minute += minute == 0 ? wake() : 0; 
+				
 				computeADLValue(minute*60);
-				badl.setRank(-1000);
+				//badl.setRank(-1000);
 				for (ADL a:adl) {
-
 					if ((a.getDoneToday()==0) && 
 							(a.getRank() > badl.getRank()) &&
 							(Day.getInstance().getWeather() >= a.getWeather()) &&
@@ -49,31 +51,17 @@ public class Main {
 					}
 				}
 				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
-				System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" minutes required: "+ (int)usedTime/60);
-				System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-				System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-				System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-				System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-				System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-				System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-				System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-				System.out.println();				
-				completeADL(positionBadl);
-
-				System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-				System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-				System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-				System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-				System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-				System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-				System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-				System.out.println();
-				
-
-				updateNeeds((int) usedTime/3600);
-				minute+= (int) usedTime/60;
+				Logs(1);
+				} 
+				minute += Math.min((int) usedTime/60, 10);
+				usedTime -= 10*60;
+				if (usedTime <= 0) {
+					completeADL(positionBadl);
+					Logs(2);				
+					updateNeeds((int) usedTime/3600);				
+				}
 			}			
-			System.out.println("ENDDAY!");
+			System.out.println("END DAY!");
 			try {
 				System.in.read();
 			} catch (IOException e) {
@@ -81,6 +69,34 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static void Logs(int logType) {
+		switch (logType) {
+		case 1: 
+			System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" minutes required: "+ (int)usedTime/60);
+			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
+			System.out.println();				
+			break;
+			
+		case 2:
+			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
+			System.out.println();
+			break;
+		}
+		
 	}
 
 	/**
