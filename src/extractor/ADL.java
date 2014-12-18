@@ -12,8 +12,8 @@ public class ADL {
 	private int mandatory;
 	private int bestTime;
 	private int type;
-	private int cyclicalityN;
-	private int cyclicalityD;
+	private double cyclicalityN;
+	private double cyclicalityD;
 	private double activationShapeA, activationShapeB; //Params for the Beta distribution
 	
 	private double rank;
@@ -111,16 +111,16 @@ public class ADL {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public int getCyclicalityN() {
+	public double getCyclicalityN() {
 		return cyclicalityN;
 	}
-	public void setCyclicalityN(int cyclicalityN) {
-		this.cyclicalityN = cyclicalityN;
+	public void setCyclicalityN(double d) {
+		this.cyclicalityN = d;
 	}
-	public int getCyclicalityD() {
+	public double getCyclicalityD() {
 		return cyclicalityD;
 	}
-	public void setCyclicalityD(int cyclicalityD) {
+	public void setCyclicalityD(double cyclicalityD) {
 		this.cyclicalityD = cyclicalityD;
 	}
 	public double getRank() {
@@ -134,7 +134,6 @@ public class ADL {
 	}
 	public void setDoneToday(int doneToday) {
 		this.doneToday = doneToday;
-		cyclicalityN = 0;
 	}	
 	public ArrayList<String> getNeeds() {
 		return needs;
