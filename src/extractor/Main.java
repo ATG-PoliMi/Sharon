@@ -17,6 +17,8 @@ public class Main {
 			0, 0, 0, 0, 0, 0, 1, 
 			new ArrayList<String>(Arrays.asList("hunger", "energy")),
 			new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.3), new ADLEffect("energy", -0.3))), 1.0, 1.0);
+	static ADL badl2;
+	static int usedTime2;
 
 	static int day, minute;
 	static int usedTime;
@@ -41,7 +43,7 @@ public class Main {
 				if (usedTime <=0) {
 					minute += minute == 0 ? wake() : 0; 
 
-					computeADLValue(minute*60);
+					computeADLRank(minute*60);
 					//badl.setRank(-1000);
 					for (ADL a:adl) {
 						if ((a.getDoneToday()==0) && 
@@ -56,16 +58,32 @@ public class Main {
 					badl.setRank(badl.getRank() + 2);
 					Logs(1);
 				} 
-				if (minute - preemptionCheck > 15) {
+				
+				if (minute - preemptionCheck > 15) { //PREEMPTION CHECK
+					//TODO: Insert Bladder ADL index (10) into the Constant File
 					preemptionCheck = minute;
-					System.out.println("PREEMPTION!!!");
+					if (Needs.getInstance().getBladder() > 0.90) {
+						badl2 = badl;
+						usedTime2 = usedTime;
+						badl = adl.get(10);
+						usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+							System.out.println("START WC Preemption");
+						Logs(1);
+						completeADL(10);
+						adl.get(10).setDoneToday(0);
+						badl = badl2;
+						usedTime = usedTime2;
+						Logs(2);
+							System.out.println("END WC Preemption");
+					} else {}
 				}
+				
 				minute += Math.min((int) usedTime/60, 10);
 				usedTime -= 10*60;
 				if (usedTime <= 0) {
 					completeADL(positionBadl);
 					Logs(2);				
-					updateNeeds((int) usedTime/3600);				
+					updateNeeds((int) usedTime/3600);
 				}
 			}			
 			System.out.println("END DAY!");
@@ -132,7 +150,7 @@ public class Main {
 	 * @param ADLindex: Index of the ADL just executed
 	 */
 	private static void completeADL(int ADLindex) {
-		Iterator<ADLEffect> x = adl.get(positionBadl).getEffects().iterator();
+		Iterator<ADLEffect> x = adl.get(ADLindex).getEffects().iterator();
 		while (x.hasNext()) {
 			ADLEffect badl;
 			badl = x.next();
@@ -143,7 +161,6 @@ public class Main {
 				if (Needs.getInstance().getHunger() > 1)
 					Needs.getInstance().setHunger(1);				
 			}
-
 			if (badl.getName().equals("comfort")) {
 				Needs.getInstance().setComfort(Needs.getInstance().getComfort()+badl.getEffect());
 				if (Needs.getInstance().getComfort() < 0)
@@ -234,7 +251,7 @@ public class Main {
 	 * Computation of the ADL rank
 	 * @param minute
 	 */
-	private static void computeADLValue(int minute) {
+	private static void computeADLRank(int minute) {
 
 		for (ADL a : adl) {
 			if (timeDependence(a, minute) > 0) {
