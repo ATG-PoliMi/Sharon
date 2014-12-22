@@ -1,15 +1,13 @@
 package extractor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Random;
 
 import org.apache.commons.math3.distribution.BetaDistribution;
-public class Main {
+
+public class ExtractorEngine {
+
 
 	static ArrayList <ADL> adl= new ArrayList<ADL>();
 	//TODO: correct the definition of badl
@@ -22,77 +20,29 @@ public class Main {
 	static int usedTime;
 	static int positionBadl;
 	static Day d;
-	static int preemptionCheck = 0;
-
-
-	public static void main (String[] args) {
-
-		System.out.println("Simulation start!");
+	
+	public ExtractorEngine () {
 		addADL();	//Adds ADLs examples
-
 		RandomGaussian gaussian = new RandomGaussian();
 
-		for (day=0; day > -1; day++) {
-			newDay();
-			dayInitADL();
-			usedTime=0;
-			preemptionCheck=0;
-			for (minute=0; minute <=1440; minute ++) {
-				if (usedTime <=0) {
-					minute += minute == 0 ? wake() : 0; 
-
-					computeADLValue(minute*60);
-					//badl.setRank(-1000);
-					for (ADL a:adl) {
-						if ((a.getDoneToday()==0) && 
-								(a.getRank() > badl.getRank()) &&
-								(Day.getInstance().getWeather() >= a.getWeather()) &&
-								(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
-							badl=a;
-							positionBadl = adl.indexOf(a);						
-						}
-					}
-					usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
-					badl.setRank(badl.getRank() + 2);
-					Logs(1);
-				} 
-				if (minute - preemptionCheck > 15) {
-					preemptionCheck = minute;
-					System.out.println("PREEMPTION!!!");
-				}
-				minute += Math.min((int) usedTime/60, 10);
-				usedTime -= 10*60;
-				if (usedTime <= 0) {
-					completeADL(positionBadl);
-					Logs(2);				
-					updateNeeds((int) usedTime/3600);				
-				}
-			}			
-			System.out.println("END DAY!");
-			try {
-				System.in.read();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
-
+	
 	private static void Logs(int logType) {
 		switch (logType) {
 		case 1: 
 			System.out.println ("ADL: "+ badl.getName() +" with rank "+ badl.getRank() + " day hour: " +(int) minute/60 +" minutes required: "+ (int)usedTime/60);
-			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			/*System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
 			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
 			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
 			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
 			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
 			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-			System.out.println();				
+			System.out.println();
+			 */
 			break;
 
-		case 2:
+		case 3:
 			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
 			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
@@ -185,7 +135,7 @@ public class Main {
 	}
 
 
-	private static void newDay() {
+	public static void newDay() {
 		Day.getInstance().nextDay();
 
 		System.out.print("Today is ");
@@ -212,7 +162,7 @@ public class Main {
 		Needs.getInstance().setEnergy(0);
 		Needs.getInstance().setComfort(0);
 		RandomGaussian gaussian = new RandomGaussian();
-		return (int) gaussian.getGaussian (8*60, 10);
+		return (int) gaussian.getGaussian (8*60, 60);
 	}
 
 	/**
@@ -234,7 +184,7 @@ public class Main {
 	 * Computation of the ADL rank
 	 * @param minute
 	 */
-	private static void computeADLValue(int minute) {
+	private static void computeADLsRank(int minute) {
 
 		for (ADL a : adl) {
 			if (timeDependence(a, minute) > 0) {
@@ -246,7 +196,6 @@ public class Main {
 			else
 				a.setRank(0);
 		}
-
 	}
 
 	private static double timeDependence(ADL a, int minute) {
@@ -339,11 +288,11 @@ public class Main {
 		adl.add(new ADL (110, "Toilet", days, 0, 5*60, 1*60, 1, 11*3600, 1*3600, 1,
 				new ArrayList<String>(Arrays.asList("bladder")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("bladder", -1.0))), 2.0,5.0));
-		adl.add(new ADL (111, "Phone", days, 0, 5*60, 1*60, 1, 10*3600, 2*3600, 1,
+		adl.add(new ADL (111, "Phone", days, 0, 10*60, 5*60, 1, 10*3600, 2*3600, 1,
 				null,
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("fun", -0.1))), 2.0,5.0));
 
-		adl.add(new ADL (100, "Lunch", days, 0, 50*60, 5*60, 1, 12*3600, 2*3600, 1,
+		adl.add(new ADL (100, "Lunch", days, 0, 50*60, 5*60, 3, 12*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("hunger")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.8), new ADLEffect("energy", +0.1))), 10.0,1.0));
 		//Afternoon		
@@ -378,9 +327,12 @@ public class Main {
 		adl.add(new ADL (210, "Toilet", days, 0, 5*60, 1*60, 1, 18*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("bladder")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("bladder", -1.0))), 2.0,5.0));
-		adl.add(new ADL (210, "Phone", days, 0, 5*60, 1*60, 1, 16*3600, 2*3600, 1,
+		adl.add(new ADL (211, "Phone", days, 0, 5*60, 1*60, 1, 16*3600, 2*3600, 1,
 				null,
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("fun", -0.1))), 2.0,5.0));
+		adl.add(new ADL (212, "Nap", days, 0, 30*60, 10*60, 0, 15*3600, 1*3600, 1,
+				new ArrayList<String>(Arrays.asList("energy")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -0.4))), 1.5,1.5));
 
 		adl.add(new ADL (200, "Dinner", days, 0, 50*60, 5*60, 1, 20*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("hunger")),
