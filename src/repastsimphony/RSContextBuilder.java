@@ -30,41 +30,60 @@ import repastsimphony.common.Map;
 public class RSContextBuilder implements ContextBuilder<Object> {
 
 	private int worldMap[][];
-	
+	private ContinuousSpace<Object> space;
+	private ContinuousSpaceFactory spaceFactory;
+	private GridFactory gridFactory;
+	private Grid<Object> grid;
+	private GridValueLayer structureLayer;
+
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Context build(Context<Object> context) {
 		context.setId("BehaviourSimulator");
-		
+
 		//Retrieving map
 		worldMap = Map.getInstance().getWorldMap();		
-		
-		//Continuous Space declaration
-		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder
+
+		continuousSpaceDeclaration (context);
+		gridDeclaration(context);
+		cellsCreation(context);
+
+		if (RunEnvironment.getInstance().isBatch()) {
+			RunEnvironment.getInstance().endAt(20);
+		}
+		return context;
+	}
+
+	private void continuousSpaceDeclaration (Context<Object> context){
+		spaceFactory = ContinuousSpaceFactoryFinder
 				.createContinuousSpaceFactory(null);
-		ContinuousSpace<Object> space = spaceFactory.createContinuousSpace(
+
+		space = spaceFactory.createContinuousSpace(
 				"space", context, new RandomCartesianAdder<Object>(),
 				new repast.simphony.space.continuous.WrapAroundBorders(), Constants.mapSizeW,
 				Constants.mapSizeH);
+	}
 
+	private void gridDeclaration (Context<Object> context) {
 		//Grid declaration
-		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
-		Grid<Object> grid = gridFactory.createGrid("grid", context,
+		gridFactory = GridFactoryFinder.createGridFactory(null);
+		grid = gridFactory.createGrid("grid", context,
 				new GridBuilderParameters<Object>(new WrapAroundBorders(),
 						new SimpleGridAdder<Object>(), true, Constants.mapSizeW, Constants.mapSizeH));
-		
 		context.add(new Actor(space, grid));
 		
 		// Create a background layer for the displayed grid
-		final GridValueLayer structureLayer = new GridValueLayer(
+		structureLayer = new GridValueLayer(
 				Constants.STRUCTURE_LAYER_ID, // Access layer through context
 				true, // Densely populated
 				new WrapAroundBorders(), // Toric world
 				// Size of the grid (defined constants)
 				Constants.mapSizeW, Constants.mapSizeH);
-
 		context.addValueLayer(structureLayer);
-
-		// Fill up the context with cells, and set the initial food values for
+	}	
+	
+	private void cellsCreation(Context<Object> context) {
+		// Fill up the context with cells, and set the initial values for
 		// the new layer. Also add them to the created grid.
 		for (int i = 0; i < Constants.mapSizeW; i++) {
 			for (int j = 0; j < Constants.mapSizeH; j++) {
@@ -78,10 +97,5 @@ public class RSContextBuilder implements ContextBuilder<Object> {
 			NdPoint pt = space.getLocation(obj);
 			grid.moveTo(obj, (int) pt.getX(), (int) pt.getY());
 		}
-
-		if (RunEnvironment.getInstance().isBatch()) {
-			RunEnvironment.getInstance().endAt(20);
-		}
-		return context;
-	}
+	}	
 }

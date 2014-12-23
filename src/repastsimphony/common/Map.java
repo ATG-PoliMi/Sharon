@@ -48,6 +48,7 @@ public class Map {
 			map[34][18]=0;
 
 			s = new Sensor [Constants.SENSORSNUMBER];
+			//(Name, Sensor type, X, Y)
 			s[0] = new Sensor ("one",2,3,10);
 			s[1] = new Sensor ("two",2,18,2);
 			s[2] = new Sensor ("three",2,25,2);
