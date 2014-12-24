@@ -2,6 +2,12 @@ package repastsimphony;
 
 
 
+import java.util.ArrayList;
+
+import behavior.simulator.extractor.ADL;
+import behavior.simulator.planner.LowLevelADL;
+import behavior.simulator.xml.ADLDB;
+import behavior.simulator.xml.LLADLDB;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -29,24 +35,28 @@ import repastsimphony.common.Map;
 
 public class RSContextBuilder implements ContextBuilder<Object> {
 
+	//Repast Simphony
 	private int worldMap[][];
 	private ContinuousSpace<Object> space;
 	private ContinuousSpaceFactory spaceFactory;
 	private GridFactory gridFactory;
 	private Grid<Object> grid;
 	private GridValueLayer structureLayer;
+	
+	//Extractor
+	ArrayList<ADL> adl;
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Context build(Context<Object> context) {
 		context.setId("BehaviourSimulator");
 
-		//Retrieving map
-		worldMap = Map.getInstance().getWorldMap();		
-
 		continuousSpaceDeclaration (context);
 		gridDeclaration(context);
 		cellsCreation(context);
+		
+		ArrayList<ADL> adl = ADLDB.addADL();
+		ArrayList<LowLevelADL> padl = LLADLDB.addLLADL();
 
 		if (RunEnvironment.getInstance().isBatch()) {
 			RunEnvironment.getInstance().endAt(20);
@@ -85,6 +95,10 @@ public class RSContextBuilder implements ContextBuilder<Object> {
 	private void cellsCreation(Context<Object> context) {
 		// Fill up the context with cells, and set the initial values for
 		// the new layer. Also add them to the created grid.
+		
+		//Retrieving map
+		worldMap = Map.getInstance().getWorldMap();
+		
 		for (int i = 0; i < Constants.mapSizeW; i++) {
 			for (int j = 0; j < Constants.mapSizeH; j++) {
 				final Wall cell = new Wall(i, j);

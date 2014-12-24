@@ -1,4 +1,4 @@
-package extractor;
+package behavior.simulator.extractor;
 
 public class ADLEffect {
 	private String name;

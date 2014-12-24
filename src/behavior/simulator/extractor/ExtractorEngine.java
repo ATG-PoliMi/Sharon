@@ -1,4 +1,4 @@
-package extractor;
+package behavior.simulator.extractor;
 
 import java.util.ArrayList;
 import java.util.Arrays;

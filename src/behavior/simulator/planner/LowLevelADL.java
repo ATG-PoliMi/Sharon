@@ -1,4 +1,4 @@
-package planner;
+package behavior.simulator.planner;
 
 import java.util.ArrayList;
 
