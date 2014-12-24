@@ -5,7 +5,7 @@ import java.util.Random;
 public final class RandomGaussian {
 	private Random fRandom = new Random();
 
-	double getGaussian(double aMean, double aVariance){
+	public double getGaussian(double aMean, double aVariance){
 		return aMean + fRandom.nextGaussian() * aVariance;
 	}
 

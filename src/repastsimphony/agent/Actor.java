@@ -1,9 +1,26 @@
 package repastsimphony.agent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.math3.distribution.BetaDistribution;
+
+import javolution.context.Context;
+import behavior.simulator.extractor.ADL;
+import behavior.simulator.extractor.ADLEffect;
+import behavior.simulator.extractor.Day;
+import behavior.simulator.extractor.Needs;
+import behavior.simulator.extractor.RandomGaussian;
+import behavior.simulator.planner.ADLMatcher;
+import behavior.simulator.planner.LowLevelADL;
+import behavior.simulator.xml.ADLDB;
+import behavior.simulator.xml.ADLMatcherDB;
+import behavior.simulator.xml.LLADLDB;
 import dijsktra.DijkstraEngine;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.query.space.grid.GridCellNgh;
@@ -27,15 +44,90 @@ public class Actor {
 	ArrayList<String> path;
 	String delims = ",";
 
+	//ADL Handling
+	static ArrayList<ADL> hLADL;
+	static ArrayList<LowLevelADL> lLADL;
+	static ArrayList<ADLMatcher> matchADL;
+
+	//User actions
+	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
+	static int idling;
+
+	//Utils
+	RandomGaussian gaussian = new RandomGaussian();
+	static double tick;
+	static int positionBadl;
+	static int usedTime;
+
+	//BADL
+	static ADL badl = new ADL (0, "Foo", new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7)), 
+			0, 0, 0, 0, 0, 0, 1, 
+			new ArrayList<String>(Arrays.asList("hunger", "energy")),
+			new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.3), new ADLEffect("energy", -0.3))), 1.0, 1.0);	
 
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space=space;
-		this.grid=grid;	
+		this.grid=grid;
+		importADL();		
 	}
-	
-//TODO: Cleanup method step()
-	@ScheduledMethod(start = 1, interval = 1, priority=0)
-	public void step() {	
+
+	private void importADL () {
+		hLADL		= 	ADLDB.addADL();
+		lLADL 		= 	LLADLDB.addLLADL();
+		matchADL 	= 	ADLMatcherDB.addADLMatch();	
+	}
+
+
+	@ScheduledMethod(start = 0, interval = 1, priority=0)
+	public void step() {
+		tick = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		
+		if (tick % 86400 == 0) {
+			System.out.println("***NEW DAY***!");
+			newDay();
+			dayInitADL();
+		}
+
+		switch (agentStatus) {
+		case 0: //Idle
+			idling--;
+			break;
+			
+		case 1: //Extracting a new ADL
+			computeADLRank((int) tick);
+			for (ADL a : hLADL) {
+				if ((a.getDoneToday()==0) && 
+						(a.getRank() > badl.getRank()) &&
+						(Day.getInstance().getWeather() >= a.getWeather()) &&
+						(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
+					badl = a;
+					positionBadl = hLADL.indexOf(a);						
+				}
+			}
+			usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+			badl.setRank(badl.getRank() + 2);
+			idling = usedTime;
+			Logs(1);
+			agentStatus = 0;
+			break;
+			
+		case 2:	//Walking
+			break;
+		case 3:	//Acting
+			
+			break;
+
+		}
+
+		if (idling <= 0) {
+			completeADL(positionBadl);
+			Logs(2);
+			updateNeeds((int) usedTime/3600);
+			agentStatus=1;
+		}
+
+		//Movement instructions
+/*
 		GridPoint pt = grid.getLocation(this);
 
 		if (path.size() > 0) {
@@ -46,10 +138,11 @@ public class Actor {
 			GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
 			moveTowards(pt2);
 		}
+*/
 
 	}
 
-	public void moveTowards(GridPoint pt) {
+/*	public void moveTowards(GridPoint pt) {
 		// only move if we are not already in this grid location
 		if (!pt.equals(grid.getLocation(this))) {
 			NdPoint myPoint = space.getLocation(this);
@@ -67,11 +160,11 @@ public class Actor {
 		DE = new DijkstraEngine();
 		worldMapMatrix = Map.getInstance().getWorldMap();
 		DE.buildAdjacencyMatrix(worldMapMatrix);
-		
+
 		int index = RandomHelper.nextIntFromTo(0, Constants.SENSORSNUMBER-1);
-		
+
 		Sensor [] s= Map.getInstance().getS();
-		
+
 		Target = new GridPoint(s[index].getX(), s[index].getY());
 
 		System.out.println("INVIO!!"+(int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
@@ -81,5 +174,219 @@ public class Actor {
 		// End point:
 		path = DE.computePath(Target.getX()+","+Target.getY());
 		System.out.println("PATH:"+path);
-	}	
+	}
+	*/
+
+	private static void newDay() {
+		Day.getInstance().nextDay();
+
+		System.out.print("Today is ");
+		switch (Day.getInstance().getWeekDay()) {
+		case 1: System.out.print("Monday"); break;
+		case 2: System.out.print("Tuesday"); break;
+		case 3: System.out.print("Wednsday"); break;
+		case 4: System.out.print("Thursday"); break;
+		case 5: System.out.print("Friday"); break;
+		case 6: System.out.print("Saturday"); break;
+		case 7: System.out.print("Sunday"); break;
+		default: System.out.print("Error");
+		}
+		System.out.print(" and the weather is ");
+		switch (Day.getInstance().getWeather()) {
+		case 1: System.out.print("Rainy\n"); break;
+		case 2: System.out.print("Cloudy\n"); break;
+		case 3: System.out.print("Sunny\n"); break;
+		default: System.out.print("Error\n");
+		}
+	}
+
+	private static int wake() {
+		Needs.getInstance().setEnergy(0);
+		Needs.getInstance().setComfort(0);
+		RandomGaussian gaussian = new RandomGaussian();
+		return (int) gaussian.getGaussian (8*60, 10);
+	}
+
+	/**
+	 * Operations applied to all the ADL each day
+	 */
+	private static void dayInitADL() {
+		double n,d;
+		for (ADL a : hLADL)  {
+			a.setDoneToday(0); //In this way I avoid duplication of activities
+			n = a.getCyclicalityN();
+			d = a.getCyclicalityD();
+			if (n < d)
+				a.setCyclicalityN(n + 1.0);			
+		}
+	}
+
+	/**
+	 * Computation of the ADL rank
+	 * @param minute
+	 */
+	private static void computeADLRank(int minute) {
+
+		for (ADL a : hLADL) {
+			if (timeDependence(a, minute) > 0) {
+				a.setRank((double) ((a.getCyclicalityN() / a.getCyclicalityD()) + 
+						a.isMandatory() + 
+						needsEffort(a) +
+						timeDependence(a, minute)));
+			}
+			else
+				a.setRank(0);
+		}
+
+	}
+
+	private static double timeDependence(ADL a, int minute) {
+		BetaDistribution b = new BetaDistribution(a.getActivationShapeA(), a.getActivationShapeB());
+		double test = b.density((0.5 + (minute - a.getBestTime()) / (2 * a.getRangeTime())));
+
+		return test;
+	}
+
+
+	private static double needsEffort(ADL a) {
+		double ADLeffort = 0.0;
+		int activations = 0;
+		if (a.getNeeds() != null) {
+			if (a.getNeeds().contains("hunger")) {
+				ADLeffort += Needs.getInstance().getHunger();
+				activations++;
+			}
+			if (a.getNeeds().contains("comfort")) {
+				ADLeffort += Needs.getInstance().getComfort();
+				activations++;
+			}
+			if (a.getNeeds().contains("hygiene")) {
+				ADLeffort += Needs.getInstance().getHygiene();
+				activations++;
+			} 
+			if (a.getNeeds().contains("bladder")) {
+				ADLeffort += Needs.getInstance().getBladder();
+				activations++;
+			} 
+			if (a.getNeeds().contains("energy")) {
+				ADLeffort += Needs.getInstance().getEnergy();
+				activations++;
+			} 
+			if (a.getNeeds().contains("fun")) {
+				ADLeffort += Needs.getInstance().getFun();
+				activations++;
+			} 
+			return ADLeffort/activations;
+		}
+		return 0;
+	}
+
+	/**
+	 * Actions to perform when the ADL has been completed
+	 * @param ADLindex: Index of the ADL just executed
+	 */
+	private static void completeADL(int ADLindex) {
+		Iterator<ADLEffect> x = hLADL.get(ADLindex).getEffects().iterator();
+		while (x.hasNext()) {
+			ADLEffect badl;
+			badl = x.next();
+			if (badl.getName().equals("hunger")) {
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger()+badl.getEffect());
+				if (Needs.getInstance().getHunger() < 0)
+					Needs.getInstance().setHunger(0);
+				if (Needs.getInstance().getHunger() > 1)
+					Needs.getInstance().setHunger(1);				
+			}
+			if (badl.getName().equals("comfort")) {
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort()+badl.getEffect());
+				if (Needs.getInstance().getComfort() < 0)
+					Needs.getInstance().setComfort(0);
+				if (Needs.getInstance().getComfort() > 1)
+					Needs.getInstance().setComfort(1);	
+			}
+			if (badl.getName().equals("hygiene")) {
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+badl.getEffect());
+				if (Needs.getInstance().getHygiene() < 0)
+					Needs.getInstance().setHygiene(0);
+				if (Needs.getInstance().getHygiene() > 1)
+					Needs.getInstance().setHygiene(1);
+			}
+			if (badl.getName().equals("bladder")) {
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()+badl.getEffect());
+				if (Needs.getInstance().getBladder() < 0)
+					Needs.getInstance().setBladder(0);
+				if (Needs.getInstance().getBladder() > 1)
+					Needs.getInstance().setBladder(1);				
+			}
+			if (badl.getName().equals("energy")) {
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+badl.getEffect());
+				if (Needs.getInstance().getEnergy() < 0)
+					Needs.getInstance().setEnergy(0);
+				if (Needs.getInstance().getEnergy() > 1)
+					Needs.getInstance().setEnergy(1);	
+			}
+			if (badl.getName().equals("fun")) {
+				if (Needs.getInstance().getFun() < 0)
+					Needs.getInstance().setFun(0);
+				if (Needs.getInstance().getFun() > 1)
+					Needs.getInstance().setFun(1);	
+				Needs.getInstance().setFun(Needs.getInstance().getFun()+badl.getEffect());
+			}
+		}
+		hLADL.get(positionBadl).setDoneToday(1);
+		hLADL.get(positionBadl).setCyclicalityN(0);
+	}
+
+	private static void Logs(int logType) {
+		switch (logType) {
+		case 1: 
+			System.out.println ("ADL: "+ badl.getName() +
+					" with rank "+ badl.getRank() + 
+					" day hour: " +(int) tick +
+					" minutes required: "+ (int) usedTime/60);
+			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
+			System.out.println();				
+			break;
+
+		case 2:
+			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
+			System.out.println();
+			break;
+		}
+
+	}
+
+	/**
+	 * Updates the needs of the user 
+	 */
+	private static void updateNeeds(int times) {
+
+		for (int i=0; i<=times; i++) {
+			if (Needs.getInstance().getHunger() < 1.0) 
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 	+ 0.05);
+			if (Needs.getInstance().getComfort() < 1.0) 
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort() + 0.03);
+			if (Needs.getInstance().getHygiene() < 1.0) 
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()	+ 0.03);
+			if (Needs.getInstance().getBladder() < 1.0) 
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()	+ 0.05);
+			if (Needs.getInstance().getEnergy() < 1.0) 
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()	+ 0.03);
+			if (Needs.getInstance().getFun() < 1.0) 
+				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ 0.03);
+		}
+	}
+
 }

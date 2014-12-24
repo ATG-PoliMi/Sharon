@@ -5,8 +5,10 @@ package repastsimphony;
 import java.util.ArrayList;
 
 import behavior.simulator.extractor.ADL;
+import behavior.simulator.planner.ADLMatcher;
 import behavior.simulator.planner.LowLevelADL;
 import behavior.simulator.xml.ADLDB;
+import behavior.simulator.xml.ADLMatcherDB;
 import behavior.simulator.xml.LLADLDB;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
@@ -55,9 +57,6 @@ public class RSContextBuilder implements ContextBuilder<Object> {
 		gridDeclaration(context);
 		cellsCreation(context);
 		
-		ArrayList<ADL> adl = ADLDB.addADL();
-		ArrayList<LowLevelADL> padl = LLADLDB.addLLADL();
-
 		if (RunEnvironment.getInstance().isBatch()) {
 			RunEnvironment.getInstance().endAt(20);
 		}
