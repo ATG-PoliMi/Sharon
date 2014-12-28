@@ -5,7 +5,6 @@ public class Constants {
 
 
 	//Repast Simphony
-
 	public static final int mapID = 1;
 	public static final int mapSizeH = 30;
 	public static final int mapSizeW = 60;

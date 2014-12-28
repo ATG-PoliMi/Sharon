@@ -46,7 +46,6 @@ public class ADLMatcherDB {
 		m.put(302, new ADLMatcher(302, new ArrayList<Integer>(Arrays.asList(9)), new ArrayList<Double>(Arrays.asList(1.0))));
 		m.put(303, new ADLMatcher(303, new ArrayList<Integer>(Arrays.asList(11,12)), new ArrayList<Double>(Arrays.asList(0.5,0.5))));
 		
-		
 		return m;
 	}
 

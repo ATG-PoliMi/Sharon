@@ -42,14 +42,14 @@ import repastsimphony.common.HomeMap;
 
 public class Actor {
 
-	
+
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 	private GridPoint Target = new GridPoint(15, 25);
 	private DijkstraEngine DE;
 	int[][] worldMapMatrix;
-	ArrayList<String> path;
-	String delims = ",";
+	private ArrayList<String> path = new ArrayList<String>();
+	private String delims = ",";
 
 	//ADL Handling
 	static Map<Integer, ADL> hLADL;
@@ -67,7 +67,13 @@ public class Actor {
 	static int usedTime;
 
 	//BADL
-	static ADL badl;	
+	static ADL badl;
+
+	//TARGETS
+	private Integer llADLIndex; 
+	private ArrayList<Integer> tTime = new ArrayList<Integer>();
+	private static int stationCounter = 0; //Station Counter
+
 
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space=space;
@@ -86,7 +92,8 @@ public class Actor {
 	@ScheduledMethod(start = 0, interval = 1, priority=0)
 	public void step() {
 		tick = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		
+		idling++;
+
 		if (tick % 86400 == 0) {
 			System.out.println("***NEW DAY***!");
 			newDay();
@@ -95,9 +102,9 @@ public class Actor {
 
 		switch (agentStatus) {
 		case 0: //Idle
-			idling--;
+			idling++;
 			break;
-			
+
 		case 1: //Extracting a new ADL
 			computeADLRank((int) tick % 86400);
 			for (ADL a : hLADL.values()) {
@@ -111,29 +118,60 @@ public class Actor {
 			}
 			usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
 			badl.setRank(badl.getRank() + 2);
-			idling = usedTime;
+			idling = 0;
 			Logs(1);
-			agentStatus = 0;
-			break;
-			
-		case 2:	//Computing new target
-			
-			break;
-		case 3:	//Acting
-			
+			agentStatus = 2;
 			break;
 
+		case 2:	//Computing new targets			
+			llADLIndex = matchADL.get(badl.getId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!		
+			tTime.clear();
+
+			for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
+				tTime.add((int) (usedTime * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
+			}
+			agentStatus=3;
+			break;
+
+
+		case 3:	//Walking+Acting
+			if (!tTime.isEmpty()) {
+				if (idling < tTime.get(0)) {
+
+					GridPoint pt = grid.getLocation(this);
+					if (path.isEmpty()) {
+						newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
+					}
+					if (path.size() > 0) {
+						String x = path.get(0);
+						path.remove(0);
+						String[] tokens = x.split(delims);
+
+						GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
+						moveTowards(pt2);
+					}
+				} else {
+					idling=0;
+					stationCounter++;
+					tTime.remove(0);					
+				}
+
+			} else {
+				agentStatus = 1;
+				completeADL(keyBadl);
+				Logs(2);
+				updateNeeds((int) usedTime/3600);
+				stationCounter=0;
+			}
+			break;
 		}
 
-		if (idling <= 0) {
-			completeADL(keyBadl);
-			Logs(2);
-			updateNeeds((int) usedTime/3600);
-			agentStatus=1;
-		}
+
+		//if (idling <= 0) {	agentStatus=1;	}
+
 
 		//Movement instructions
-/*
+		/*
 		GridPoint pt = grid.getLocation(this);
 
 		if (path.size() > 0) {
@@ -144,11 +182,11 @@ public class Actor {
 			GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
 			moveTowards(pt2);
 		}
-*/
+		 */
 
 	}
 
-/*	public void moveTowards(GridPoint pt) {
+	public void moveTowards(GridPoint pt) {
 		// only move if we are not already in this grid location
 		if (!pt.equals(grid.getLocation(this))) {
 			NdPoint myPoint = space.getLocation(this);
@@ -161,17 +199,15 @@ public class Actor {
 		}
 	}
 
-	@ScheduledMethod(start = 1, interval = 60, priority=1)
-	public void newTarget() {
+
+	public void newTarget(int indexSensor) {
 		DE = new DijkstraEngine();
-		worldMapMatrix = Map.getInstance().getWorldMap();
+		worldMapMatrix = HomeMap.getInstance().getWorldMap();
 		DE.buildAdjacencyMatrix(worldMapMatrix);
 
-		int index = RandomHelper.nextIntFromTo(0, Constants.SENSORSNUMBER-1);
+		Sensor [] s= HomeMap.getInstance().getS();
 
-		Sensor [] s= Map.getInstance().getS();
-
-		Target = new GridPoint(s[index].getX(), s[index].getY());
+		Target = new GridPoint(s[indexSensor].getX(), s[indexSensor].getY());
 
 		System.out.println("INVIO!!"+(int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
 		// Start point:
@@ -181,7 +217,6 @@ public class Actor {
 		path = DE.computePath(Target.getX()+","+Target.getY());
 		System.out.println("PATH:"+path);
 	}
-	*/
 
 	private static void newDay() {
 		Day.getInstance().nextDay();

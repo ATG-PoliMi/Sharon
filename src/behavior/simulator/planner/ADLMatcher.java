@@ -15,4 +15,34 @@ public class ADLMatcher {
 		LLadl = lLadl;
 		LLadlProbability = lLadlProbability;
 	}
+
+
+	public int getHLadl() {
+		return HLadl;
+	}
+
+
+	public void setHLadl(int hLadl) {
+		HLadl = hLadl;
+	}
+
+
+	public ArrayList<Integer> getLLadl() {
+		return LLadl;
+	}
+
+
+	public void setLLadl(ArrayList<Integer> lLadl) {
+		LLadl = lLadl;
+	}
+
+
+	public ArrayList<Double> getLLadlProbability() {
+		return LLadlProbability;
+	}
+
+
+	public void setLLadlProbability(ArrayList<Double> lLadlProbability) {
+		LLadlProbability = lLadlProbability;
+	}
 }
