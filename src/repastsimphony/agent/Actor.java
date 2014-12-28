@@ -1,9 +1,12 @@
 package repastsimphony.agent;
 
+import utils.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import utils.Constants;
 
 import org.apache.commons.math3.distribution.BetaDistribution;
 
@@ -31,11 +34,12 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.SimUtilities;
-import repastsimphony.common.Constants;
+import utils.Constants;
 import repastsimphony.common.Map;
 
 public class Actor {
 
+	
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 	private GridPoint Target = new GridPoint(15, 25);
@@ -60,15 +64,13 @@ public class Actor {
 	static int usedTime;
 
 	//BADL
-	static ADL badl = new ADL (0, "Foo", new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7)), 
-			0, 0, 0, 0, 0, 0, 1, 
-			new ArrayList<String>(Arrays.asList("hunger", "energy")),
-			new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.3), new ADLEffect("energy", -0.3))), 1.0, 1.0);	
+	static ADL badl;	
 
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space=space;
 		this.grid=grid;
-		importADL();		
+		importADL();
+		badl = hLADL.get(Constants.SLEEP_ID); //Sleeping
 	}
 
 	private void importADL () {
@@ -94,7 +96,7 @@ public class Actor {
 			break;
 			
 		case 1: //Extracting a new ADL
-			computeADLRank((int) tick);
+			computeADLRank((int) tick % 86400);
 			for (ADL a : hLADL) {
 				if ((a.getDoneToday()==0) && 
 						(a.getRank() > badl.getRank()) &&
@@ -338,11 +340,12 @@ public class Actor {
 	}
 
 	private static void Logs(int logType) {
+		Time t = new Time(tick % 86400);
 		switch (logType) {
 		case 1: 
 			System.out.println ("ADL: "+ badl.getName() +
 					" with rank "+ badl.getRank() + 
-					" day hour: " +(int) tick +
+					" day hour: " +t.getHour() +":"+t.getMinute()+
 					" minutes required: "+ (int) usedTime/60);
 			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());

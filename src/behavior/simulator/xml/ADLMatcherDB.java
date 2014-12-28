@@ -25,6 +25,7 @@ public class ADLMatcherDB {
 		m.add(new ADLMatcher(109, new ArrayList<Integer>(Arrays.asList(5)), new ArrayList<Double>(Arrays.asList(1.0))));
 		m.add(new ADLMatcher(110, new ArrayList<Integer>(Arrays.asList(6)), new ArrayList<Double>(Arrays.asList(1.0))));
 		m.add(new ADLMatcher(111, new ArrayList<Integer>(Arrays.asList(7)), new ArrayList<Double>(Arrays.asList(1.0))));
+		m.add(new ADLMatcher(112, new ArrayList<Integer>(Arrays.asList(15,16)), new ArrayList<Double>(Arrays.asList(0.5,0.5))));
 		
 		m.add(new ADLMatcher(200, new ArrayList<Integer>(Arrays.asList(14)), new ArrayList<Double>(Arrays.asList(1.0))));
 		m.add(new ADLMatcher(201, new ArrayList<Integer>(Arrays.asList(9)), new ArrayList<Double>(Arrays.asList(1.0))));

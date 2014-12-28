@@ -30,7 +30,7 @@ import repast.simphony.space.grid.WrapAroundBorders;
 import repast.simphony.valueLayer.GridValueLayer;
 import repastsimphony.agent.Actor;
 import repastsimphony.agent.Wall;
-import repastsimphony.common.Constants;
+import utils.Constants;
 import repastsimphony.common.Map;
 
 

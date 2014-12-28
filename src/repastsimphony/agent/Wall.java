@@ -5,7 +5,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.valueLayer.GridValueLayer;
 import repastsimphony.common.Map;
-
+import utils.Constants;
 
 
 public class Wall {
@@ -44,12 +44,12 @@ public class Wall {
 	@ScheduledMethod(start = 1, interval = 1, priority = 1)
 	public void wall(){
 	final GridValueLayer ValueLayer = (GridValueLayer) ContextUtils
-				.getContext(this).getValueLayer(repastsimphony.common.Constants.STRUCTURE_LAYER_ID);
+				.getContext(this).getValueLayer(Constants.STRUCTURE_LAYER_ID);
 
 		if (null == ValueLayer) {
 			throw new IllegalStateException(
 					"Cannot locate value layer with ID="
-							+ repastsimphony.common.Constants.STRUCTURE_LAYER_ID + ".");
+							+ Constants.STRUCTURE_LAYER_ID + ".");
 		}
 		//ValueLayer.set(1, x, y);
 	}

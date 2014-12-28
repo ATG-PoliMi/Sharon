@@ -62,6 +62,9 @@ public class ADLDB {
 		adl.add(new ADL (111, "Phone", days, 0, 5*60, 1*60, 1, 10*3600, 2*3600, 1,
 				null,
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("fun", -0.1))), 2.0,5.0));
+		adl.add(new ADL (112, "Sleep", days, 0, 7*3600, 120*60, 1, 3*3600, 2*3600, 1,
+				new ArrayList<String>(Arrays.asList("energy")),
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -2.0), new ADLEffect("comfort", -1.0))), 10.0,1.0));
 
 		adl.add(new ADL (100, "Lunch", days, 0, 50*60, 5*60, 1, 12*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("hunger")),
@@ -118,7 +121,7 @@ public class ADLDB {
 				new ArrayList<String>(Arrays.asList("comfort", "fun")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("comfort", -0.5), new ADLEffect("fun", -0.3))), 2.0,5.0));
 
-		adl.add(new ADL (300, "Sleep", days, 0, 480*60, 120*60, 1, 21*3600, 2*3600, 1,
+		adl.add(new ADL (300, "Sleep", days, 0, 9*3600, 120*60, 1, 21*3600, 2*3600, 1,
 				new ArrayList<String>(Arrays.asList("energy")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -2.0), new ADLEffect("comfort", -1.0))), 10.0,1.0));
 		return adl;

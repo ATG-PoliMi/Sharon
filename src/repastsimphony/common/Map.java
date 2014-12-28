@@ -2,6 +2,7 @@ package repastsimphony.common;
 
 import repastsimphony.agent.Sensor;
 
+import utils.Constants;
 public class Map {
 
 	private int map [][] = new int [Constants.mapSizeW][Constants.mapSizeH];
