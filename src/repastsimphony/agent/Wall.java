@@ -4,14 +4,14 @@ package repastsimphony.agent;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.valueLayer.GridValueLayer;
-import repastsimphony.common.Map;
+import repastsimphony.common.HomeMap;
 import utils.Constants;
 
 
 public class Wall {
 	private final int x, y;
 
-	Map m;
+	HomeMap m;
 	private int worldMap[][];
 
 	/**
@@ -37,7 +37,7 @@ public class Wall {
 
 		this.x = x;
 		this.y = y;
-		m = Map.getInstance();
+		m = HomeMap.getInstance();
 		worldMap = m.getWorldMap();	
 	}
 	

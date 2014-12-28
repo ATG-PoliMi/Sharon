@@ -20,5 +20,5 @@ public class Constants {
 	public static final String STRUCTURE_LAYER_ID = "walls";
 
 	//Behavior Simulator
-	public static final int SLEEP_ID = 15;
+	public static final int SLEEP_ID = 300;
 }

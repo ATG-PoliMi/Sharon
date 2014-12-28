@@ -3,14 +3,14 @@ package repastsimphony.common;
 import repastsimphony.agent.Sensor;
 
 import utils.Constants;
-public class Map {
+public class HomeMap {
 
 	private int map [][] = new int [Constants.mapSizeW][Constants.mapSizeH];
 	Sensor[] s;
 
-	private static Map instance;
+	private static HomeMap instance;
 	@SuppressWarnings("unused")
-	private Map(){		
+	private HomeMap(){		
 		for (int i=0; i<Constants.mapSizeW; i++) {
 			for (int j=0; j<Constants.mapSizeH; j++) {
 				map [i][j] = 0;
@@ -94,10 +94,10 @@ public class Map {
 		this.s = s;
 	}
 
-	public static synchronized Map getInstance() {
+	public static synchronized HomeMap getInstance() {
 
 		if(instance==null) {
-			instance=new Map();
+			instance=new HomeMap();
 		}
 		return instance;
 	}

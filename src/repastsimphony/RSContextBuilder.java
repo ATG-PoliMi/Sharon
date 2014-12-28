@@ -31,7 +31,7 @@ import repast.simphony.valueLayer.GridValueLayer;
 import repastsimphony.agent.Actor;
 import repastsimphony.agent.Wall;
 import utils.Constants;
-import repastsimphony.common.Map;
+import repastsimphony.common.HomeMap;
 
 
 
@@ -96,7 +96,7 @@ public class RSContextBuilder implements ContextBuilder<Object> {
 		// the new layer. Also add them to the created grid.
 		
 		//Retrieving map
-		worldMap = Map.getInstance().getWorldMap();
+		worldMap = HomeMap.getInstance().getWorldMap();
 		
 		for (int i = 0; i < Constants.mapSizeW; i++) {
 			for (int j = 0; j < Constants.mapSizeH; j++) {

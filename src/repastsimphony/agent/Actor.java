@@ -1,10 +1,13 @@
 package repastsimphony.agent;
 
 import utils.Time;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import utils.Constants;
 
@@ -35,7 +38,7 @@ import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.SimUtilities;
 import utils.Constants;
-import repastsimphony.common.Map;
+import repastsimphony.common.HomeMap;
 
 public class Actor {
 
@@ -49,9 +52,9 @@ public class Actor {
 	String delims = ",";
 
 	//ADL Handling
-	static ArrayList<ADL> hLADL;
-	static ArrayList<LowLevelADL> lLADL;
-	static ArrayList<ADLMatcher> matchADL;
+	static Map<Integer, ADL> hLADL;
+	static Map<Integer, LowLevelADL>  lLADL;
+	static Map<Integer, ADLMatcher> matchADL;
 
 	//User actions
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
@@ -60,7 +63,7 @@ public class Actor {
 	//Utils
 	RandomGaussian gaussian = new RandomGaussian();
 	static double tick;
-	static int positionBadl;
+	static int keyBadl;
 	static int usedTime;
 
 	//BADL
@@ -70,7 +73,7 @@ public class Actor {
 		this.space=space;
 		this.grid=grid;
 		importADL();
-		badl = hLADL.get(Constants.SLEEP_ID); //Sleeping
+		badl = hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 	}
 
 	private void importADL () {
@@ -97,13 +100,13 @@ public class Actor {
 			
 		case 1: //Extracting a new ADL
 			computeADLRank((int) tick % 86400);
-			for (ADL a : hLADL) {
+			for (ADL a : hLADL.values()) {
 				if ((a.getDoneToday()==0) && 
 						(a.getRank() > badl.getRank()) &&
 						(Day.getInstance().getWeather() >= a.getWeather()) &&
 						(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
 					badl = a;
-					positionBadl = hLADL.indexOf(a);						
+					keyBadl = a.getId();	
 				}
 			}
 			usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
@@ -113,7 +116,8 @@ public class Actor {
 			agentStatus = 0;
 			break;
 			
-		case 2:	//Walking
+		case 2:	//Computing new target
+			
 			break;
 		case 3:	//Acting
 			
@@ -122,7 +126,7 @@ public class Actor {
 		}
 
 		if (idling <= 0) {
-			completeADL(positionBadl);
+			completeADL(keyBadl);
 			Logs(2);
 			updateNeeds((int) usedTime/3600);
 			agentStatus=1;
@@ -214,7 +218,7 @@ public class Actor {
 	 */
 	private static void dayInitADL() {
 		double n,d;
-		for (ADL a : hLADL)  {
+		for (ADL a : hLADL.values())  {
 			a.setDoneToday(0); //In this way I avoid duplication of activities
 			n = a.getCyclicalityN();
 			d = a.getCyclicalityD();
@@ -229,7 +233,7 @@ public class Actor {
 	 */
 	private static void computeADLRank(int minute) {
 
-		for (ADL a : hLADL) {
+		for (ADL a : hLADL.values()) {
 			if (timeDependence(a, minute) > 0) {
 				a.setRank((double) ((a.getCyclicalityN() / a.getCyclicalityD()) + 
 						a.isMandatory() + 
@@ -335,8 +339,8 @@ public class Actor {
 				Needs.getInstance().setFun(Needs.getInstance().getFun()+badl.getEffect());
 			}
 		}
-		hLADL.get(positionBadl).setDoneToday(1);
-		hLADL.get(positionBadl).setCyclicalityN(0);
+		hLADL.get(keyBadl).setDoneToday(1);
+		hLADL.get(keyBadl).setCyclicalityN(0);
 	}
 
 	private static void Logs(int logType) {
