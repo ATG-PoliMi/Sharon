@@ -49,6 +49,7 @@ public class HomeMap {
 			map[34][18]=0;
 
 			s = new Sensor [Constants.SENSORSNUMBER];
+			
 			//(Name, Sensor type(2+), X, Y)
 			s[0] = new Sensor ("BedroomBed",2,3,10);
 			s[1] = new Sensor ("BedroomWardrobe",2,18,2);
@@ -72,6 +73,7 @@ public class HomeMap {
 			s[16] = new Sensor ("KitchenSink",2,14,28);
 			s[17] = new Sensor ("KitchenCooker",2,10,28);
 			s[18] = new Sensor ("KitchenCupboard",2,10,28);
+			s[19] = new Sensor ("KitchenFridge",2,2,25);
 			
 
 

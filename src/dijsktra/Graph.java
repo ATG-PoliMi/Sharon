@@ -79,14 +79,12 @@ public class Graph {
 		Vertex current = c;
 		if (current.previous != null) {
 			printPath(current.previous);
-			
-			System.out.println("PATH: "+ current.name+ " Not null");
+
+			//System.out.println("PATH: "+ current.name+ " Not null");
 			//path.add(current.name);
 		}
-		if (current.previous == null)
-			System.out.println("PATH: "+ current.name+ " Null");
-			path.add(current.name);
-			
-		
+//		if (current.previous == null)
+//			System.out.println("PATH: "+ current.name+ " Null");
+		path.add(current.name);		
 	}
 }

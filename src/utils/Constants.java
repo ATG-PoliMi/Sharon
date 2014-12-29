@@ -8,7 +8,7 @@ public class Constants {
 	public static final int mapID = 1;
 	public static final int mapSizeH = 30;
 	public static final int mapSizeW = 60;
-	public static final int SENSORSNUMBER = 19;
+	public static final int SENSORSNUMBER = 20;
 
 	/*public static final int mapID = 2;
 		public static final int mapSizeH = 40;

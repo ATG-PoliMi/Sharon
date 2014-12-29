@@ -209,13 +209,13 @@ public class Actor {
 
 		Target = new GridPoint(s[indexSensor].getX(), s[indexSensor].getY());
 
-		System.out.println("INVIO!!"+(int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
+		//System.out.println("INVIO!!"+(int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
 		// Start point:
 		DE.setInitial((int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
 
 		// End point:
 		path = DE.computePath(Target.getX()+","+Target.getY());
-		System.out.println("PATH:"+path);
+		//System.out.println("PATH:"+path);
 	}
 
 	private static void newDay() {
