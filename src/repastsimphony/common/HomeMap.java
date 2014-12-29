@@ -49,23 +49,31 @@ public class HomeMap {
 			map[34][18]=0;
 
 			s = new Sensor [Constants.SENSORSNUMBER];
-			//(Name, Sensor type, X, Y)
-			s[0] = new Sensor ("one",2,3,10);
-			s[1] = new Sensor ("two",2,18,2);
-			s[2] = new Sensor ("three",2,25,2);
-			s[3] = new Sensor ("four",2,28,10);
-			s[4] = new Sensor ("five",2,28,12);
-			s[5] = new Sensor ("six",2,28,14);
-			s[6] = new Sensor ("seven",2,42,2);
-			s[7] = new Sensor ("eight",2,44,2);
-			s[8] = new Sensor ("nine",2,48,2);
-			s[9] = new Sensor ("ten",2,15,18);
-			s[10] = new Sensor ("eleven",2,23,18);
-			s[11] = new Sensor ("twelve",2,33,18);
-			s[12] = new Sensor ("thirtheen",2,38,20);
-			s[13] = new Sensor ("fourteen",2,10,28);
-			s[14] = new Sensor ("fiveteen",2,15,28);
-			s[15] = new Sensor ("sixteen",2,55,28);
+			//(Name, Sensor type(2+), X, Y)
+			s[0] = new Sensor ("BedroomBed",2,3,10);
+			s[1] = new Sensor ("BedroomWardrobe",2,18,2);
+			s[2] = new Sensor ("BedroomDoor",2,15,18);
+			
+			s[3] = new Sensor ("BathBathtub",2,25,2);
+			s[4] = new Sensor ("BathWC",2,29,8);			
+			s[5] = new Sensor ("BathSink",2,29,12);
+			s[6] = new Sensor ("BathWashingMachine",2,29,16);
+			s[7] = new Sensor ("BathDoor",2,23,18);
+			s[8] = new Sensor ("ExitDoor",2,33,18);
+			
+			s[9] = new Sensor ("LivingroomChair1",2,45,8);
+			s[10] = new Sensor ("LivingroomChair2",2,48,11);
+			s[11] = new Sensor ("LivingroomSofa1",2,48,2);
+			s[12] = new Sensor ("LivingroomSofa2",2,58,10);
+			s[13] = new Sensor ("LivingroomLight",2,45,2);
+			s[14] = new Sensor ("LivingroomTV",2,48,28);
+			
+			s[15] = new Sensor ("KitchenTermometer",2,18,28);
+			s[16] = new Sensor ("KitchenSink",2,14,28);
+			s[17] = new Sensor ("KitchenCooker",2,10,28);
+			s[18] = new Sensor ("KitchenCupboard",2,10,28);
+			
+
 
 			for (int i=0; i<s.length;i++) {
 				map[s[i].getX()][s[i].getY()]=2;
