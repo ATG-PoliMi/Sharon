@@ -103,6 +103,19 @@ public class HomeMap {
 	public void setS(Sensor[] s) {
 		this.s = s;
 	}
+	
+	public int getHouseArea (double x, double y) {
+		if (x>40)
+			return 5;
+		else if (y>20) {
+			return 4;
+		} else if (x<20)
+			return 1;
+		else if (x<30)
+			return 2;
+		else
+			return 3;
+	}
 
 	public static synchronized HomeMap getInstance() {
 

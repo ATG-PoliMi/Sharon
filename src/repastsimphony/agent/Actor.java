@@ -217,6 +217,41 @@ public class Actor {
 		path = DE.computePath(Target.getX()+","+Target.getY());
 		//System.out.println("PATH:"+path);
 	}
+	
+	/**
+	 * printActiveSensors computes the values for each sensor of the house and returns a String in the following format:
+	 * "tick, home area, ADL id, UserX, UserY, sensors 0-k"
+	 * @return
+	 */
+	public String printActiveSensors () {
+		
+		String activeSensors = "";
+		
+		Sensor[] sensorsArray = HomeMap.getInstance().getS();
+		NdPoint printPoint = space.getLocation(this);
+		activeSensors += tick;
+		activeSensors += ", ";
+		activeSensors += HomeMap.getInstance().getHouseArea(printPoint.getX(), printPoint.getY());
+		activeSensors += ", ";
+		activeSensors += badl.getId();
+		activeSensors += ", ";
+		activeSensors += (int)printPoint.getX();
+		activeSensors += ", ";
+		activeSensors += (int)printPoint.getY();
+		activeSensors += ", ";
+		for (int i=0; i < Constants.SENSORSNUMBER; i++) {
+			if (((sensorsArray[i].getX() == printPoint.getX())&&
+					(sensorsArray[i].getY() == printPoint.getY()))) {
+				activeSensors += "1, ";
+							
+			} else {
+				activeSensors += "0, ";				
+			}
+		}
+		activeSensors = activeSensors.substring(0, activeSensors.length()-2);
+		
+		return activeSensors;
+	}
 
 	private static void newDay() {
 		Day.getInstance().nextDay();
