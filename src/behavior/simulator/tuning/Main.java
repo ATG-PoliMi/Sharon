@@ -7,6 +7,7 @@ import org.apache.commons.math3.distribution.BetaDistribution;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.space.grid.GridPoint;
+import utils.Constants;
 import utils.Time;
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.extractor.ADLEffect;
@@ -34,7 +35,7 @@ public class Main {
 	static RandomGaussian gaussian = new RandomGaussian();
 	static long tick;
 	static int keyBadl;
-	static int usedTime;
+	static long usedTime;
 
 	//BADL
 	static ADL badl;
@@ -45,7 +46,8 @@ public class Main {
 		
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
-		matchADL 	= 	ADLMatcherDB.addADLMatch();	
+		matchADL 	= 	ADLMatcherDB.addADLMatch();
+		badl = hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 
 		for (tick=0; tick >=0; tick++) {
 			if (tick % 86400 == 0) {
@@ -70,35 +72,27 @@ public class Main {
 						keyBadl = a.getId();	
 					}
 				}
-				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+				usedTime = tick + (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
 				badl.setRank(badl.getRank() + 2);
 				idling = 0;
 				Logs(1);
 				agentStatus = 2;
 				break;
 
-			case 2:	//Computing new targets			
-
+			case 2:	//Computing new targets	
 				agentStatus=3;
 				break;
 
 
 			case 3:	//Walking+Acting
 				
-//				if (!tTime.isEmpty()) {
-//					if (idling < tTime.get(0)) {} else {
-//						idling=0;
-//						stationCounter++;
-//						tTime.remove(0);					
-//					}
-//
-//				} else {
-//					agentStatus = 1;
-//					completeADL(keyBadl);
-//					Logs(2);
-//					updateNeeds((int) usedTime/3600);
-//					stationCounter=0;
-//				}
+				if (tick >= usedTime) {
+					agentStatus = 1;
+					completeADL(keyBadl);
+					Logs(2);
+					updateNeeds((int) (usedTime-tick)/3600);
+					
+				}
 				break;
 			}
 		}
@@ -217,7 +211,7 @@ public class Main {
 			ADLEffect badl;
 			badl = x.next();
 			if (badl.getName().equals("hunger")) {
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger()+badl.getEffect());
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() + badl.getEffect());
 				if (Needs.getInstance().getHunger() < 0)
 					Needs.getInstance().setHunger(0);
 				if (Needs.getInstance().getHunger() > 1)
@@ -270,7 +264,7 @@ public class Main {
 			System.out.println ("ADL: "+ badl.getName() +
 					" with rank "+ badl.getRank() + 
 					" day hour: " +t.getHour() +":"+t.getMinute()+
-					" minutes required: "+ (int) usedTime/60);
+					" minutes required: "+ (int) (usedTime-tick)/60);
 			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
 			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
