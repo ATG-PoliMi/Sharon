@@ -1,5 +1,7 @@
 package utils;
 
+import behavior.simulator.extractor.Needs;
+
 public class Constants {	
 
 
@@ -20,4 +22,13 @@ public class Constants {
 
 	//Behavior Simulator
 	public static final int SLEEP_ID = 300;
+	
+	//Behavior Simulator NeedsParameters
+	public static double HUNGER = 0.05;
+	public static double HYGIENE = 0.03;
+	public static double COMFORT = 0.03;
+	public static double BLADDER = 0.05;
+	public static double ENERGY = 0.03;
+	public static double FUN = 0.05;
+	
 }

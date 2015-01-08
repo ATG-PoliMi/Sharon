@@ -452,18 +452,19 @@ public class Actor {
 
 		for (int i=0; i<=times; i++) {
 			if (Needs.getInstance().getHunger() < 1.0) 
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 	+ 0.05);
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 	+ Constants.HUNGER);
 			if (Needs.getInstance().getComfort() < 1.0) 
-				Needs.getInstance().setComfort(Needs.getInstance().getComfort() + 0.03);
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort() + Constants.COMFORT);
 			if (Needs.getInstance().getHygiene() < 1.0) 
-				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()	+ 0.03);
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()	+ Constants.HYGIENE);
 			if (Needs.getInstance().getBladder() < 1.0) 
-				Needs.getInstance().setBladder(Needs.getInstance().getBladder()	+ 0.05);
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()	+ Constants.BLADDER);
 			if (Needs.getInstance().getEnergy() < 1.0) 
-				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()	+ 0.03);
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()	+ Constants.ENERGY);
 			if (Needs.getInstance().getFun() < 1.0) 
-				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ 0.03);
+				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ Constants.FUN);
 		}
+		
 	}
 
 }
