@@ -1,7 +1,6 @@
-package repastsimphony.common;
+package repast.simphony.common;
 
-import repastsimphony.agent.Sensor;
-
+import repast.simphony.agent.Sensor;
 import utils.Constants;
 public class HomeMap {
 
@@ -109,7 +108,7 @@ public class HomeMap {
 			return 5;
 		else if (y>20) {
 			return 4;
-		} else if (x<20)
+		} else if (x<18)
 			return 1;
 		else if (x<30)
 			return 2;

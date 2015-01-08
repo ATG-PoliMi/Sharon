@@ -1,4 +1,4 @@
-package repastsimphony.agent;
+package repast.simphony.agent;
 
 import java.util.ArrayList;
 

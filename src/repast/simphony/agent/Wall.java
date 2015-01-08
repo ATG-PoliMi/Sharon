@@ -1,10 +1,10 @@
-package repastsimphony.agent;
+package repast.simphony.agent;
 
 
+import repast.simphony.common.HomeMap;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.valueLayer.GridValueLayer;
-import repastsimphony.common.HomeMap;
 import utils.Constants;
 
 

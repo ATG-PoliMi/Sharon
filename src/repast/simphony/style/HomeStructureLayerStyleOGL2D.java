@@ -1,4 +1,4 @@
-package repastsimphony.style;
+package repast.simphony.style;
 
 import java.awt.Color;
 

@@ -1,4 +1,4 @@
-package repastsimphony;
+package repast.simphony;
 
 
 
@@ -10,6 +10,9 @@ import behavior.simulator.planner.LowLevelADL;
 import behavior.simulator.xml.ADLDB;
 import behavior.simulator.xml.ADLMatcherDB;
 import behavior.simulator.xml.LLADLDB;
+import repast.simphony.agent.Actor;
+import repast.simphony.agent.Wall;
+import repast.simphony.common.HomeMap;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -28,10 +31,7 @@ import repast.simphony.space.grid.GridBuilderParameters;
 import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.WrapAroundBorders;
 import repast.simphony.valueLayer.GridValueLayer;
-import repastsimphony.agent.Actor;
-import repastsimphony.agent.Wall;
 import utils.Constants;
-import repastsimphony.common.HomeMap;
 
 
 

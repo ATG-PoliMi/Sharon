@@ -1,0 +1,31 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Sensors</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>repast.simphony.agent.Actor</sourceType>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>176159509</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>printActiveSensors</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>printActiveSensors</id>
+        <className>repast.simphony.agent.Actor</className>
+        <methodName>printActiveSensors</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

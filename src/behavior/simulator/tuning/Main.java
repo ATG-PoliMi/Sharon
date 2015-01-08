@@ -1,19 +1,13 @@
-package repastsimphony.agent;
+package behavior.simulator.tuning;
 
-import utils.Time;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-
-import utils.Constants;
 
 import org.apache.commons.math3.distribution.BetaDistribution;
 
-import javolution.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.space.grid.GridPoint;
+import utils.Time;
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.extractor.ADLEffect;
 import behavior.simulator.extractor.Day;
@@ -24,32 +18,8 @@ import behavior.simulator.planner.LowLevelADL;
 import behavior.simulator.xml.ADLDB;
 import behavior.simulator.xml.ADLMatcherDB;
 import behavior.simulator.xml.LLADLDB;
-import dijsktra.DijkstraEngine;
-import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.schedule.Schedule;
-import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.query.space.grid.GridCell;
-import repast.simphony.query.space.grid.GridCellNgh;
-import repast.simphony.random.RandomHelper;
-import repast.simphony.space.SpatialMath;
-import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.continuous.NdPoint;
-import repast.simphony.space.grid.Grid;
-import repast.simphony.space.grid.GridPoint;
-import repast.simphony.util.SimUtilities;
-import utils.Constants;
-import repastsimphony.common.HomeMap;
 
-public class Actor {
-
-
-	private ContinuousSpace<Object> space;
-	private Grid<Object> grid;
-	private GridPoint Target = new GridPoint(15, 25);
-	private DijkstraEngine DE;
-	int[][] worldMapMatrix;
-	private ArrayList<String> path = new ArrayList<String>();
-	private String delims = ",";
+public class Main {
 
 	//ADL Handling
 	static Map<Integer, ADL> hLADL;
@@ -61,198 +31,78 @@ public class Actor {
 	static int idling;
 
 	//Utils
-	RandomGaussian gaussian = new RandomGaussian();
-	static double tick;
+	static RandomGaussian gaussian = new RandomGaussian();
+	static long tick;
 	static int keyBadl;
 	static int usedTime;
 
 	//BADL
 	static ADL badl;
 
-	//TARGETS
-	private Integer llADLIndex; 
-	private ArrayList<Integer> tTime = new ArrayList<Integer>();
-	private static int stationCounter = 0; //Station Counter
-
-
-	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
-		this.space=space;
-		this.grid=grid;
-		importADL();
-		badl = hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
-	}
-
-	private void importADL () {
+	public static void main(String[] args) {		
+		
+		idling++;
+		
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();	
-	}
 
-
-	@ScheduledMethod(start = 0, interval = 1, priority=0)
-	public void step() {
-		tick = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		idling++;
-
-		if (tick % 86400 == 0) {
-			System.out.println("***NEW DAY***!");
-			newDay();
-			dayInitADL();
-		}
-
-		switch (agentStatus) {
-		case 0: //Idle
-			idling++;
-			break;
-
-		case 1: //Extracting a new ADL
-			computeADLRank((int) tick % 86400);
-			for (ADL a : hLADL.values()) {
-				if ((a.getDoneToday()==0) && 
-						(a.getRank() > badl.getRank()) &&
-						(Day.getInstance().getWeather() >= a.getWeather()) &&
-						(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
-					badl = a;
-					keyBadl = a.getId();	
-				}
+		for (tick=0; tick >=0; tick++) {
+			if (tick % 86400 == 0) {
+				System.out.println("***NEW DAY***!");
+				newDay();
+				dayInitADL();
 			}
-			usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
-			badl.setRank(badl.getRank() + 2);
-			idling = 0;
-			Logs(1);
-			agentStatus = 2;
-			break;
 
-		case 2:	//Computing new targets			
-			llADLIndex = matchADL.get(badl.getId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!		
-			tTime.clear();
+			switch (agentStatus) {
+			case 0: //Idle
+				idling++;
+				break;
 
-			for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
-				tTime.add((int) (usedTime * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
-			}
-			agentStatus=3;
-			break;
-
-
-		case 3:	//Walking+Acting
-			if (!tTime.isEmpty()) {
-				if (idling < tTime.get(0)) {
-
-					GridPoint pt = grid.getLocation(this);
-					if (path.isEmpty()) {
-						newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
+			case 1: //Extracting a new ADL
+				computeADLRank((int) tick % 86400);
+				for (ADL a : hLADL.values()) {
+					if ((a.getDoneToday()==0) && 
+							(a.getRank() > badl.getRank()) &&
+							(Day.getInstance().getWeather() >= a.getWeather()) &&
+							(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
+						badl = a;
+						keyBadl = a.getId();	
 					}
-					if (path.size() > 0) {
-						String x = path.get(0);
-						path.remove(0);
-						String[] tokens = x.split(delims);
-
-						GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-						moveTowards(pt2);
-					}
-				} else {
-					idling=0;
-					stationCounter++;
-					tTime.remove(0);					
 				}
+				usedTime = (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+				badl.setRank(badl.getRank() + 2);
+				idling = 0;
+				Logs(1);
+				agentStatus = 2;
+				break;
 
-			} else {
-				agentStatus = 1;
-				completeADL(keyBadl);
-				Logs(2);
-				updateNeeds((int) usedTime/3600);
-				stationCounter=0;
-			}
-			break;
-		}
+			case 2:	//Computing new targets			
 
-
-		//if (idling <= 0) {	agentStatus=1;	}
+				agentStatus=3;
+				break;
 
 
-		//Movement instructions
-		/*
-		GridPoint pt = grid.getLocation(this);
-
-		if (path.size() > 0) {
-			String x = path.get(0);
-			path.remove(0);
-			String[] tokens = x.split(delims);
-
-			GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-			moveTowards(pt2);
-		}
-		 */
-
-	}
-
-	public void moveTowards(GridPoint pt) {
-		// only move if we are not already in this grid location
-		if (!pt.equals(grid.getLocation(this))) {
-			NdPoint myPoint = space.getLocation(this);
-			NdPoint otherPoint = new NdPoint(pt.getX(), pt.getY());
-			double angle = SpatialMath.calcAngleFor2DMovement(space, myPoint,
-					otherPoint);
-			space.moveByVector(this, 1, angle, 0);
-			myPoint = space.getLocation(this);
-			grid.moveTo(this, (int) myPoint.getX(), (int) myPoint.getY());
-		}
-	}
-
-
-	public void newTarget(int indexSensor) {
-		DE = new DijkstraEngine();
-		worldMapMatrix = HomeMap.getInstance().getWorldMap();
-		DE.buildAdjacencyMatrix(worldMapMatrix);
-
-		Sensor [] s= HomeMap.getInstance().getS();
-
-		Target = new GridPoint(s[indexSensor].getX(), s[indexSensor].getY());
-
-		//System.out.println("INVIO!!"+(int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
-		// Start point:
-		DE.setInitial((int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
-
-		// End point:
-		path = DE.computePath(Target.getX()+","+Target.getY());
-		//System.out.println("PATH:"+path);
-	}
-	
-	/**
-	 * printActiveSensors computes the values for each sensor of the house and returns a String in the following format:
-	 * "tick, home area, ADL id, UserX, UserY, sensors 0-k"
-	 * @return
-	 */
-	public String printActiveSensors () {
-		
-		String activeSensors = "";
-		
-		Sensor[] sensorsArray = HomeMap.getInstance().getS();
-		NdPoint printPoint = space.getLocation(this);
-		activeSensors += tick;
-		activeSensors += ", ";
-		activeSensors += HomeMap.getInstance().getHouseArea(printPoint.getX(), printPoint.getY());
-		activeSensors += ", ";
-		activeSensors += badl.getId();
-		activeSensors += ", ";
-		activeSensors += (int)printPoint.getX();
-		activeSensors += ", ";
-		activeSensors += (int)printPoint.getY();
-		activeSensors += ", ";
-		for (int i=0; i < Constants.SENSORSNUMBER; i++) {
-			if (((sensorsArray[i].getX() == printPoint.getX())&&
-					(sensorsArray[i].getY() == printPoint.getY()))) {
-				activeSensors += "1, ";
-							
-			} else {
-				activeSensors += "0, ";				
+			case 3:	//Walking+Acting
+				
+//				if (!tTime.isEmpty()) {
+//					if (idling < tTime.get(0)) {} else {
+//						idling=0;
+//						stationCounter++;
+//						tTime.remove(0);					
+//					}
+//
+//				} else {
+//					agentStatus = 1;
+//					completeADL(keyBadl);
+//					Logs(2);
+//					updateNeeds((int) usedTime/3600);
+//					stationCounter=0;
+//				}
+				break;
 			}
 		}
-		activeSensors = activeSensors.substring(0, activeSensors.length()-2);
-		
-		return activeSensors;
 	}
-
 	private static void newDay() {
 		Day.getInstance().nextDay();
 
@@ -465,5 +315,4 @@ public class Actor {
 				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ 0.03);
 		}
 	}
-
 }
