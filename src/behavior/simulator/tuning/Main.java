@@ -29,21 +29,19 @@ public class Main {
 
 	//User actions
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
-	static int idling;
 
 	//Utils
 	static RandomGaussian gaussian = new RandomGaussian();
 	static long tick;
 	static int keyBadl;
 	static long usedTime;
+	static int changeADL = 0;
 
 	//BADL
 	static ADL badl;
 
-	public static void main(String[] args) {		
-		
-		idling++;
-		
+	public static void main(String[] args) {	
+
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
@@ -55,48 +53,38 @@ public class Main {
 				newDay();
 				dayInitADL();
 			}
-
-			switch (agentStatus) {
-			case 0: //Idle
-				idling++;
-				break;
-
-			case 1: //Extracting a new ADL
-				computeADLRank((int) tick % 86400);
-				for (ADL a : hLADL.values()) {
-					if ((a.getDoneToday()==0) && 
-							(a.getRank() > badl.getRank()) &&
-							(Day.getInstance().getWeather() >= a.getWeather()) &&
-							(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
-						badl = a;
-						keyBadl = a.getId();	
-					}
-				}
-				usedTime = tick + (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
-				badl.setRank(badl.getRank() + 2);
-				idling = 0;
-				Logs(1);
-				agentStatus = 2;
-				break;
-
-			case 2:	//Computing new targets	
-				agentStatus=3;
-				break;
-
-
-			case 3:	//Walking+Acting
-				
-				if (tick >= usedTime) {
-					agentStatus = 1;
-					completeADL(keyBadl);
-					Logs(2);
-					updateNeeds((int) (usedTime-tick)/3600);
-					
-				}
-				break;
+			if (tick % 60 == 0) {
+				updateNeeds(1); //After each minute Needs are updated
+				computeADLRank((int) tick % 86400);				
 			}
+			for (ADL a : hLADL.values()) {
+				if ((a != badl) && (a.getRank()>badl.getRank())) {
+					badl = a;
+					keyBadl = a.getId();
+					changeADL=1;
+				}					
+			}
+			if (changeADL == 1) {
+				completeADL(keyBadl);
+				changeADL=0;
+				Logs(2);				
+			}
+			//usedTime = tick + (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
+			badl.setRank(badl.getRank() + 2);
+
+			Logs(1);
+
+			//ADL completed
+			if (tick >= usedTime) {
+
+
+			}
+
 		}
 	}
+
+
+
 	private static void newDay() {
 		Day.getInstance().nextDay();
 
@@ -156,6 +144,15 @@ public class Main {
 			}
 			else
 				a.setRank(0);
+		}
+		for (ADL a : hLADL.values()) {
+			if ((a.getDoneToday()==0) && 
+					(a.getRank() > badl.getRank()) &&
+					(Day.getInstance().getWeather() >= a.getWeather()) &&
+					(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
+				badl = a;
+				keyBadl = a.getId();	
+			}
 		}
 
 	}
@@ -265,25 +262,25 @@ public class Main {
 					" with rank "+ badl.getRank() + 
 					" day hour: " +t.getHour() +":"+t.getMinute()+
 					" minutes required: "+ (int) (usedTime-tick)/60);
-			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-			System.out.println();				
+			//			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			//			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			//			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			//			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			//			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			//			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			//			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
+			//			System.out.println();				
 			break;
 
 		case 2:
-			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-			System.out.println();
+			//			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			//			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			//			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			//			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			//			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			//			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			//			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
+			//			System.out.println();
 			break;
 		}
 
@@ -296,18 +293,18 @@ public class Main {
 
 		for (int i=0; i<=times; i++) {
 			if (Needs.getInstance().getHunger() < 1.0) 
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 	+ Constants.HUNGER);
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 	+ Constants.HUNGER/60);
 			if (Needs.getInstance().getComfort() < 1.0) 
-				Needs.getInstance().setComfort(Needs.getInstance().getComfort() + Constants.COMFORT);
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort() + Constants.COMFORT/60);
 			if (Needs.getInstance().getHygiene() < 1.0) 
-				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()	+ Constants.HYGIENE);
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()	+ Constants.HYGIENE/60);
 			if (Needs.getInstance().getBladder() < 1.0) 
-				Needs.getInstance().setBladder(Needs.getInstance().getBladder()	+ Constants.BLADDER);
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()	+ Constants.BLADDER/60);
 			if (Needs.getInstance().getEnergy() < 1.0) 
-				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()	+ Constants.ENERGY);
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()	+ Constants.ENERGY/60);
 			if (Needs.getInstance().getFun() < 1.0) 
-				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ Constants.FUN);
+				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ Constants.FUN/60);
 		}
-		
+
 	}
 }
