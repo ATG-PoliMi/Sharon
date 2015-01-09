@@ -10,6 +10,7 @@ public class ADL {
 	private double[] weather; //[0]: sun probability,[1]: cloud probability, [2]: rain probability
 	private double[] timeDescription;
 	private int minTime;
+	private double active;
 	
 	private double rank;
 	private int doneToday;
@@ -25,6 +26,7 @@ public class ADL {
 		this.weather = weather;
 		this.timeDescription = timeDescription;
 		this.minTime = minTime;
+		this.active = 0;
 		
 		this.needs = needs;
 		this.effects = effects;
@@ -45,6 +47,12 @@ public class ADL {
 	public double[] getDays() {
 		return days;
 	}
+	public double getExactDay(int i) {
+		if ((i>=0)&&(i<7))
+			return days[i];
+		else
+			return 0;
+	}
 	public void setDays(double[] days) {
 		this.days = days;
 	}
@@ -56,6 +64,12 @@ public class ADL {
 	}
 	public double[] getTimeDescription() {
 		return timeDescription;
+	}
+	public double getExactTimeDescription(int i) {
+		if ((i>=0)&&(i<1440))
+			return timeDescription[i];
+		else
+			return 0;
 	}
 	public void setTimeDescription(double[] timeDescription) {
 		this.timeDescription = timeDescription;
@@ -90,5 +104,10 @@ public class ADL {
 	public void setEffects(ArrayList<ADLEffect> effects) {
 		this.effects = effects;
 	}
-	
+	public double getActive() {
+		return active;
+	}
+	public void setActive(double active) {
+		this.active = active;
+	}	
 }

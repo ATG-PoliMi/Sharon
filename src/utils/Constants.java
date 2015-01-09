@@ -1,6 +1,6 @@
 package utils;
 
-import behavior.simulator.extractor.NeedsActor;
+import behavior.simulator.extractor.Needs;
 
 public class Constants {	
 
@@ -30,5 +30,7 @@ public class Constants {
 	public static double BLADDER = 0.05;
 	public static double ENERGY = 0.03;
 	public static double FUN = 0.05;
+	public static double DIRTINESS = 0.005;
+	public static double STOCK = 0.005;
 	
 }

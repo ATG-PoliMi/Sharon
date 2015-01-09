@@ -3,16 +3,12 @@ package behavior.simulator.tuning;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.math3.distribution.BetaDistribution;
-
-import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.space.grid.GridPoint;
 import utils.Constants;
 import utils.Time;
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.extractor.ADLEffect;
 import behavior.simulator.extractor.Day;
-import behavior.simulator.extractor.NeedsActor;
+import behavior.simulator.extractor.Needs;
 import behavior.simulator.extractor.RandomGaussian;
 import behavior.simulator.planner.ADLMatcher;
 import behavior.simulator.planner.LowLevelADL;
@@ -23,71 +19,66 @@ import behavior.simulator.xml.LLADLDB;
 public class Main {
 
 	//ADL Handling
-	static Map<Integer, ADL> hLADL;
-	static Map<Integer, LowLevelADL>  lLADL;
-	static Map<Integer, ADLMatcher> matchADL;
+	static Map<Integer, ADL> 			hLADL;
+	static Map<Integer, LowLevelADL>  	lLADL;
+	static Map<Integer, ADLMatcher> 	matchADL;
 
 	//User actions
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
 
 	//Utils
 	static RandomGaussian gaussian = new RandomGaussian();
-	static long tick;
-	static int keyBadl;
-	static long usedTime;
-	static int changeADL = 0;
+	static long 	tick;
+	static int 		keyBadl;
+	static long 	usedTime;
+	static int 		changeADL = 0;
 
-	//BADL
+	//Support ADL
 	static ADL badl;
+	static ADL finishingADL;
 
 	public static void main(String[] args) {	
 
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
-		badl = hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
+		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 
 		for (tick=0; tick >=0; tick++) {
-			if (tick % 86400 == 0) {
-				System.out.println("***NEW DAY***!");
-				newDay();
-				dayInitADL();
-			}
+
+			if (tick % 86400 == 0)
+				newDay();			
+
 			if (tick % 60 == 0) {
-				updateNeeds(1); //After each minute Needs are updated
+				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution
 				computeADLRank((int) tick % 86400);				
 			}
+
+			//Check Best ADL
 			for (ADL a : hLADL.values()) {
-				if ((a != badl) && (a.getRank()>badl.getRank())) {
-					badl = a;
-					keyBadl = a.getId();
-					changeADL=1;
-				}					
+				if ((a != badl) && (a.getRank() > badl.getRank())) {
+					finishingADL	= changeADL == 0 ? badl : finishingADL;
+					changeADL		= 1;									
+					badl 			= a;
+					keyBadl 		= a.getId();
+					badl.setActive(0);
+				}
+				badl.setActive(1);
+				Logs(1);
 			}
-			if (changeADL == 1) {
-				completeADL(keyBadl);
+
+			if (changeADL == 1) {				
 				changeADL=0;
 				Logs(2);				
 			}
-			//usedTime = tick + (int) gaussian.getGaussian (badl.getTmean(), badl.getTvariability());
-			badl.setRank(badl.getRank() + 2);
-
-			Logs(1);
-
-			//ADL completed
-			if (tick >= usedTime) {
-
-
-			}
-
 		}
 	}
 
-
-
 	private static void newDay() {
+		dayInitADL();
 		Day.getInstance().nextDay();
 
+		System.out.println("***NEW DAY***!");
 		System.out.print("Today is ");
 		switch (Day.getInstance().getWeekDay()) {
 		case 1: System.out.print("Monday"); break;
@@ -108,24 +99,12 @@ public class Main {
 		}
 	}
 
-	private static int wake() {
-		NeedsActor.getInstance().setEnergy(0);
-		NeedsActor.getInstance().setComfort(0);
-		RandomGaussian gaussian = new RandomGaussian();
-		return (int) gaussian.getGaussian (8*60, 10);
-	}
-
 	/**
 	 * Operations applied to all the ADL each day
 	 */
 	private static void dayInitADL() {
-		double n,d;
 		for (ADL a : hLADL.values())  {
-			a.setDoneToday(0); //In this way I avoid duplication of activities
-			n = a.getCyclicalityN();
-			d = a.getCyclicalityD();
-			if (n < d)
-				a.setCyclicalityN(n + 1.0);			
+			a.setDoneToday(0); //In this way I avoid duplication of activities			
 		}
 	}
 
@@ -134,126 +113,57 @@ public class Main {
 	 * @param minute
 	 */
 	private static void computeADLRank(int minute) {
+		double r;
+		double active;
 
+		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
-			if (timeDependence(a, minute) > 0) {
-				a.setRank((double) ((a.getCyclicalityN() / a.getCyclicalityD()) + 
-						a.isMandatory() + 
-						needsEffort(a) +
-						timeDependence(a, minute)));
+			r = 0;			
+			active = (a.getActive() > 0) ? 1 : 0.7;
+			for (int i=0; i<needs.length; i++) {
+				r += needsEffort(a, i) * needs[i] * a.getExactTimeDescription(minute) * 
+						a.getExactDay(Day.getInstance().getWeekDay()) * active;						
 			}
-			else
-				a.setRank(0);
+			a.setRank(r);
 		}
-		for (ADL a : hLADL.values()) {
-			if ((a.getDoneToday()==0) && 
-					(a.getRank() > badl.getRank()) &&
-					(Day.getInstance().getWeather() >= a.getWeather()) &&
-					(a.getDays().contains(Day.getInstance().getWeekDay())))	{						
-				badl = a;
-				keyBadl = a.getId();	
-			}
-		}
-
 	}
 
-	private static double timeDependence(ADL a, int minute) {
-		BetaDistribution b = new BetaDistribution(a.getActivationShapeA(), a.getActivationShapeB());
-		double test = b.density((0.5 + (minute - a.getBestTime()) / (2 * a.getRangeTime())));
-
-		return test;
-	}
-
-
-	private static double needsEffort(ADL a) {
+	private static double needsEffort(ADL a, int i) {
 		double ADLeffort = 0.0;
-		int activations = 0;
+		int needed = 0;
 		if (a.getNeeds() != null) {
-			if (a.getNeeds().contains("hunger")) {
-				ADLeffort += NeedsActor.getInstance().getHunger();
-				activations++;
-			}
-			if (a.getNeeds().contains("comfort")) {
-				ADLeffort += NeedsActor.getInstance().getComfort();
-				activations++;
-			}
-			if (a.getNeeds().contains("hygiene")) {
-				ADLeffort += NeedsActor.getInstance().getHygiene();
-				activations++;
-			} 
-			if (a.getNeeds().contains("bladder")) {
-				ADLeffort += NeedsActor.getInstance().getBladder();
-				activations++;
-			} 
-			if (a.getNeeds().contains("energy")) {
-				ADLeffort += NeedsActor.getInstance().getEnergy();
-				activations++;
-			} 
-			if (a.getNeeds().contains("fun")) {
-				ADLeffort += NeedsActor.getInstance().getFun();
-				activations++;
-			} 
-			return ADLeffort/activations;
-		}
-		return 0;
-	}
-
-	/**
-	 * Actions to perform when the ADL has been completed
-	 * @param ADLindex: Index of the ADL just executed
-	 */
-	private static void completeADL(int ADLindex) {
-		Iterator<ADLEffect> x = hLADL.get(ADLindex).getEffects().iterator();
-		while (x.hasNext()) {
-			ADLEffect badl;
-			badl = x.next();
-			if (badl.getName().equals("hunger")) {
-				NeedsActor.getInstance().setHunger(NeedsActor.getInstance().getHunger() + badl.getEffect());
-				if (NeedsActor.getInstance().getHunger() < 0)
-					NeedsActor.getInstance().setHunger(0);
-				if (NeedsActor.getInstance().getHunger() > 1)
-					NeedsActor.getInstance().setHunger(1);				
-			}
-			if (badl.getName().equals("comfort")) {
-				NeedsActor.getInstance().setComfort(NeedsActor.getInstance().getComfort()+badl.getEffect());
-				if (NeedsActor.getInstance().getComfort() < 0)
-					NeedsActor.getInstance().setComfort(0);
-				if (NeedsActor.getInstance().getComfort() > 1)
-					NeedsActor.getInstance().setComfort(1);	
-			}
-			if (badl.getName().equals("hygiene")) {
-				NeedsActor.getInstance().setHygiene(NeedsActor.getInstance().getHygiene()+badl.getEffect());
-				if (NeedsActor.getInstance().getHygiene() < 0)
-					NeedsActor.getInstance().setHygiene(0);
-				if (NeedsActor.getInstance().getHygiene() > 1)
-					NeedsActor.getInstance().setHygiene(1);
-			}
-			if (badl.getName().equals("bladder")) {
-				NeedsActor.getInstance().setBladder(NeedsActor.getInstance().getBladder()+badl.getEffect());
-				if (NeedsActor.getInstance().getBladder() < 0)
-					NeedsActor.getInstance().setBladder(0);
-				if (NeedsActor.getInstance().getBladder() > 1)
-					NeedsActor.getInstance().setBladder(1);				
-			}
-			if (badl.getName().equals("energy")) {
-				NeedsActor.getInstance().setEnergy(NeedsActor.getInstance().getEnergy()+badl.getEffect());
-				if (NeedsActor.getInstance().getEnergy() < 0)
-					NeedsActor.getInstance().setEnergy(0);
-				if (NeedsActor.getInstance().getEnergy() > 1)
-					NeedsActor.getInstance().setEnergy(1);	
-			}
-			if (badl.getName().equals("fun")) {
-				if (NeedsActor.getInstance().getFun() < 0)
-					NeedsActor.getInstance().setFun(0);
-				if (NeedsActor.getInstance().getFun() > 1)
-					NeedsActor.getInstance().setFun(1);	
-				NeedsActor.getInstance().setFun(NeedsActor.getInstance().getFun()+badl.getEffect());
+			switch (i) {
+			case 0: 
+				needed += a.getNeeds().contains("hunger") ? 1 : 0;
+				break;
+			case 1: 
+				needed += a.getNeeds().contains("comfort") ? 1 : 0;
+				break;
+			case 2: 
+				needed += a.getNeeds().contains("hygiene") ? 1 : 0;
+				break;
+			case 3: 
+				needed += a.getNeeds().contains("bladder") ? 1 : 0;
+				break;
+			case 4: 
+				needed += a.getNeeds().contains("energy") ? 1 : 0;
+				break;
+			case 5: 
+				needed += a.getNeeds().contains("fun") ? 1 : 0;
+				break;
+			case 6: 
+				needed += a.getNeeds().contains("stock") ? 1 : 0;
+				break;
+			case 7: 
+				needed += a.getNeeds().contains("dirtiness") ? 1 : 0;
+				break;
 			}
 		}
-		hLADL.get(keyBadl).setDoneToday(1);
-		hLADL.get(keyBadl).setCyclicalityN(0);
+		ADLeffort = ((a.getNeeds().size()>0) && (needed>0)) ? (1/a.getNeeds().size()) : 0;
+		return ADLeffort;
 	}
 
+	
 	private static void Logs(int logType) {
 		Time t = new Time(tick % 86400);
 		switch (logType) {
@@ -292,19 +202,93 @@ public class Main {
 	private static void updateNeeds(int times) {
 
 		for (int i=0; i<=times; i++) {
-			if (NeedsActor.getInstance().getHunger() < 1.0) 
-				NeedsActor.getInstance().setHunger(NeedsActor.getInstance().getHunger() 	+ Constants.HUNGER/60);
-			if (NeedsActor.getInstance().getComfort() < 1.0) 
-				NeedsActor.getInstance().setComfort(NeedsActor.getInstance().getComfort() + Constants.COMFORT/60);
-			if (NeedsActor.getInstance().getHygiene() < 1.0) 
-				NeedsActor.getInstance().setHygiene(NeedsActor.getInstance().getHygiene()	+ Constants.HYGIENE/60);
-			if (NeedsActor.getInstance().getBladder() < 1.0) 
-				NeedsActor.getInstance().setBladder(NeedsActor.getInstance().getBladder()	+ Constants.BLADDER/60);
-			if (NeedsActor.getInstance().getEnergy() < 1.0) 
-				NeedsActor.getInstance().setEnergy(NeedsActor.getInstance().getEnergy()	+ Constants.ENERGY/60);
-			if (NeedsActor.getInstance().getFun() < 1.0) 
-				NeedsActor.getInstance().setFun(NeedsActor.getInstance().getFun()			+ Constants.FUN/60);
-		}
-
+			if (Needs.getInstance().getHunger() < 1.0) 
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 		+ Constants.HUNGER/60);
+			if (Needs.getInstance().getComfort() < 1.0) 
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort() 	+ Constants.COMFORT/60);
+			if (Needs.getInstance().getHygiene() < 1.0) 
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()		+ Constants.HYGIENE/60);
+			if (Needs.getInstance().getBladder() < 1.0) 
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()		+ Constants.BLADDER/60);
+			if (Needs.getInstance().getEnergy() < 1.0) 
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()		+ Constants.ENERGY/60);
+			if (Needs.getInstance().getFun() < 1.0) 
+				Needs.getInstance().setFun(Needs.getInstance().getFun()				+ Constants.FUN/60);
+			if (Needs.getInstance().getDirtiness() < 1.0) 
+				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()	+ Constants.DIRTINESS/60);
+			if (Needs.getInstance().getStock() < 1.0) 
+				Needs.getInstance().setStock(Needs.getInstance().getStock()			+ Constants.STOCK/60);
+			updateADLNeeds(finishingADL);
+		}		
 	}
+	
+	/**
+	 * Actions to perform when the ADL has been completed
+	 * @param ADLindex: Index of the ADL just executed
+	 */
+	private static void updateADLNeeds(ADL finishingADL) {
+		Iterator<ADLEffect> x = hLADL.get(finishingADL).getEffects().iterator();
+		while (x.hasNext()) {
+			ADLEffect effects;
+			effects = x.next();
+			if (effects.getName().equals("hunger")) {
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() + effects.getEffect());
+				if (Needs.getInstance().getHunger() < 0)
+					Needs.getInstance().setHunger(0);
+				if (Needs.getInstance().getHunger() > 1)
+					Needs.getInstance().setHunger(1);				
+			}
+			if (effects.getName().equals("comfort")) {
+				Needs.getInstance().setComfort(Needs.getInstance().getComfort()+effects.getEffect());
+				if (Needs.getInstance().getComfort() < 0)
+					Needs.getInstance().setComfort(0);
+				if (Needs.getInstance().getComfort() > 1)
+					Needs.getInstance().setComfort(1);	
+			}
+			if (effects.getName().equals("hygiene")) {
+				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+effects.getEffect());
+				if (Needs.getInstance().getHygiene() < 0)
+					Needs.getInstance().setHygiene(0);
+				if (Needs.getInstance().getHygiene() > 1)
+					Needs.getInstance().setHygiene(1);
+			}
+			if (effects.getName().equals("bladder")) {
+				Needs.getInstance().setBladder(Needs.getInstance().getBladder()+effects.getEffect());
+				if (Needs.getInstance().getBladder() < 0)
+					Needs.getInstance().setBladder(0);
+				if (Needs.getInstance().getBladder() > 1)
+					Needs.getInstance().setBladder(1);				
+			}
+			if (effects.getName().equals("energy")) {
+				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+effects.getEffect());
+				if (Needs.getInstance().getEnergy() < 0)
+					Needs.getInstance().setEnergy(0);
+				if (Needs.getInstance().getEnergy() > 1)
+					Needs.getInstance().setEnergy(1);	
+			}
+			if (effects.getName().equals("fun")) {
+				Needs.getInstance().setFun(Needs.getInstance().getFun()+effects.getEffect());
+				if (Needs.getInstance().getFun() < 0)
+					Needs.getInstance().setFun(0);
+				if (Needs.getInstance().getFun() > 1)
+					Needs.getInstance().setFun(1);				
+			}
+			if (effects.getName().equals("stock")) {
+				Needs.getInstance().setStock(Needs.getInstance().getStock()+effects.getEffect());
+				if (Needs.getInstance().getStock() < 0)
+					Needs.getInstance().setStock(0);
+				if (Needs.getInstance().getStock() > 1)
+					Needs.getInstance().setStock(1);				
+			}
+			if (effects.getName().equals("dirtiness")) {
+				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()+effects.getEffect());
+				if (Needs.getInstance().getDirtiness() < 0)
+					Needs.getInstance().setDirtiness(0);
+				if (Needs.getInstance().getDirtiness() > 1)
+					Needs.getInstance().setDirtiness(1);				
+			}
+		}
+		//hLADL.get(keyBadl).setDoneToday(1);		
+	}
+
 }
