@@ -43,12 +43,12 @@ public class ExtractorEngine {
 			break;
 
 		case 3:
-			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.printf ("newNeeds: Hu:%.2f", NeedsActor.getInstance().getHunger());
+			System.out.printf (", C:%.2f", NeedsActor.getInstance().getComfort());
+			System.out.printf (", Hy:%.2f", NeedsActor.getInstance().getHygiene());
+			System.out.printf (", B:%.2f", NeedsActor.getInstance().getBladder());
+			System.out.printf (", E:%.2f", NeedsActor.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", NeedsActor.getInstance().getFun());
 			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
 			System.out.println();
 			break;
@@ -62,18 +62,18 @@ public class ExtractorEngine {
 	private static void updateNeeds(int times) {
 
 		for (int i=0; i<=times; i++) {
-			if (Needs.getInstance().getHunger() < 1.0) 
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 	+ 0.05);
-			if (Needs.getInstance().getComfort() < 1.0) 
-				Needs.getInstance().setComfort(Needs.getInstance().getComfort() + 0.03);
-			if (Needs.getInstance().getHygiene() < 1.0) 
-				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()	+ 0.03);
-			if (Needs.getInstance().getBladder() < 1.0) 
-				Needs.getInstance().setBladder(Needs.getInstance().getBladder()	+ 0.05);
-			if (Needs.getInstance().getEnergy() < 1.0) 
-				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()	+ 0.03);
-			if (Needs.getInstance().getFun() < 1.0) 
-				Needs.getInstance().setFun(Needs.getInstance().getFun()			+ 0.03);
+			if (NeedsActor.getInstance().getHunger() < 1.0) 
+				NeedsActor.getInstance().setHunger(NeedsActor.getInstance().getHunger() 	+ 0.05);
+			if (NeedsActor.getInstance().getComfort() < 1.0) 
+				NeedsActor.getInstance().setComfort(NeedsActor.getInstance().getComfort() + 0.03);
+			if (NeedsActor.getInstance().getHygiene() < 1.0) 
+				NeedsActor.getInstance().setHygiene(NeedsActor.getInstance().getHygiene()	+ 0.03);
+			if (NeedsActor.getInstance().getBladder() < 1.0) 
+				NeedsActor.getInstance().setBladder(NeedsActor.getInstance().getBladder()	+ 0.05);
+			if (NeedsActor.getInstance().getEnergy() < 1.0) 
+				NeedsActor.getInstance().setEnergy(NeedsActor.getInstance().getEnergy()	+ 0.03);
+			if (NeedsActor.getInstance().getFun() < 1.0) 
+				NeedsActor.getInstance().setFun(NeedsActor.getInstance().getFun()			+ 0.03);
 		}
 	}
 
@@ -87,47 +87,47 @@ public class ExtractorEngine {
 			ADLEffect badl;
 			badl = x.next();
 			if (badl.getName().equals("hunger")) {
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger()+badl.getEffect());
-				if (Needs.getInstance().getHunger() < 0)
-					Needs.getInstance().setHunger(0);
-				if (Needs.getInstance().getHunger() > 1)
-					Needs.getInstance().setHunger(1);				
+				NeedsActor.getInstance().setHunger(NeedsActor.getInstance().getHunger()+badl.getEffect());
+				if (NeedsActor.getInstance().getHunger() < 0)
+					NeedsActor.getInstance().setHunger(0);
+				if (NeedsActor.getInstance().getHunger() > 1)
+					NeedsActor.getInstance().setHunger(1);				
 			}
 
 			if (badl.getName().equals("comfort")) {
-				Needs.getInstance().setComfort(Needs.getInstance().getComfort()+badl.getEffect());
-				if (Needs.getInstance().getComfort() < 0)
-					Needs.getInstance().setComfort(0);
-				if (Needs.getInstance().getComfort() > 1)
-					Needs.getInstance().setComfort(1);	
+				NeedsActor.getInstance().setComfort(NeedsActor.getInstance().getComfort()+badl.getEffect());
+				if (NeedsActor.getInstance().getComfort() < 0)
+					NeedsActor.getInstance().setComfort(0);
+				if (NeedsActor.getInstance().getComfort() > 1)
+					NeedsActor.getInstance().setComfort(1);	
 			}
 			if (badl.getName().equals("hygiene")) {
-				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+badl.getEffect());
-				if (Needs.getInstance().getHygiene() < 0)
-					Needs.getInstance().setHygiene(0);
-				if (Needs.getInstance().getHygiene() > 1)
-					Needs.getInstance().setHygiene(1);
+				NeedsActor.getInstance().setHygiene(NeedsActor.getInstance().getHygiene()+badl.getEffect());
+				if (NeedsActor.getInstance().getHygiene() < 0)
+					NeedsActor.getInstance().setHygiene(0);
+				if (NeedsActor.getInstance().getHygiene() > 1)
+					NeedsActor.getInstance().setHygiene(1);
 			}
 			if (badl.getName().equals("bladder")) {
-				Needs.getInstance().setBladder(Needs.getInstance().getBladder()+badl.getEffect());
-				if (Needs.getInstance().getBladder() < 0)
-					Needs.getInstance().setBladder(0);
-				if (Needs.getInstance().getBladder() > 1)
-					Needs.getInstance().setBladder(1);				
+				NeedsActor.getInstance().setBladder(NeedsActor.getInstance().getBladder()+badl.getEffect());
+				if (NeedsActor.getInstance().getBladder() < 0)
+					NeedsActor.getInstance().setBladder(0);
+				if (NeedsActor.getInstance().getBladder() > 1)
+					NeedsActor.getInstance().setBladder(1);				
 			}
 			if (badl.getName().equals("energy")) {
-				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+badl.getEffect());
-				if (Needs.getInstance().getEnergy() < 0)
-					Needs.getInstance().setEnergy(0);
-				if (Needs.getInstance().getEnergy() > 1)
-					Needs.getInstance().setEnergy(1);	
+				NeedsActor.getInstance().setEnergy(NeedsActor.getInstance().getEnergy()+badl.getEffect());
+				if (NeedsActor.getInstance().getEnergy() < 0)
+					NeedsActor.getInstance().setEnergy(0);
+				if (NeedsActor.getInstance().getEnergy() > 1)
+					NeedsActor.getInstance().setEnergy(1);	
 			}
 			if (badl.getName().equals("fun")) {
-				if (Needs.getInstance().getFun() < 0)
-					Needs.getInstance().setFun(0);
-				if (Needs.getInstance().getFun() > 1)
-					Needs.getInstance().setFun(1);	
-				Needs.getInstance().setFun(Needs.getInstance().getFun()+badl.getEffect());
+				if (NeedsActor.getInstance().getFun() < 0)
+					NeedsActor.getInstance().setFun(0);
+				if (NeedsActor.getInstance().getFun() > 1)
+					NeedsActor.getInstance().setFun(1);	
+				NeedsActor.getInstance().setFun(NeedsActor.getInstance().getFun()+badl.getEffect());
 			}
 		}
 		adl.get(positionBadl).setDoneToday(1);
@@ -159,8 +159,8 @@ public class ExtractorEngine {
 	}
 
 	private static int wake() {
-		Needs.getInstance().setEnergy(0);
-		Needs.getInstance().setComfort(0);
+		NeedsActor.getInstance().setEnergy(0);
+		NeedsActor.getInstance().setComfort(0);
 		RandomGaussian gaussian = new RandomGaussian();
 		return (int) gaussian.getGaussian (8*60, 60);
 	}
@@ -211,27 +211,27 @@ public class ExtractorEngine {
 		int activations = 0;
 		if (a.getNeeds() != null) {
 			if (a.getNeeds().contains("hunger")) {
-				ADLeffort += Needs.getInstance().getHunger();
+				ADLeffort += NeedsActor.getInstance().getHunger();
 				activations++;
 			}
 			if (a.getNeeds().contains("comfort")) {
-				ADLeffort += Needs.getInstance().getComfort();
+				ADLeffort += NeedsActor.getInstance().getComfort();
 				activations++;
 			}
 			if (a.getNeeds().contains("hygiene")) {
-				ADLeffort += Needs.getInstance().getHygiene();
+				ADLeffort += NeedsActor.getInstance().getHygiene();
 				activations++;
 			} 
 			if (a.getNeeds().contains("bladder")) {
-				ADLeffort += Needs.getInstance().getBladder();
+				ADLeffort += NeedsActor.getInstance().getBladder();
 				activations++;
 			} 
 			if (a.getNeeds().contains("energy")) {
-				ADLeffort += Needs.getInstance().getEnergy();
+				ADLeffort += NeedsActor.getInstance().getEnergy();
 				activations++;
 			} 
 			if (a.getNeeds().contains("fun")) {
-				ADLeffort += Needs.getInstance().getFun();
+				ADLeffort += NeedsActor.getInstance().getFun();
 				activations++;
 			} 
 			return ADLeffort/activations;

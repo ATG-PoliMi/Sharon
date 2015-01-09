@@ -13,8 +13,13 @@ public class ComputeADLTimeDescription {
 			if (i==700) {
 				System.out.println("");		
 			}
+			description[i]=0.1;
 			description [i] += timeDependence(i, 2.0, 1.0, 12*60, 60);
 			//description [i] += timeDependence(i, 1.0, 1.0, 12*60, 60);
+			description [i] += timeDependence(i, 2.0, 1.0, 9*60, 60);
+			description [i] += timeDependence(i, 2.0, 1.0, 15*60, 60);
+			description [i] += timeDependence(i, 2.0, 1.0, 19*60, 60);
+			
 			
 			System.out.print(description [i]+", ");
 			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0
@@ -23,7 +28,7 @@ public class ComputeADLTimeDescription {
 		System.out.println("");
 		for (int i=0; i< description.length; i++) {
 				System.out.print(i+": ");
-				for (int j=0; j< ( description[i]*10+1); j++) {
+				for (int j=0; j< (description[i]*10); j++) {
 					System.out.print("*");
 				}
 				System.out.println();

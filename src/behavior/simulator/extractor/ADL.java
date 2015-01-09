@@ -3,60 +3,33 @@ package behavior.simulator.extractor;
 import java.util.ArrayList;
 
 public class ADL {
+
 	private int id;
 	private String name;
-	private ArrayList <Integer> days = new ArrayList <Integer>();	
-	private int weather; //0: Independent, 1: sunny, 2: cloudy, 3: rainy
-	private int tmean;
-	private int tvariability;
-	private int mandatory;
-	private int bestTime;
-	private int rangeTime;
-	private double cyclicalityN;
-	private double cyclicalityD;
-	private double activationShapeA, activationShapeB; //Params for the Beta distribution
+	private double[] days;
+	private double[] weather; //[0]: sun probability,[1]: cloud probability, [2]: rain probability
+	private double[] timeDescription;
+	private int minTime;
 	
 	private double rank;
 	private int doneToday;
 	private ArrayList<String> needs = new ArrayList <String>();
 	private ArrayList<ADLEffect> effects = new ArrayList <ADLEffect>();
 	
-	
-	
-	public ADL(int id, String name, ArrayList<Integer> days, int weather, int tmean,
-			int tvariability, int mandatory, int bestTime, int rangeTime,
-			int cyclicalityD, ArrayList<String> needs, ArrayList<ADLEffect> effects, 
-			double activationShapeA, double activationShapeB) {
+	public ADL(int id, String name, double [] days, double [] weather, double [] timeDescription, int minTime,
+			ArrayList<String> needs, ArrayList<ADLEffect> effects) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.days = days;
 		this.weather = weather;
-		this.tmean = tmean;
-		this.tvariability = tvariability;
-		this.mandatory = mandatory;
-		this.bestTime = bestTime;
-		this.rangeTime = rangeTime;
-		this.cyclicalityD = cyclicalityD;
-		this.cyclicalityN = 0;
+		this.timeDescription = timeDescription;
+		this.minTime = minTime;
+		
 		this.needs = needs;
 		this.effects = effects;
-		this.activationShapeA = activationShapeA;
-		this.activationShapeB = activationShapeB;
 	}
-	
-	public double getActivationShapeA() {
-		return activationShapeA;
-	}
-	public void setActivationShapeA(int activationShapeA) {
-		this.activationShapeA = activationShapeA;
-	}
-	public double getActivationShapeB() {
-		return activationShapeB;
-	}
-	public void setActivationShapeB(int activationShapeB) {
-		this.activationShapeB = activationShapeB;
-	}
+
 	public int getId() {
 		return id;
 	}
@@ -69,59 +42,29 @@ public class ADL {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public ArrayList<Integer> getDays() {
+	public double[] getDays() {
 		return days;
 	}
-	public void setDays(ArrayList <Integer> days) {
+	public void setDays(double[] days) {
 		this.days = days;
 	}
-	public int getWeather() {
+	public double[] getWeather() {
 		return weather;
 	}
-	public void setWeather(int weather) {
+	public void setWeather(double[] weather) {
 		this.weather = weather;
 	}
-	public int getTmean() {
-		return tmean;
+	public double[] getTimeDescription() {
+		return timeDescription;
 	}
-	public void setTmean(int tmean) {
-		this.tmean = tmean;
+	public void setTimeDescription(double[] timeDescription) {
+		this.timeDescription = timeDescription;
 	}
-	public int getTvariability() {
-		return tvariability;
+	public int getMinTime() {
+		return minTime;
 	}
-	public void setTvariability(int tvariability) {
-		this.tvariability = tvariability;
-	}
-	public int isMandatory() {
-		return mandatory;
-	}
-	public void setMandatory(int mandatory) {
-		this.mandatory = mandatory;
-	}
-	public int getBestTime() {
-		return bestTime;
-	}
-	public void setBestTime(int bestTime) {
-		this.bestTime = bestTime;
-	}
-	public int getRangeTime() {
-		return rangeTime;
-	}
-	public void setRangeTime(int type) {
-		this.rangeTime = type;
-	}
-	public double getCyclicalityN() {
-		return cyclicalityN;
-	}
-	public void setCyclicalityN(double d) {
-		this.cyclicalityN = d;
-	}
-	public double getCyclicalityD() {
-		return cyclicalityD;
-	}
-	public void setCyclicalityD(double cyclicalityD) {
-		this.cyclicalityD = cyclicalityD;
+	public void setMinTime(int minTime) {
+		this.minTime = minTime;
 	}
 	public double getRank() {
 		return rank;
@@ -134,7 +77,7 @@ public class ADL {
 	}
 	public void setDoneToday(int doneToday) {
 		this.doneToday = doneToday;
-	}	
+	}
 	public ArrayList<String> getNeeds() {
 		return needs;
 	}
@@ -147,7 +90,5 @@ public class ADL {
 	public void setEffects(ArrayList<ADLEffect> effects) {
 		this.effects = effects;
 	}
-	public int getMandatory() {
-		return mandatory;
-	}
+	
 }

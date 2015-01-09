@@ -1,8 +1,8 @@
 package behavior.simulator.extractor;
 
 
-public class Needs {
-	private static Needs instance;
+public class NeedsActor {
+	private static NeedsActor instance;
 	
 	private double hunger;
 	private double comfort;
@@ -12,7 +12,7 @@ public class Needs {
 	private double fun;
 
 
-	private Needs(){
+	private NeedsActor(){
 		this.hunger	=	1.0;
 		this.comfort=	1.0;
 		this.hygiene=	1.0;
@@ -69,14 +69,14 @@ public class Needs {
 		this.fun = fun;
 	}
 
-	public static void setInstance(Needs instance) {
-		Needs.instance = instance;
+	public static void setInstance(NeedsActor instance) {
+		NeedsActor.instance = instance;
 	}
 
-	public static synchronized Needs getInstance() {
+	public static synchronized NeedsActor getInstance() {
 
 		if(instance==null) {
-			instance = new Needs();
+			instance = new NeedsActor();
 		}
 		return instance;
 	}

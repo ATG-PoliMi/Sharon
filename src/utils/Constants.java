@@ -1,6 +1,6 @@
 package utils;
 
-import behavior.simulator.extractor.Needs;
+import behavior.simulator.extractor.NeedsActor;
 
 public class Constants {	
 
