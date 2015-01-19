@@ -43,6 +43,7 @@ public class HighLevelDaySimulator {
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
 		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
+		finishingADL= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 
 		for (tick=0; tick >=0; tick++) {
 
@@ -68,7 +69,7 @@ public class HighLevelDaySimulator {
 		//Check Better ADL
 		for (ADL a : hLADL.values()) {
 			if ((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * a.getMinTime())) {
-				//finishingADL	= changedADL == 0 ? badl : finishingADL; USELESS?
+				finishingADL	= changedADL == 0 ? badl : finishingADL;
 				changedADL		= 1;
 				badl.setActive(0);
 				badl 			= a;
@@ -235,7 +236,7 @@ public class HighLevelDaySimulator {
 	 * @param ADLindex: Index of the ADL just executed
 	 */
 	private static void updateADLNeeds(ADL finishingADL) {
-		Iterator<ADLEffect> x = hLADL.get(finishingADL).getEffects().iterator();
+		Iterator<ADLEffect> x = hLADL.get(finishingADL.getId()).getEffects().iterator();
 		while (x.hasNext()) {
 			ADLEffect effects;
 			effects = x.next();
