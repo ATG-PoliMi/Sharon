@@ -21,7 +21,8 @@ public class Day {
 		return weekDay;
 	}
 	public void nextDay() {
-		weather = weather == 1 ? 3 			: 1;	//TODO: insert a more complex weather model
+		//TODO: insert a more complex weather model
+		weather = weather == 1 ? 3 			: 1;	
 		weekDay = weekDay < 7  ? weekDay+1 	: 1;
 	}
 	

@@ -4,6 +4,16 @@ import org.apache.commons.math3.distribution.BetaDistribution;
 
 import behavior.simulator.extractor.ADL;
 
+/***
+ * 
+ * @author Daniele Proserpio
+ * The aim of this class is to provide a custom description of an ADL. 
+ * Each ADL is described, over the day, with a combination of Beta distribution.
+ * 
+ * timeDependence(double currentMinute, double betaA, double betaB, 
+			double centralTime, double rangeTime );
+ *
+ */
 public class ComputeADLTimeDescription {
 
 	public static double description [] = new double [1440];

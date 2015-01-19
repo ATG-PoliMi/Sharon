@@ -1,5 +1,7 @@
 package repast.simphony.common;
 
+import java.io.Console;
+
 import repast.simphony.agent.Sensor;
 import utils.Constants;
 public class HomeMap {
@@ -48,32 +50,32 @@ public class HomeMap {
 			map[34][18]=0;
 
 			s = new Sensor [Constants.SENSORSNUMBER];
-			
+
 			//(Name, Sensor type(2+), X, Y)
 			s[0] = new Sensor ("BedroomBed",2,3,10);
 			s[1] = new Sensor ("BedroomWardrobe",2,18,2);
 			s[2] = new Sensor ("BedroomDoor",2,15,18);
-			
+
 			s[3] = new Sensor ("BathBathtub",2,25,2);
 			s[4] = new Sensor ("BathWC",2,29,8);			
 			s[5] = new Sensor ("BathSink",2,29,12);
 			s[6] = new Sensor ("BathWashingMachine",2,29,16);
 			s[7] = new Sensor ("BathDoor",2,23,18);
 			s[8] = new Sensor ("ExitDoor",2,33,18);
-			
+
 			s[9] = new Sensor ("LivingroomChair1",2,45,8);
 			s[10] = new Sensor ("LivingroomChair2",2,48,11);
 			s[11] = new Sensor ("LivingroomSofa1",2,48,2);
 			s[12] = new Sensor ("LivingroomSofa2",2,58,10);
 			s[13] = new Sensor ("LivingroomLight",2,45,2);
 			s[14] = new Sensor ("LivingroomTV",2,48,28);
-			
+
 			s[15] = new Sensor ("KitchenTermometer",2,18,28);
 			s[16] = new Sensor ("KitchenSink",2,14,28);
 			s[17] = new Sensor ("KitchenCooker",2,10,28);
 			s[18] = new Sensor ("KitchenCupboard",2,10,28);
 			s[19] = new Sensor ("KitchenFridge",2,2,25);
-			
+
 
 
 			for (int i=0; i<s.length;i++) {
@@ -102,7 +104,7 @@ public class HomeMap {
 	public void setS(Sensor[] s) {
 		this.s = s;
 	}
-	
+
 	public int getHouseArea (double x, double y) {
 		if (x>40)
 			return 5;
@@ -125,6 +127,31 @@ public class HomeMap {
 	}
 	public int[][] getWorldMap() {
 		return map;
+	}
+
+	public void printMap () {
+		int[][] x = trasponi(map);
+		//int[][] x = map;
+
+		for (int i=0; i<Constants.mapSizeH; i++) {			
+			for (int j=0; j<Constants.mapSizeW; j++) {
+				System.out.print(x[j][i]);
+			}
+			System.out.println(); 
+		}
+	}
+
+
+	static int[][] trasponi(int[][] mat) { 
+		int [][] x = new int[60][30];
+
+		for (int i=0; i<Constants.mapSizeW; i++) {			
+			for (int j=0; j<Constants.mapSizeH; j++) {
+				x[i][Constants.mapSizeH-1-j]=mat[i][j];
+			}
+		}
+
+		return x;
 	}
 
 }

@@ -16,7 +16,7 @@ import behavior.simulator.xml.ADLDB;
 import behavior.simulator.xml.ADLMatcherDB;
 import behavior.simulator.xml.LLADLDB;
 
-public class Main {
+public class HighLevelDaySimulator {
 
 	//ADL Handling
 	static Map<Integer, ADL> 			hLADL;
@@ -30,8 +30,8 @@ public class Main {
 	static RandomGaussian gaussian = new RandomGaussian();
 	static long 	tick;
 	static int 		keyBadl;
-	static long 	usedTime;
-	static int 		changeADL = 0;
+	static long 	usedTime = 0;
+	static int 		changedADL = 0;
 
 	//Support ADL
 	static ADL badl;
@@ -51,27 +51,34 @@ public class Main {
 
 			if (tick % 60 == 0) {
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution
-				computeADLRank((int) tick % 86400);				
+				computeADLRank((int) tick % 86400);
+				changedADL = checkBetterADL();
 			}
-
-			//Check Best ADL
-			for (ADL a : hLADL.values()) {
-				if ((a != badl) && (a.getRank() > badl.getRank())) {
-					finishingADL	= changeADL == 0 ? badl : finishingADL;
-					changeADL		= 1;									
-					badl 			= a;
-					keyBadl 		= a.getId();
-					badl.setActive(0);
-				}
-				badl.setActive(1);
-				Logs(1);
-			}
-
-			if (changeADL == 1) {				
-				changeADL=0;
-				Logs(2);				
+			if (changedADL == 1) {
+				//Operations when a new ADL is selected
+				changedADL=0;
+				Logs(2);
+				usedTime=0;
 			}
 		}
+	}	
+	
+	private static int checkBetterADL() {
+		changedADL=0;
+		//Check Better ADL
+		for (ADL a : hLADL.values()) {
+			if ((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * a.getMinTime())) {
+				//finishingADL	= changedADL == 0 ? badl : finishingADL; USELESS?
+				changedADL		= 1;
+				badl.setActive(0);
+				badl 			= a;
+				keyBadl 		= a.getId();
+				badl.setActive(0);
+			}
+			badl.setActive(1);
+			Logs(1);
+		}
+		return changedADL;
 	}
 
 	private static void newDay() {
@@ -103,6 +110,7 @@ public class Main {
 	 * Operations applied to all the ADL each day
 	 */
 	private static void dayInitADL() {
+		//TODO: Con nuova f peso da rimuovere?
 		for (ADL a : hLADL.values())  {
 			a.setDoneToday(0); //In this way I avoid duplication of activities			
 		}
@@ -119,7 +127,7 @@ public class Main {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.7;
+			active = (a.getActive() > 0) ? 1 : 0.8;
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i] * a.getExactTimeDescription(minute) * 
 						a.getExactDay(Day.getInstance().getWeekDay()) * active;						
@@ -171,7 +179,7 @@ public class Main {
 			System.out.println ("ADL: "+ badl.getName() +
 					" with rank "+ badl.getRank() + 
 					" day hour: " +t.getHour() +":"+t.getMinute()+
-					" minutes required: "+ (int) (usedTime-tick)/60);
+					" minutes required: "+ (int) (usedTime-tick)/60); //TODO: Used time l'ho usato per altro! 
 			//			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			//			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
 			//			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
@@ -197,7 +205,7 @@ public class Main {
 	}
 
 	/**
-	 * Updates the needs of the user 
+	 * Updates user's and house's needs
 	 */
 	private static void updateNeeds(int times) {
 
