@@ -21,7 +21,7 @@ public class ComputeADLTimeDescription {
 	public static void main(String[] args) {
 		for (int i=0; i<description.length;i++) {
 			//description[i] = ((i<420)||(i>1310)) ? 1.0 : 0.0;
-			description[i] = ((i>460)&&(i<1300)) ? 0.0 : 0.00; //Only day
+			description[i] = ((i>900)&&(i<1080)) ? 0.15 : 0.001; //Only day
 			//description [i] += timeDependence(i, 2.0, 2.0, 15*60, 60)/3;
 			//description [i] += timeDependence(i, 2.0, 2.0, 16*60, 90)/3;
 			//description [i] += timeDependence(i, 2.0, 2.0, 14.5*60, 30)/2;

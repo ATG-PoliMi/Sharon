@@ -51,8 +51,9 @@ public class HighLevelDaySimulator {
 			if (tick % 86400 == 0)
 				newDay();			
 
-			if (tick % 60 == 0) {
+			if (tick % 60 == 0) {				
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution
+				//Logs(2);
 				computeADLRank((int) tick % 86400);
 				changedADL = checkBetterADL();
 			}
@@ -80,7 +81,7 @@ public class HighLevelDaySimulator {
 				Logs(1);
 			}
 			badl.setActive(1);
-			
+
 		}
 		return changedADL;
 	}
@@ -131,7 +132,7 @@ public class HighLevelDaySimulator {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.95;
+			active = (a.getActive() > 0) ? 1 : 0.80;
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i] * a.getExactTimeDescription(minute/60) * 
 						a.getExactDay(Day.getInstance().getWeekDay()) * active;						
@@ -184,31 +185,34 @@ public class HighLevelDaySimulator {
 			System.out.println ("ADL: "+ badl.getName() +
 					" with rank "+ badl.getRank() + 
 					" day hour: " +t.getHour() +":"+t.getMinute());
-					 
+			
 			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
 			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
 			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
 			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
 			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());
+			System.out.printf (", S:%.2f", Needs.getInstance().getStock());
 			System.out.println();
-			for (ADL a : hLADL.values())  {
-				System.out.printf (a.getName()+": "+a.getRank()+" ");							
-			}
 			
-			//			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-			System.out.println();				
+			/*for (ADL a : hLADL.values())  {
+				System.out.printf (a.getName()+": "+a.getRank()+" ");							
+			}*/
+
+			//System.out.println();				
 			break;
 
 		case 2:
-			//			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			//			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-			//			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			//			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-			//			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-			//			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-			//			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-			//			System.out.println();
+			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());
+			System.out.printf (", S:%.2f", Needs.getInstance().getStock());
+			System.out.println();
 			break;
 		}
 
@@ -220,23 +224,23 @@ public class HighLevelDaySimulator {
 	private static void updateNeeds(int times) {
 
 		for (int i=0; i<=times; i++) {
-			if (Needs.getInstance().getHunger() < 1.0) 
+			if (Needs.getInstance().getHunger() 	< 1.0) 
 				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 		+ Constants.HUNGER/60);
-			if (Needs.getInstance().getComfort() < 1.0) 
+			if (Needs.getInstance().getComfort() 	< 1.0) 
 				Needs.getInstance().setComfort(Needs.getInstance().getComfort() 	+ Constants.COMFORT/60);
-			if (Needs.getInstance().getHygiene() < 1.0) 
+			if (Needs.getInstance().getHygiene() 	< 1.0) 
 				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()		+ Constants.HYGIENE/60);
-			if (Needs.getInstance().getBladder() < 1.0) 
+			if (Needs.getInstance().getBladder() 	< 1.0) 
 				Needs.getInstance().setBladder(Needs.getInstance().getBladder()		+ Constants.BLADDER/60);
-			if (Needs.getInstance().getEnergy() < 1.0) 
+			if (Needs.getInstance().getEnergy() 	< 1.0) 
 				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()		+ Constants.ENERGY/60);
-			if (Needs.getInstance().getFun() < 1.0) 
+			if (Needs.getInstance().getFun() 		< 1.0) 
 				Needs.getInstance().setFun(Needs.getInstance().getFun()				+ Constants.FUN/60);
-			if (Needs.getInstance().getDirtiness() < 1.0) 
+			if (Needs.getInstance().getDirtiness() 	< 1.0) 
 				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()	+ Constants.DIRTINESS/60);
-			if (Needs.getInstance().getStock() < 1.0) 
+			if (Needs.getInstance().getStock() 		< 1.0) 
 				Needs.getInstance().setStock(Needs.getInstance().getStock()			+ Constants.STOCK/60);
-			updateADLNeeds(finishingADL);
+			updateADLNeeds(badl);
 		}		
 	}
 
