@@ -168,7 +168,8 @@ public class HighLevelDaySimulator {
 				break;
 			}
 		}
-		ADLeffort = ((a.getNeeds().size()>0) && (needed>0)) ? (1/a.getNeeds().size()) : 0;
+		System.out.println(i);
+		ADLeffort = ((a.getNeeds().size()>0) && (needed>0)) ? (1/a.getNeeds().size()) : 0.0;
 		return ADLeffort;
 	}
 
