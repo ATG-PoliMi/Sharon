@@ -20,19 +20,26 @@ public class ComputeADLTimeDescription {
 
 	public static void main(String[] args) {
 		for (int i=0; i<description.length;i++) {
-			if (i==700) {
-				System.out.println("");		
-			}
-			description[i]=0.1;
-			description [i] += timeDependence(i, 2.0, 1.0, 12*60, 60);
+			//description[i] = ((i<420)||(i>1310)) ? 1.0 : 0.0;
+			description[i] = ((i>460)&&(i<1300)) ? 0.0 : 0.00; //Only day
+			//description [i] += timeDependence(i, 2.0, 2.0, 15*60, 60)/3;
+			//description [i] += timeDependence(i, 2.0, 2.0, 16*60, 90)/3;
+			//description [i] += timeDependence(i, 2.0, 2.0, 14.5*60, 30)/2;
+			//description [i] += timeDependence(i, 2.0, 2.0, 11*60, 60)/2;
+			//description [i] += timeDependence(i, 2.0, 2.0, 9*60, 90)/2;			
+			//description [i] += timeDependence(i, 2.0, 2.0, 15*60, 90)/2;
+			//description [i] += timeDependence(i, 2.0, 2.0, 21*60, 90)/2;
+			//description [i] += timeDependence(i, 1.0, 1.0, 16*60, 180)/3;
+			//description [i] += timeDependence(i, 2.0, 2.0, 15*60, 120)/2;
 			//description [i] += timeDependence(i, 1.0, 1.0, 12*60, 60);
-			description [i] += timeDependence(i, 2.0, 1.0, 9*60, 60);
-			description [i] += timeDependence(i, 2.0, 1.0, 15*60, 60);
-			description [i] += timeDependence(i, 2.0, 1.0, 19*60, 60);
+			//description [i] += timeDependence(i, 2.0, 1.0, 9*60, 60);
+			//description [i] += timeDependence(i, 2.0, 1.0, 15*60, 60);
+			//description [i] += timeDependence(i, 2.0, 1.0, 19*60, 60);
 			
 			
-			System.out.print(description [i]+", ");
+			
 			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0
+			System.out.print(description [i]+" ");
 			
 		}
 		System.out.println("");

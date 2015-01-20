@@ -8,7 +8,7 @@ public class ADL {
 	private String name;
 	private double[] days;
 	private double[] weather; //[0]: sun probability,[1]: cloud probability, [2]: rain probability
-	private double[] timeDescription;
+	private Float[] timeDescription;
 	private int minTime;
 	private double active;
 	
@@ -17,7 +17,7 @@ public class ADL {
 	private ArrayList<String> needs = new ArrayList <String>();
 	private ArrayList<ADLEffect> effects = new ArrayList <ADLEffect>();
 	
-	public ADL(int id, String name, double [] days, double [] weather, double [] timeDescription, int minTime,
+	public ADL(int id, String name, double [] days, double [] weather, Float[] timeDescription, int minTime,
 			ArrayList<String> needs, ArrayList<ADLEffect> effects) {
 		super();
 		this.id = id;
@@ -62,7 +62,7 @@ public class ADL {
 	public void setWeather(double[] weather) {
 		this.weather = weather;
 	}
-	public double[] getTimeDescription() {
+	public Float[] getTimeDescription() {
 		return timeDescription;
 	}
 	public double getExactTimeDescription(int i) {
@@ -71,7 +71,7 @@ public class ADL {
 		else
 			return 0;
 	}
-	public void setTimeDescription(double[] timeDescription) {
+	public void setTimeDescription(Float[] timeDescription) {
 		this.timeDescription = timeDescription;
 	}
 	public int getMinTime() {

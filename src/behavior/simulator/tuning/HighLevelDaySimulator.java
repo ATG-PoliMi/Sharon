@@ -46,6 +46,7 @@ public class HighLevelDaySimulator {
 		finishingADL= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 
 		for (tick=0; tick >=0; tick++) {
+			usedTime++;
 
 			if (tick % 86400 == 0)
 				newDay();			
@@ -58,26 +59,28 @@ public class HighLevelDaySimulator {
 			if (changedADL == 1) {
 				//Operations when a new ADL is selected
 				changedADL=0;
-				Logs(2);
+				//Logs(2);
 				usedTime=0;
 			}
 		}
 	}	
-	
+
 	private static int checkBetterADL() {
 		changedADL=0;
 		//Check Better ADL
 		for (ADL a : hLADL.values()) {
 			if ((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * a.getMinTime())) {
-				finishingADL	= changedADL == 0 ? badl : finishingADL;
+				//finishingADL	= changedADL == 0 ? badl : finishingADL;
+				finishingADL	= badl;
 				changedADL		= 1;
 				badl.setActive(0);
 				badl 			= a;
 				keyBadl 		= a.getId();
 				badl.setActive(0);
+				Logs(1);
 			}
 			badl.setActive(1);
-			Logs(1);
+			
 		}
 		return changedADL;
 	}
@@ -128,9 +131,9 @@ public class HighLevelDaySimulator {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.8;
+			active = (a.getActive() > 0) ? 1 : 0.95;
 			for (int i=0; i<needs.length; i++) {
-				r += needsEffort(a, i) * needs[i] * a.getExactTimeDescription(minute) * 
+				r += needsEffort(a, i) * needs[i] * a.getExactTimeDescription(minute/60) * 
 						a.getExactDay(Day.getInstance().getWeekDay()) * active;						
 			}
 			a.setRank(r);
@@ -168,28 +171,33 @@ public class HighLevelDaySimulator {
 				break;
 			}
 		}
-		System.out.println(i);
+
 		ADLeffort = ((a.getNeeds().size()>0) && (needed>0)) ? (1/a.getNeeds().size()) : 0.0;
 		return ADLeffort;
 	}
 
-	
+
 	private static void Logs(int logType) {
 		Time t = new Time(tick % 86400);
 		switch (logType) {
 		case 1: 
 			System.out.println ("ADL: "+ badl.getName() +
 					" with rank "+ badl.getRank() + 
-					" day hour: " +t.getHour() +":"+t.getMinute()+
-					" minutes required: "+ (int) (usedTime-tick)/60); //TODO: Used time l'ho usato per altro! 
-			//			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			//			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-			//			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			//			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-			//			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-			//			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+					" day hour: " +t.getHour() +":"+t.getMinute());
+					 
+			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
+			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
+			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.println();
+			for (ADL a : hLADL.values())  {
+				System.out.printf (a.getName()+": "+a.getRank()+" ");							
+			}
+			
 			//			System.out.print (", Cycl: "+ badl.getCyclicalityN()+":"+badl.getCyclicalityD());
-			//			System.out.println();				
+			System.out.println();				
 			break;
 
 		case 2:
@@ -231,7 +239,7 @@ public class HighLevelDaySimulator {
 			updateADLNeeds(finishingADL);
 		}		
 	}
-	
+
 	/**
 	 * Actions to perform when the ADL has been completed
 	 * @param ADLindex: Index of the ADL just executed
