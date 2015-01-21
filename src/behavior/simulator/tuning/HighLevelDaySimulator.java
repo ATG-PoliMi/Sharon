@@ -31,8 +31,7 @@ public class HighLevelDaySimulator {
 	static long 	tick;
 	static int 		keyBadl;
 	static long 	usedTime = 0;
-	static int 		changedADL = 0;
-	static int 		dayNumber=0;
+	static int 		changedADL = 0;	
 
 	//Support ADL
 	static ADL badl;
@@ -66,7 +65,7 @@ public class HighLevelDaySimulator {
 			}
 		}
 	}	
-
+	
 	private static int checkBetterADL() {
 		changedADL=0;
 		//Check Better ADL
@@ -97,20 +96,20 @@ public class HighLevelDaySimulator {
 	}
 
 	private static void newDay() {
-		dayNumber++;
+		
 		dayInitADL();
 		Day.getInstance().nextDay();
 
-		System.out.println("***NEW DAY***! ("+dayNumber+")");
+		System.out.println("***NEW DAY***! ("+Day.getInstance().getWeekDay()+")");
 		System.out.print("Today is ");
-		switch (Day.getInstance().getWeekDay()) {
-		case 1: System.out.print("Monday"); break;
-		case 2: System.out.print("Tuesday"); break;
-		case 3: System.out.print("Wednsday"); break;
-		case 4: System.out.print("Thursday"); break;
-		case 5: System.out.print("Friday"); break;
-		case 6: System.out.print("Saturday"); break;
-		case 7: System.out.print("Sunday"); break;
+		switch (Day.getInstance().getWeekDay()%7) {
+		case 0: System.out.print("Monday"); break;
+		case 1: System.out.print("Tuesday"); break;
+		case 2: System.out.print("Wednsday"); break;
+		case 3: System.out.print("Thursday"); break;
+		case 4: System.out.print("Friday"); break;
+		case 5: System.out.print("Saturday"); break;
+		case 6: System.out.print("Sunday"); break;
 		default: System.out.print("Error");
 		}
 		System.out.print(" and the weather is ");
@@ -143,10 +142,10 @@ public class HighLevelDaySimulator {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.70;
+			active = (a.getActive() > 0) ? 1 : 0.60;
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i] * a.getExactTimeDescription(minute/60) * 
-						a.getExactDay(Day.getInstance().getWeekDay()) * active;						
+						a.getExactDay(Day.getInstance().getWeekDay()%7) * active;						
 			}
 			a.setRank(r);
 		}
@@ -211,11 +210,11 @@ public class HighLevelDaySimulator {
 			System.out.printf ("%.3f", badl.getRank());
 			System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
 						
-			/*for (ADL a : hLADL.values())  {
-				System.out.printf (a.getName()+": "+a.getRank()+" ");							
-			}*/
+			for (ADL a : hLADL.values())  {
+				System.out.printf ("%s : %.3f ",a.getName(),a.getRank());											
+			}
 
-			//System.out.println();				
+			System.out.println();				
 			break;
 
 		case 2:
@@ -231,7 +230,6 @@ public class HighLevelDaySimulator {
 			System.out.println();
 			break;
 		}
-
 	}
 
 	/**

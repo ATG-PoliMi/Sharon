@@ -27,7 +27,7 @@ public class Constants {
 	public static double HUNGER = 0.005;
 	public static double HYGIENE = 0.0001;
 	public static double COMFORT = 0.003;
-	public static double BLADDER = 0.005;
+	public static double BLADDER = 0.002;
 	public static double ENERGY = 0.003;
 	public static double FUN = 0.005;
 	public static double SOCIALITY = 0.001;
