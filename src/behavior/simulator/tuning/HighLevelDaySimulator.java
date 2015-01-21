@@ -142,15 +142,19 @@ public class HighLevelDaySimulator {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.60;
+			active = (a.getActive() > 0) ? 1 : 0.80;
 			for (int i=0; i<needs.length; i++) {
-				r += needsEffort(a, i) * needs[i] * a.getExactTimeDescription(minute/60) * 
-						a.getExactDay(Day.getInstance().getWeekDay()%7) * active;						
+				r += needsEffort(a, i) * needs[i];					
 			}
+			r *= a.getExactTimeDescription(minute/60) * 
+					a.getExactDay(Day.getInstance().getWeekDay()%7) * active;
 			a.setRank(r);
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private static double needsEffort(ADL a, int i) {
 		double ADLeffort = 0.0;
 		int needed = 0;
@@ -206,13 +210,13 @@ public class HighLevelDaySimulator {
 			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());		
 			System.out.println();
 			
-			System.out.print ("ADL: "+ badl.getName() +" with rank ");
-			System.out.printf ("%.3f", badl.getRank());
-			System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
-						
 			for (ADL a : hLADL.values())  {
 				System.out.printf ("%s : %.3f ",a.getName(),a.getRank());											
 			}
+			System.out.println();
+			System.out.print ("ADL SELECTED: "+ badl.getName() +" with rank ");
+			System.out.printf ("%.3f", badl.getRank());
+			System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
 
 			System.out.println();				
 			break;
@@ -237,7 +241,7 @@ public class HighLevelDaySimulator {
 	 */
 	private static void updateNeeds(int times) {
 
-		for (int i=0; i<=times; i++) {
+		for (int i=0; i<times; i++) {
 			if (Needs.getInstance().getHunger() 	< 1.0) 
 				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 		+ Constants.HUNGER);
 			if (Needs.getInstance().getComfort() 	< 1.0) 

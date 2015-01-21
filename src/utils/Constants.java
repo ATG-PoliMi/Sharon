@@ -24,11 +24,11 @@ public class Constants {
 	public static final int SLEEP_ID = 8;
 	
 	//Behavior Simulator NeedsParameters
-	public static double HUNGER = 0.005;
-	public static double HYGIENE = 0.0001;
+	public static double HUNGER = 0.0033;
+	public static double HYGIENE = 0.0006;
 	public static double COMFORT = 0.003;
-	public static double BLADDER = 0.002;
-	public static double ENERGY = 0.003;
+	public static double BLADDER = 0.0056;
+	public static double ENERGY = 0.0025;
 	public static double FUN = 0.005;
 	public static double SOCIALITY = 0.001;
 	public static double DIRTINESS = 0.0001;
