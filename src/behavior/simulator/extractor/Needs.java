@@ -13,6 +13,7 @@ public class Needs {
 	private double bladder;
 	private double energy;
 	private double fun;
+	private double sociality;
 	
 	//House Needs
 	private double stock;
@@ -28,6 +29,7 @@ public class Needs {
 		this.fun		=	0.0;
 		this.stock		= 	0.0;
 		this.dirtiness	= 	0.0;
+		this.sociality	= 	0.0;
 	}
 	
 	public double []loadNeeds () {
@@ -43,10 +45,19 @@ public class Needs {
 		this.bladder	=	needs[3];
 		this.energy		=	needs[4];
 		this.fun		=	needs[5];
-		this.stock		= 	needs[6];
-		this.dirtiness	= 	needs[7];
+		this.sociality	=	needs[6];
+		this.stock		= 	needs[7];
+		this.dirtiness	= 	needs[8];
 	}
 	
+	public double getSociality() {
+		return sociality;
+	}
+
+	public void setSociality(double sociality) {
+		this.sociality = sociality;
+	}
+
 	public double getHunger() {
 		return hunger;
 	}
