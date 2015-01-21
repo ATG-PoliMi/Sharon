@@ -69,7 +69,7 @@ public class ADLDB {
 		adl.put(7, new ADL (7, "Snack", days, independent, TimeDependancy.get(5), 5,
 				new ArrayList<String>(Arrays.asList("hunger")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.01)))));
-		adl.put(8, new ADL (8, "Sleeping", days, independent, TimeDependancy.get(6), 480,
+		adl.put(8, new ADL (8, "Sleeping", days, independent, TimeDependancy.get(6), 300,
 				new ArrayList<String>(Arrays.asList("energy")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -0.01)))));
 		adl.put(9, new ADL (9, "WatchingTV", days, independent, TimeDependancy.get(7), 30,

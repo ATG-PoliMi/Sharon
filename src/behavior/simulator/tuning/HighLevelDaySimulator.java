@@ -70,19 +70,28 @@ public class HighLevelDaySimulator {
 		changedADL=0;
 		//Check Better ADL
 		for (ADL a : hLADL.values()) {
-			if ((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * a.getMinTime())) {
+//			System.out.print (a.getName() +": ");
+//			System.out.printf ("%.3f", a.getRank());
+//			System.out.print (">"+badl.getName() +": ");
+//			System.out.printf ("%.3f", badl.getRank());
+//			System.out.print(": ");
+//			System.out.println((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * badl.getMinTime()));
+//			
+			if ((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * badl.getMinTime())) {
 				//finishingADL	= changedADL == 0 ? badl : finishingADL;
-				finishingADL	= badl;
+				//finishingADL	= badl;
 				changedADL		= 1;
 				badl.setActive(0);
 				badl 			= a;
 				keyBadl 		= a.getId();
-				badl.setActive(0);
-				Logs(1);
+//				System.out.printf (a.getName());
+//				System.out.printf (": %.3f", a.getRank());				
 			}
 			badl.setActive(1);
 
 		}
+		if (changedADL>0)
+			Logs(1);
 		return changedADL;
 	}
 
@@ -147,28 +156,28 @@ public class HighLevelDaySimulator {
 		if (a.getNeeds() != null) {
 			switch (i) {
 			case 0: 
-				needed += a.getNeeds().contains("hunger") ? 1 : 0;
+				needed += a.getNeeds().contains("hunger") 	? 1 : 0;
 				break;
 			case 1: 
-				needed += a.getNeeds().contains("comfort") ? 1 : 0;
+				needed += a.getNeeds().contains("comfort") 	? 1 : 0;
 				break;
 			case 2: 
-				needed += a.getNeeds().contains("hygiene") ? 1 : 0;
+				needed += a.getNeeds().contains("hygiene") 	? 1 : 0;
 				break;
 			case 3: 
-				needed += a.getNeeds().contains("bladder") ? 1 : 0;
+				needed += a.getNeeds().contains("bladder") 	? 1 : 0;
 				break;
 			case 4: 
-				needed += a.getNeeds().contains("energy") ? 1 : 0;
+				needed += a.getNeeds().contains("energy")	? 1 : 0;
 				break;
 			case 5: 
-				needed += a.getNeeds().contains("fun") ? 1 : 0;
+				needed += a.getNeeds().contains("fun") 		? 1 : 0;
 				break;
 			case 6: 
-				needed += a.getNeeds().contains("stock") ? 1 : 0;
+				needed += a.getNeeds().contains("stock") 	? 1 : 0;
 				break;
 			case 7: 
-				needed += a.getNeeds().contains("dirtiness") ? 1 : 0;
+				needed += a.getNeeds().contains("dirtiness")? 1 : 0;
 				break;
 			}
 		}
@@ -182,18 +191,18 @@ public class HighLevelDaySimulator {
 		Time t = new Time(tick % 86400);
 		switch (logType) {
 		case 1: 
-			System.out.println ("ADL: "+ badl.getName() +
-					" with rank "+ badl.getRank() + 
-					" day hour: " +t.getHour() +":"+t.getMinute());
-			
+			System.out.print ("ADL: "+ badl.getName() +" with rank ");
+			System.out.printf ("%.3f", badl.getRank());
+			System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
+						
 			System.out.printf ("oldNeeds: Hu:%.2f", Needs.getInstance().getHunger());
 			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
 			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
 			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
 			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
 			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());
 			System.out.printf (", S:%.2f", Needs.getInstance().getStock());
+			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());			
 			System.out.println();
 			
 			/*for (ADL a : hLADL.values())  {
@@ -210,8 +219,8 @@ public class HighLevelDaySimulator {
 			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
 			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
 			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());
 			System.out.printf (", S:%.2f", Needs.getInstance().getStock());
+			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());
 			System.out.println();
 			break;
 		}
