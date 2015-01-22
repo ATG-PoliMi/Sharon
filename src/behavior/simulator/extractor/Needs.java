@@ -34,7 +34,7 @@ public class Needs {
 	
 	public double []loadNeeds () {
 		
-		double needs [] = {hunger, comfort, hygiene, bladder, energy, fun, stock, dirtiness};
+		double needs [] = {hunger, comfort, hygiene, bladder, energy, fun, sociality, stock, dirtiness};
 		return needs;
 	}
 	

@@ -29,7 +29,7 @@ public class Constants {
 	public static double COMFORT = 0.003;
 	public static double BLADDER = 0.0056;
 	public static double ENERGY = 0.0025;
-	public static double FUN = 0.005;
+	public static double FUN = 0.004;
 	public static double SOCIALITY = 0.001;
 	public static double DIRTINESS = 0.0001;
 	public static double STOCK = 0.0001;

@@ -1,5 +1,6 @@
 package behavior.simulator.tuning;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -52,8 +53,7 @@ public class HighLevelDaySimulator {
 				newDay();			
 
 			if (tick % 60 == 0) {				
-				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution
-				//Logs(2);
+				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
 				computeADLRank((int) tick % 86400);
 				changedADL = checkBetterADL();
 			}
@@ -100,6 +100,7 @@ public class HighLevelDaySimulator {
 		dayInitADL();
 		Day.getInstance().nextDay();
 
+		//eraseNeeds();
 		System.out.println("***NEW DAY***! ("+Day.getInstance().getWeekDay()+")");
 		System.out.print("Today is ");
 		switch (Day.getInstance().getWeekDay()%7) {
@@ -119,6 +120,24 @@ public class HighLevelDaySimulator {
 		case 3: System.out.print("Sunny\n"); break;
 		default: System.out.print("Error\n");
 		}
+	}
+
+	private static void eraseNeeds() {
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Needs.getInstance().setBladder(0);
+		Needs.getInstance().setComfort(0);
+		Needs.getInstance().setDirtiness(0);
+		Needs.getInstance().setEnergy(0);
+		Needs.getInstance().setFun(0);
+		Needs.getInstance().setHunger(0);
+		Needs.getInstance().setHygiene(0);
+		Needs.getInstance().setSociality(0);
+		Needs.getInstance().setStock(0);		
 	}
 
 	/**
@@ -200,17 +219,18 @@ public class HighLevelDaySimulator {
 		switch (logType) {
 		case 1: 
 			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
+			System.out.printf (", C:%.2f", 	Needs.getInstance().getComfort());
 			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
+			System.out.printf (", B:%.2f", 	Needs.getInstance().getBladder());
+			System.out.printf (", E:%.2f", 	Needs.getInstance().getEnergy());
+			System.out.printf (", F:%.2f", 	Needs.getInstance().getFun());
 			System.out.printf (", So:%.2f", Needs.getInstance().getSociality());
 			System.out.printf (", St:%.2f", Needs.getInstance().getStock());
-			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());		
+			System.out.printf (", D:%.2f", 	Needs.getInstance().getDirtiness());		
 			System.out.println();
 			
 			for (ADL a : hLADL.values())  {
+				if (a.getRank()>0)
 				System.out.printf ("%s : %.3f ",a.getName(),a.getRank());											
 			}
 			System.out.println();
@@ -222,15 +242,16 @@ public class HighLevelDaySimulator {
 			break;
 
 		case 2:
-			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			System.out.printf (", C:%.2f", Needs.getInstance().getComfort());
-			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			System.out.printf (", B:%.2f", Needs.getInstance().getBladder());
-			System.out.printf (", E:%.2f", Needs.getInstance().getEnergy());
-			System.out.printf (", F:%.2f", Needs.getInstance().getFun());
-			System.out.printf (", So:%.2f", Needs.getInstance().getSociality());
-			System.out.printf (", St:%.2f", Needs.getInstance().getStock());
-			System.out.printf (", D:%.2f", Needs.getInstance().getDirtiness());
+			System.out.print (t.getHour() +":"+t.getMinute()+" ");
+			System.out.printf ("Hu:%.2f", 	Needs.getInstance().getHunger());
+			System.out.printf (" C:%.2f", 	Needs.getInstance().getComfort());
+			System.out.printf (" Hy:%.2f", 	Needs.getInstance().getHygiene());
+			System.out.printf (" B:%.2f", 	Needs.getInstance().getBladder());
+			System.out.printf (" E:%.2f", 	Needs.getInstance().getEnergy());
+			System.out.printf (" F:%.2f", 	Needs.getInstance().getFun());
+			System.out.printf (" So:%.2f", Needs.getInstance().getSociality());
+			System.out.printf (" St:%.2f", Needs.getInstance().getStock());
+			System.out.printf (" D:%.2f", Needs.getInstance().getDirtiness());
 			System.out.println();
 			break;
 		}
@@ -339,5 +360,4 @@ public class HighLevelDaySimulator {
 		}
 		//hLADL.get(keyBadl).setDoneToday(1);		
 	}
-
 }

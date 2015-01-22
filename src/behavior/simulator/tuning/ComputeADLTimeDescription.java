@@ -23,7 +23,7 @@ public class ComputeADLTimeDescription {
 			//description[i] = ((i>900)&&(i<1080)) ? 0.15 : 0.001; //Only day
 			//description [i] += timeDependence(i, 2.0, 2.0, 15*60, 60)/3;
 			//description [i] += timeDependence(i, 2.0, 2.0, 16*60, 90)/3;
-			//description[i]=0.7;
+			description[i]=100.0;
 			
 			
 			//RELAX
@@ -38,23 +38,23 @@ public class ComputeADLTimeDescription {
 //			description [i] += timeDependence(i, 2.0, 2.0, 20*60, 30)/2;
 //			description [i] += timeDependence(i, 2.0, 2.0, 11*60, 180)/2;			
 			//SLEEP:
-			description[i] = ((i<400)||(i>1310)) ? 1.0 : 0.0;
-			description [i] += timeDependence(i, 2.0, 2.0, 6.5*60, 240)/2;
-			description [i] += timeDependence(i, 2.0, 2.0, 21.5*60, 180)/2;
+//			description[i] = ((i<400)||(i>1310)) ? 1.0 : 0.0;
+//			description [i] += timeDependence(i, 2.0, 2.0, 6.5*60, 240)/2;
+//			description [i] += timeDependence(i, 2.0, 2.0, 21.5*60, 180)/2;
 			
 			
-			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0
+//			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0
 			System.out.print(description [i]+" ");
 			
 		}
 		System.out.println("");
-		for (int i=0; i< description.length; i++) {
-				System.out.print(i+": ");
-				for (int j=0; j< (description[i]*10); j++) {
-					System.out.print("*");
-				}
-				System.out.println();
-			}
+//		for (int i=0; i< description.length; i++) {
+//				System.out.print(i+": ");
+//				for (int j=0; j< (description[i]*10); j++) {
+//					System.out.print("*");
+//				}
+//				System.out.println();
+//			}
 	}
 
 	private static double timeDependence(double currentMinute, double betaA, double betaB, 
