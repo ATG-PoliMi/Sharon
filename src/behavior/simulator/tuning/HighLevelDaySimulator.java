@@ -161,7 +161,7 @@ public class HighLevelDaySimulator {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.80;
+			active = (a.getActive() > 0) ? 1 : 0.70;
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i];					
 			}
@@ -209,7 +209,7 @@ public class HighLevelDaySimulator {
 			}
 		}
 
-		ADLeffort = ((a.getNeeds().size()>0) && (needed>0)) ? (1/a.getNeeds().size()) : 0.0;
+		ADLeffort = ((a.getNeeds().size()>0) && (needed>0)) ? ((double)1/a.getNeeds().size()) : 0.0;
 		return ADLeffort;
 	}
 

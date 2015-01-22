@@ -41,9 +41,15 @@ public class ComputeADLTimeDescription {
 //			description[i] = ((i<400)||(i>1310)) ? 1.0 : 0.0;
 //			description [i] += timeDependence(i, 2.0, 2.0, 6.5*60, 240)/2;
 //			description [i] += timeDependence(i, 2.0, 2.0, 21.5*60, 180)/2;
+			//TV
+			description[i] = ((i<400)||(i>1310)) ? 0.0 : 0.30;
+			description [i] += timeDependence(i, 2.0, 2.0, 10*60, 240)/3;
+			description [i] += timeDependence(i, 2.0, 2.0, 16*60, 180)/3;
+			description [i] += timeDependence(i, 2.0, 2.0, 21*60, 60)/2;
 			
 			
-//			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0
+			
+			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0
 			System.out.print(description [i]+" ");
 			
 		}
