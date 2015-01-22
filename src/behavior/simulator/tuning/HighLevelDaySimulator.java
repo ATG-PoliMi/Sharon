@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import utils.Constants;
+import utils.Histogram;
 import utils.Time;
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.extractor.ADLEffect;
@@ -32,7 +33,8 @@ public class HighLevelDaySimulator {
 	static long 	tick;
 	static int 		keyBadl;
 	static long 	usedTime = 0;
-	static int 		changedADL = 0;	
+	static int 		changedADL = 0;
+	static Histogram hist = new Histogram();
 
 	//Support ADL
 	static ADL badl;
@@ -49,13 +51,15 @@ public class HighLevelDaySimulator {
 		for (tick=0; tick >=0; tick++) {
 			usedTime++;
 
-			if (tick % 86400 == 0)
-				newDay();			
-
+			if (tick % 86400 == 0){
+				newDay();
+				hist.printHistogram();
+			}
 			if (tick % 60 == 0) {				
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
 				computeADLRank((int) tick % 86400);
 				changedADL = checkBetterADL();
+				Logs(3);
 			}
 			if (changedADL == 1) {
 				//Operations when a new ADL is selected
@@ -90,8 +94,9 @@ public class HighLevelDaySimulator {
 			badl.setActive(1);
 
 		}
-		if (changedADL>0)
-			Logs(1);
+		if (changedADL>0){
+			//Logs(1);
+		}
 		return changedADL;
 	}
 
@@ -161,7 +166,7 @@ public class HighLevelDaySimulator {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.70;
+			active = (a.getActive() > 0) ? 1 : 0.5;
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i];					
 			}
@@ -253,6 +258,10 @@ public class HighLevelDaySimulator {
 			System.out.printf (" St:%.2f", Needs.getInstance().getStock());
 			System.out.printf (" D:%.2f", Needs.getInstance().getDirtiness());
 			System.out.println();
+			break;
+			
+		case 3:
+			hist.updateHistogram(tick, badl.getId());
 			break;
 		}
 	}

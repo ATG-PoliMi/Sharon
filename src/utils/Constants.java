@@ -20,6 +20,8 @@ public class Constants {
 
 	public static final String STRUCTURE_LAYER_ID = "walls";
 
+	//Histogram
+	public static int ADLCOUNT = 20;
 	//Behavior Simulator
 	public static final int SLEEP_ID = 8;
 	
