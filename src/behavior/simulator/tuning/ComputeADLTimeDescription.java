@@ -23,7 +23,7 @@ public class ComputeADLTimeDescription {
 			//description[i] = ((i>900)&&(i<1080)) ? 0.15 : 0.001; //Only day
 			//description [i] += timeDependence(i, 2.0, 2.0, 15*60, 60)/3;
 			//description [i] += timeDependence(i, 2.0, 2.0, 16*60, 90)/3;
-			description[i]=100.0;
+//			description[i]=100.0;
 			
 			
 			//RELAX
@@ -54,13 +54,13 @@ public class ComputeADLTimeDescription {
 			
 		}
 		System.out.println("");
-//		for (int i=0; i< description.length; i++) {
-//				System.out.print(i+": ");
-//				for (int j=0; j< (description[i]*10); j++) {
-//					System.out.print("*");
-//				}
-//				System.out.println();
-//			}
+		for (int i=0; i< description.length; i++) {
+				System.out.print(i+": ");
+				for (int j=0; j< (description[i]*10); j++) {
+					System.out.print("*");
+				}
+				System.out.println();
+			}
 	}
 
 	private static double timeDependence(double currentMinute, double betaA, double betaB, 

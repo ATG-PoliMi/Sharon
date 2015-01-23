@@ -59,7 +59,7 @@ public class ADLDB {
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("sociality", -0.03)))));
 		adl.put(3, new ADL (3, "Shopping", marketDays, sunny, TimeDependancy.get(1), 40,
 				new ArrayList<String>(Arrays.asList("stock")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("stock", -0.05)))));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("stock", -0.05), new ADLEffect("comfort", +0.005)))));
 		adl.put(4, new ADL (4, "Breakfast", days, independent, TimeDependancy.get(2), 10,
 				new ArrayList<String>(Arrays.asList("hunger")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.03)))));
@@ -74,10 +74,10 @@ public class ADLDB {
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.025)))));
 		adl.put(8, new ADL (8, "Sleeping", days, independent, TimeDependancy.get(6), 60,
 				new ArrayList<String>(Arrays.asList("energy")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -(Constants.ENERGY + 0.00165)),new ADLEffect("comfort", -Constants.COMFORT/3), new ADLEffect("hunger", -Constants.HUNGER/3), new ADLEffect("fun", -Constants.FUN/3), new ADLEffect("hygiene", -Constants.HYGIENE/3), new ADLEffect("bladder", -Constants.BLADDER*0.8), new ADLEffect("stock", -Constants.STOCK/3), new ADLEffect("dirtiness", -Constants.DIRTINESS/3)))));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("energy", -(Constants.ENERGY + 0.00165)),new ADLEffect("comfort", -Constants.COMFORT/4), new ADLEffect("hunger", -Constants.HUNGER/3), new ADLEffect("fun", -Constants.FUN/3), new ADLEffect("hygiene", -Constants.HYGIENE/3), new ADLEffect("bladder", -Constants.BLADDER*0.8), new ADLEffect("stock", -Constants.STOCK/3), new ADLEffect("dirtiness", -Constants.DIRTINESS/3)))));
 		adl.put(9, new ADL (9, "WatchingTV", days, independent, TimeDependancy.get(7), 45,
 				new ArrayList<String>(Arrays.asList("fun","comfort")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("fun", -0.05), new ADLEffect("comfort", -0.03)))));		
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("fun", -0.05), new ADLEffect("comfort", -0.02)))));		
 		adl.put(10,new ADL (10, "Shower", days, independent, TimeDependancy.get(8), 15,
 				new ArrayList<String>(Arrays.asList("hygiene")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hygiene", -0.05)))));

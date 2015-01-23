@@ -53,13 +53,27 @@ public class HighLevelDaySimulator {
 
 			if (tick % 86400 == 0){
 				newDay();
-				hist.printHistogram();
+				
+				//System.out.println();
+				if (Day.getInstance().getWeekDay()==102){
+					hist.printHistogram();
+					for (ADL a : hLADL.values()) {
+						//a.get
+					}
+					try {
+						System.in.read();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			if (tick % 60 == 0) {				
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
 				computeADLRank((int) tick % 86400);
 				changedADL = checkBetterADL();
-				Logs(3);
+				//Logs(3);
+				Logs(4);
 			}
 			if (changedADL == 1) {
 				//Operations when a new ADL is selected
@@ -69,27 +83,17 @@ public class HighLevelDaySimulator {
 			}
 		}
 	}	
-	
+
 	private static int checkBetterADL() {
 		changedADL=0;
 		//Check Better ADL
 		for (ADL a : hLADL.values()) {
-//			System.out.print (a.getName() +": ");
-//			System.out.printf ("%.3f", a.getRank());
-//			System.out.print (">"+badl.getName() +": ");
-//			System.out.printf ("%.3f", badl.getRank());
-//			System.out.print(": ");
-//			System.out.println((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * badl.getMinTime()));
-//			
+
 			if ((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * badl.getMinTime())) {
-				//finishingADL	= changedADL == 0 ? badl : finishingADL;
-				//finishingADL	= badl;
 				changedADL		= 1;
 				badl.setActive(0);
 				badl 			= a;
 				keyBadl 		= a.getId();
-//				System.out.printf (a.getName());
-//				System.out.printf (": %.3f", a.getRank());				
 			}
 			badl.setActive(1);
 
@@ -101,10 +105,10 @@ public class HighLevelDaySimulator {
 	}
 
 	private static void newDay() {
-		
+
 		dayInitADL();
 		Day.getInstance().nextDay();
-
+/*
 		//eraseNeeds();
 		System.out.println("***NEW DAY***! ("+Day.getInstance().getWeekDay()+")");
 		System.out.print("Today is ");
@@ -125,6 +129,7 @@ public class HighLevelDaySimulator {
 		case 3: System.out.print("Sunny\n"); break;
 		default: System.out.print("Error\n");
 		}
+		*/
 	}
 
 	private static void eraseNeeds() {
@@ -233,10 +238,10 @@ public class HighLevelDaySimulator {
 			System.out.printf (", St:%.2f", Needs.getInstance().getStock());
 			System.out.printf (", D:%.2f", 	Needs.getInstance().getDirtiness());		
 			System.out.println();
-			
+
 			for (ADL a : hLADL.values())  {
 				if (a.getRank()>0)
-				System.out.printf ("%s : %.3f ",a.getName(),a.getRank());											
+					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());											
 			}
 			System.out.println();
 			System.out.print ("ADL SELECTED: "+ badl.getName() +" with rank ");
@@ -259,9 +264,14 @@ public class HighLevelDaySimulator {
 			System.out.printf (" D:%.2f", Needs.getInstance().getDirtiness());
 			System.out.println();
 			break;
-			
+
 		case 3:
 			hist.updateHistogram(tick, badl.getId());
+			break;
+		case 4:
+			if (badl.getName().equals("Sleeping")) {
+				System.out.print("\t"+badl.getRank());
+			}
 			break;
 		}
 	}
@@ -367,6 +377,5 @@ public class HighLevelDaySimulator {
 					Needs.getInstance().setDirtiness(1);				
 			}
 		}
-		//hLADL.get(keyBadl).setDoneToday(1);		
 	}
 }
