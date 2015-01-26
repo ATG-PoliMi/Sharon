@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import utils.Constants;
-import utils.Histogram;
+import utils.CumulateHistogram;
 import utils.Time;
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.extractor.ADLEffect;
@@ -34,7 +34,7 @@ public class HighLevelDaySimulator {
 	static int 		keyBadl;
 	static long 	usedTime = 0;
 	static int 		changedADL = 0;
-	static Histogram hist = new Histogram();
+	static CumulateHistogram hist = new CumulateHistogram();
 
 	//Support ADL
 	static ADL badl;

@@ -2,10 +2,10 @@ package utils;
 
 import behavior.simulator.extractor.Day;
 
-public class Histogram {
+public class CumulateHistogram {
 	int[][] ADLsCount = new int[24][Constants.ADLCOUNT];
 	
-	public Histogram(){
+	public CumulateHistogram(){
 		
 	}
 	
