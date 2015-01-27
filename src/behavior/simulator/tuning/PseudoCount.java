@@ -63,11 +63,12 @@ public class PseudoCount {
 		computationADLs(5);
 		computationADLs(6);
 		computationADLs(7);
+		computationADLs(8);
 
 		//computationADLs(2);
 		//computationADLs(3);
 
-		writeADLs("data/histResults.txt", 2);
+		writeADLs("data/histResults.txt", 1);
 		System.out.println("END!");
 	}
 
@@ -253,7 +254,7 @@ public class PseudoCount {
 			}
 
 			break;
-		case 7: //Mean with 120 samples		
+		case 8: //Mean with 120 samples		
 			for (int j=0; j<C; j++) {
 				float max=0;
 				for (int i=0; i<R/60; i++) {
@@ -263,6 +264,26 @@ public class PseudoCount {
 				for (int i=0; i<R/60; i++) {
 					ADLSmoothing[i][j] = (max>0) ? ADLSmoothing[i][j]/max : ADLSmoothing[i][j];
 					ADLSmoothing[i][j] = (ADLSmoothing[i][j]+0.05f<=1.0f) ? ADLSmoothing[i][j]+0.05f : 1.0f;
+				}
+			}
+			break;
+		case 7: //Smoothing		
+			float[][] temp = new float [R][C];
+			
+			for (int j=0; j<C; j++) {
+				for (int i=0; i< R/60; i++) {
+					temp [i][j] = ADLSmoothing[i][j];
+				}
+			}
+			
+			for (int j=0; j<C; j++) {
+				for (int i=0; i< R/60; i++) {
+					ADLSmoothing[i][j] = 0;
+					for (int w = (i>30) ? i-30 : 0; ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
+						ADLSmoothing[i][j] += (float) temp [w][j];
+					}
+					System.out.println();
+					ADLSmoothing[i][j] /= 60.0f;
 				}
 			}
 			break;
