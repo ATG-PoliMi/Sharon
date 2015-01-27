@@ -53,7 +53,7 @@ public class HighLevelDaySimulator {
 
 			if (tick % 86400 == 0){
 				newDay();
-				
+				/*
 				//System.out.println();
 				if (Day.getInstance().getWeekDay()==102){
 					hist.printHistogram();
@@ -66,19 +66,19 @@ public class HighLevelDaySimulator {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}
+				}*/
 			}
 			if (tick % 60 == 0) {				
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
 				computeADLRank((int) tick % 86400);
 				changedADL = checkBetterADL();
 				//Logs(3);
-				Logs(4);
+				//Logs(4);
 			}
 			if (changedADL == 1) {
 				//Operations when a new ADL is selected
 				changedADL=0;
-				//Logs(2);
+				Logs(1);
 				usedTime=0;
 			}
 		}
@@ -108,7 +108,7 @@ public class HighLevelDaySimulator {
 
 		dayInitADL();
 		Day.getInstance().nextDay();
-/*
+
 		//eraseNeeds();
 		System.out.println("***NEW DAY***! ("+Day.getInstance().getWeekDay()+")");
 		System.out.print("Today is ");
@@ -129,7 +129,7 @@ public class HighLevelDaySimulator {
 		case 3: System.out.print("Sunny\n"); break;
 		default: System.out.print("Error\n");
 		}
-		*/
+		
 	}
 
 	private static void eraseNeeds() {

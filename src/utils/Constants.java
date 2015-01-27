@@ -21,9 +21,9 @@ public class Constants {
 	public static final String STRUCTURE_LAYER_ID = "walls";
 
 	//Histogram
-	public static int ADLCOUNT = 19;
+	public static int ADLCOUNT = 17;
 	//Behavior Simulator
-	public static final int SLEEP_ID = 8;
+	public static final int SLEEP_ID = 7;
 	
 	//Behavior Simulator NeedsParameters
 	public static double HUNGER = 0.0033;

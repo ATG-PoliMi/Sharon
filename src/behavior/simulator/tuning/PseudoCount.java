@@ -62,11 +62,12 @@ public class PseudoCount {
 		//smoothing ();
 		computationADLs(5);
 		computationADLs(6);
+		computationADLs(7);
 
 		//computationADLs(2);
 		//computationADLs(3);
 
-		writeADLs("data/histResults.txt", 1);
+		writeADLs("data/histResults.txt", 2);
 		System.out.println("END!");
 	}
 
@@ -219,30 +220,46 @@ public class PseudoCount {
 						p++;
 					if((int) Math.floor(i/120)+k < 1440) {
 						ADLSmoothing[(int) Math.floor(i/120)+k][j]+=ADLs[i][j];
-						//						if (i%20==0) {
-						//							System.out.print(i+"A");
-						//							System.out.print((int) Math.floor(i/120)+k+" ");
-						//						}
 						if (i>60) {
-							ADLSmoothing[(int) Math.floor((60+i)/120)+p][j]+=ADLs[i][j];
-							//							if (i%20==0) {
-							//								System.out.print("B");
-							//								System.out.println((int) Math.floor((60+i)/120)+p);
-							//							}
+							ADLSmoothing[(int) Math.floor((60+i)/120)+p][j]+=ADLs[i][j];							
 						}
 					}
 				}
 			}
 			break;
-		case 6: //Mean with 120 samples			
+		case 6: //Merge of ADLs
+			for (int i=0; i<R/60; i++) {
+				for (int j=0; j<C; j++) {
+					ADLSmoothing [i][3] += ADLSmoothing[i][2];
+					ADLSmoothing[i][2] = 0;
 
+					ADLSmoothing [i][5] += ADLSmoothing[i][4];
+					ADLSmoothing[i][4] = 0;
+
+					ADLSmoothing [i][7] += ADLSmoothing[i][6];
+					ADLSmoothing[i][6] = 0;
+
+					ADLSmoothing [i][13] += 	ADLSmoothing[i][8] + 
+							ADLSmoothing [i][19] + ADLSmoothing [i][20];
+					ADLSmoothing[i][8] = 0;
+					ADLSmoothing[i][19] = 0;
+					ADLSmoothing[i][20] = 0;
+
+					ADLSmoothing [i][21] += ADLSmoothing [i][24] + 
+							ADLSmoothing [i][25];
+					ADLSmoothing[i][24] = 0;
+					ADLSmoothing[i][25] = 0;					
+				}
+			}
+
+			break;
+		case 7: //Mean with 120 samples		
 			for (int j=0; j<C; j++) {
 				float max=0;
 				for (int i=0; i<R/60; i++) {
 					max = (ADLSmoothing[i][j]>max) ? ADLSmoothing[i][j] : max;  
 				}
-				System.out.println(max);
-				//max /= 0.95;
+
 				for (int i=0; i<R/60; i++) {
 					ADLSmoothing[i][j] = (max>0) ? ADLSmoothing[i][j]/max : ADLSmoothing[i][j];
 					ADLSmoothing[i][j] = (ADLSmoothing[i][j]+0.05f<=1.0f) ? ADLSmoothing[i][j]+0.05f : 1.0f;
@@ -253,11 +270,10 @@ public class PseudoCount {
 	}
 
 
-
 	private static void writeADLs(String outputFile, int target) {
 		PrintWriter out;
 		switch(target) {
-		case 1: //Print ADL 
+		case 1: //Print ADL Smoothing VERTICAL
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int i=0; i<R/60; i++) {		    	
@@ -272,13 +288,12 @@ public class PseudoCount {
 				e.printStackTrace();
 			}
 			break;
-		case 2: //Print ADLSmoothing
-
+		case 2: //Print ADLSmoothing HORIZONTAL
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
-				for (int i=0; i<R; i++) {		    	
-					for (int j=0; j<C; j++) {	    		 
-						out.print(ADLSmoothing[i][j]+"\t");	    		
+				for (int j=0; j<C; j++) {
+					for (int i=0; i<R/60; i++) {
+						out.print(ADLSmoothing[i][j]+" ");	    		
 					}
 					out.println();
 				}
@@ -287,23 +302,7 @@ public class PseudoCount {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			break;
-		case 3: //Print ADLSampled
-
-			try {
-				out = new PrintWriter(new FileWriter(outputFile));
-				for (int i=0; i<R/60; i++) {		    	
-					for (int j=0; j<C; j++) {	    		 
-						out.print(ADLUnderSampling[i][j]+"\t");	    		
-					}
-					out.println();
-				}
-				out.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			break;	
+			break;		
 		}		
 	}
 }
