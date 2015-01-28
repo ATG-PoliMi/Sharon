@@ -68,7 +68,7 @@ public class PseudoCount {
 		//computationADLs(2);
 		//computationADLs(3);
 
-		writeADLs("data/histResults.txt", 1);
+		writeADLs("data/histResults.txt", 2); //1: vertical, 2: horizontal
 		System.out.println("END!");
 	}
 

@@ -3,6 +3,7 @@ package behavior.simulator.tuning;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import utils.Constants;
 import utils.CumulateHistogram;
@@ -167,6 +168,7 @@ public class HighLevelDaySimulator {
 	private static void computeADLRank(int minute) {
 		double r;
 		double active;
+		Random r1 = new Random();
 
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
@@ -175,8 +177,9 @@ public class HighLevelDaySimulator {
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i];					
 			}
-			r *= a.getExactTimeDescription(minute/60) * 
-					a.getExactDay(Day.getInstance().getWeekDay()%7) * active;
+			
+			r *= a.getExactTimeDescription(minute/60) * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
+					active * (0.80+Math.random()*(1-0.80));
 			a.setRank(r);
 		}
 	}
