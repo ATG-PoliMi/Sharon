@@ -140,15 +140,15 @@ public class HighLevelDaySimulator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Needs.getInstance().setBladder(0);
-		Needs.getInstance().setComfort(0);
+		Needs.getInstance().setToileting(0);
+		Needs.getInstance().setStress(0);
 		Needs.getInstance().setDirtiness(0);
-		Needs.getInstance().setEnergy(0);
-		Needs.getInstance().setFun(0);
+		Needs.getInstance().setTirediness(0);
+		Needs.getInstance().setBoredom(0);
 		Needs.getInstance().setHunger(0);
-		Needs.getInstance().setHygiene(0);
-		Needs.getInstance().setSociality(0);
-		Needs.getInstance().setStock(0);		
+		Needs.getInstance().setSweat(0);
+		Needs.getInstance().setAsociality(0);
+		Needs.getInstance().setOutOfStock(0);		
 	}
 
 	/**
@@ -196,25 +196,25 @@ public class HighLevelDaySimulator {
 				needed += a.getNeeds().contains("hunger") 	? 1 : 0;
 				break;
 			case 1: 
-				needed += a.getNeeds().contains("comfort") 	? 1 : 0;
+				needed += a.getNeeds().contains("stress") 	? 1 : 0;
 				break;
 			case 2: 
-				needed += a.getNeeds().contains("hygiene") 	? 1 : 0;
+				needed += a.getNeeds().contains("sweat") 	? 1 : 0;
 				break;
 			case 3: 
-				needed += a.getNeeds().contains("bladder") 	? 1 : 0;
+				needed += a.getNeeds().contains("toileting") 	? 1 : 0;
 				break;
 			case 4: 
-				needed += a.getNeeds().contains("energy")	? 1 : 0;
+				needed += a.getNeeds().contains("tirediness")	? 1 : 0;
 				break;
 			case 5: 
-				needed += a.getNeeds().contains("fun") 		? 1 : 0;
+				needed += a.getNeeds().contains("boredom") 		? 1 : 0;
 				break;
 			case 6: 
-				needed += a.getNeeds().contains("sociality")? 1 : 0;
+				needed += a.getNeeds().contains("asociality")? 1 : 0;
 				break;
 			case 7: 
-				needed += a.getNeeds().contains("stock") 	? 1 : 0;
+				needed += a.getNeeds().contains("outofstock") 	? 1 : 0;
 				break;
 			case 8: 
 				needed += a.getNeeds().contains("dirtiness")? 1 : 0;
@@ -232,14 +232,14 @@ public class HighLevelDaySimulator {
 		switch (logType) {
 		case 1: 
 			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
-			System.out.printf (", C:%.2f", 	Needs.getInstance().getComfort());
-			System.out.printf (", Hy:%.2f", Needs.getInstance().getHygiene());
-			System.out.printf (", B:%.2f", 	Needs.getInstance().getBladder());
-			System.out.printf (", E:%.2f", 	Needs.getInstance().getEnergy());
-			System.out.printf (", F:%.2f", 	Needs.getInstance().getFun());
-			System.out.printf (", So:%.2f", Needs.getInstance().getSociality());
-			System.out.printf (", St:%.2f", Needs.getInstance().getStock());
-			System.out.printf (", D:%.2f", 	Needs.getInstance().getDirtiness());		
+			System.out.printf (", St:%.2f", 	Needs.getInstance().getStress());
+			System.out.printf (", Sw:%.2f", 	Needs.getInstance().getSweat());
+			System.out.printf (", To:%.2f", 	Needs.getInstance().getToileting());
+			System.out.printf (", Ti:%.2f", 	Needs.getInstance().getTirediness());
+			System.out.printf (", Bo:%.2f", 	Needs.getInstance().getBoredom());
+			System.out.printf (", As:%.2f",	 	Needs.getInstance().getAsociality());
+			System.out.printf (", OS:%.2f", 	Needs.getInstance().getOutOfStock());
+			System.out.printf (", Di:%.2f", 	Needs.getInstance().getDirtiness());		
 			System.out.println();
 
 			for (ADL a : hLADL.values())  {
@@ -256,15 +256,15 @@ public class HighLevelDaySimulator {
 
 		case 2:
 			System.out.print (t.getHour() +":"+t.getMinute()+" ");
-			System.out.printf ("Hu:%.2f", 	Needs.getInstance().getHunger());
-			System.out.printf (" C:%.2f", 	Needs.getInstance().getComfort());
-			System.out.printf (" Hy:%.2f", 	Needs.getInstance().getHygiene());
-			System.out.printf (" B:%.2f", 	Needs.getInstance().getBladder());
-			System.out.printf (" E:%.2f", 	Needs.getInstance().getEnergy());
-			System.out.printf (" F:%.2f", 	Needs.getInstance().getFun());
-			System.out.printf (" So:%.2f", Needs.getInstance().getSociality());
-			System.out.printf (" St:%.2f", Needs.getInstance().getStock());
-			System.out.printf (" D:%.2f", Needs.getInstance().getDirtiness());
+			System.out.printf ("newNeeds: Hu:%.2f", Needs.getInstance().getHunger());
+			System.out.printf (", St:%.2f", 	Needs.getInstance().getStress());
+			System.out.printf (", Sw:%.2f", 	Needs.getInstance().getSweat());
+			System.out.printf (", To:%.2f", 	Needs.getInstance().getToileting());
+			System.out.printf (", Ti:%.2f", 	Needs.getInstance().getTirediness());
+			System.out.printf (", Bo:%.2f", 	Needs.getInstance().getBoredom());
+			System.out.printf (", As:%.2f", 	Needs.getInstance().getAsociality());
+			System.out.printf (", OS:%.2f", 	Needs.getInstance().getOutOfStock());
+			System.out.printf (", Di:%.2f", 	Needs.getInstance().getDirtiness());	
 			System.out.println();
 			break;
 
@@ -286,23 +286,23 @@ public class HighLevelDaySimulator {
 
 		for (int i=0; i<times; i++) {
 			if (Needs.getInstance().getHunger() 	< 1.0) 
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 		+ Constants.HUNGER);
-			if (Needs.getInstance().getComfort() 	< 1.0) 
-				Needs.getInstance().setComfort(Needs.getInstance().getComfort() 	+ Constants.COMFORT);
-			if (Needs.getInstance().getHygiene() 	< 1.0) 
-				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()		+ Constants.HYGIENE);
-			if (Needs.getInstance().getBladder() 	< 1.0) 
-				Needs.getInstance().setBladder(Needs.getInstance().getBladder()		+ Constants.BLADDER);
-			if (Needs.getInstance().getEnergy() 	< 1.0) 
-				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()		+ Constants.ENERGY);
-			if (Needs.getInstance().getFun() 		< 1.0) 
-				Needs.getInstance().setFun(Needs.getInstance().getFun()				+ Constants.FUN);
-			if (Needs.getInstance().getSociality() 	< 1.0) 
-				Needs.getInstance().setSociality(Needs.getInstance().getSociality()	+ Constants.SOCIALITY);
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 			+ Constants.HUNGER);
+			if (Needs.getInstance().getStress() 	< 1.0) 
+				Needs.getInstance().setStress(Needs.getInstance().getStress() 			+ Constants.STRESS);
+			if (Needs.getInstance().getSweat() 	< 1.0) 
+				Needs.getInstance().setSweat(Needs.getInstance().getSweat()				+ Constants.SWEAT);
+			if (Needs.getInstance().getToileting() 	< 1.0) 
+				Needs.getInstance().setToileting(Needs.getInstance().getToileting()		+ Constants.TOILETING);
+			if (Needs.getInstance().getTirediness() 	< 1.0) 
+				Needs.getInstance().setTirediness(Needs.getInstance().getTirediness()	+ Constants.TIREDINESS);
+			if (Needs.getInstance().getBoredom() 		< 1.0) 
+				Needs.getInstance().setBoredom(Needs.getInstance().getBoredom()			+ Constants.BOREDOM);
+			if (Needs.getInstance().getAsociality() 	< 1.0) 
+				Needs.getInstance().setAsociality(Needs.getInstance().getAsociality()	+ Constants.ASOCIALITY);
 			if (Needs.getInstance().getDirtiness() 	< 1.0) 
-				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()	+ Constants.DIRTINESS);
-			if (Needs.getInstance().getStock() 		< 1.0) 
-				Needs.getInstance().setStock(Needs.getInstance().getStock()			+ Constants.STOCK);
+				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()		+ Constants.DIRTINESS);
+			if (Needs.getInstance().getOutOfStock() 		< 1.0) 
+				Needs.getInstance().setOutOfStock(Needs.getInstance().getOutOfStock()	+ Constants.OUTOFSTOCK);
 			updateADLNeeds(badl);
 		}		
 	}
@@ -323,54 +323,54 @@ public class HighLevelDaySimulator {
 				if (Needs.getInstance().getHunger() > 1)
 					Needs.getInstance().setHunger(1);				
 			}
-			if (effects.getName().equals("comfort")) {
-				Needs.getInstance().setComfort(Needs.getInstance().getComfort()+effects.getEffect());
-				if (Needs.getInstance().getComfort() < 0)
-					Needs.getInstance().setComfort(0);
-				if (Needs.getInstance().getComfort() > 1)
-					Needs.getInstance().setComfort(1);	
+			if (effects.getName().equals("stress")) {
+				Needs.getInstance().setStress(Needs.getInstance().getStress()+effects.getEffect());
+				if (Needs.getInstance().getStress() < 0)
+					Needs.getInstance().setStress(0);
+				if (Needs.getInstance().getStress() > 1)
+					Needs.getInstance().setStress(1);	
 			}
-			if (effects.getName().equals("hygiene")) {
-				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+effects.getEffect());
-				if (Needs.getInstance().getHygiene() < 0)
-					Needs.getInstance().setHygiene(0);
-				if (Needs.getInstance().getHygiene() > 1)
-					Needs.getInstance().setHygiene(1);
+			if (effects.getName().equals("sweat")) {
+				Needs.getInstance().setSweat(Needs.getInstance().getSweat()+effects.getEffect());
+				if (Needs.getInstance().getSweat() < 0)
+					Needs.getInstance().setSweat(0);
+				if (Needs.getInstance().getSweat() > 1)
+					Needs.getInstance().setSweat(1);
 			}
-			if (effects.getName().equals("bladder")) {
-				Needs.getInstance().setBladder(Needs.getInstance().getBladder()+effects.getEffect());
-				if (Needs.getInstance().getBladder() < 0)
-					Needs.getInstance().setBladder(0);
-				if (Needs.getInstance().getBladder() > 1)
-					Needs.getInstance().setBladder(1);				
+			if (effects.getName().equals("toileting")) {
+				Needs.getInstance().setToileting(Needs.getInstance().getToileting()+effects.getEffect());
+				if (Needs.getInstance().getToileting() < 0)
+					Needs.getInstance().setToileting(0);
+				if (Needs.getInstance().getToileting() > 1)
+					Needs.getInstance().setToileting(1);				
 			}
-			if (effects.getName().equals("energy")) {
-				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+effects.getEffect());
-				if (Needs.getInstance().getEnergy() < 0)
-					Needs.getInstance().setEnergy(0);
-				if (Needs.getInstance().getEnergy() > 1)
-					Needs.getInstance().setEnergy(1);	
+			if (effects.getName().equals("tirediness")) {
+				Needs.getInstance().setTirediness(Needs.getInstance().getTirediness()+effects.getEffect());
+				if (Needs.getInstance().getTirediness() < 0)
+					Needs.getInstance().setTirediness(0);
+				if (Needs.getInstance().getTirediness() > 1)
+					Needs.getInstance().setTirediness(1);	
 			}
-			if (effects.getName().equals("fun")) {
-				Needs.getInstance().setFun(Needs.getInstance().getFun()+effects.getEffect());
-				if (Needs.getInstance().getFun() < 0)
-					Needs.getInstance().setFun(0);
-				if (Needs.getInstance().getFun() > 1)
-					Needs.getInstance().setFun(1);				
+			if (effects.getName().equals("boredom")) {
+				Needs.getInstance().setBoredom(Needs.getInstance().getBoredom()+effects.getEffect());
+				if (Needs.getInstance().getBoredom() < 0)
+					Needs.getInstance().setBoredom(0);
+				if (Needs.getInstance().getBoredom() > 1)
+					Needs.getInstance().setBoredom(1);				
 			}
-			if (effects.getName().equals("sociality")) {
-				Needs.getInstance().setSociality(Needs.getInstance().getSociality()+effects.getEffect());
-				if (Needs.getInstance().getSociality() < 0)
-					Needs.getInstance().setSociality(0);
-				if (Needs.getInstance().getSociality() > 1)
-					Needs.getInstance().setSociality(1);				
+			if (effects.getName().equals("asociality")) {
+				Needs.getInstance().setAsociality(Needs.getInstance().getAsociality()+effects.getEffect());
+				if (Needs.getInstance().getAsociality() < 0)
+					Needs.getInstance().setAsociality(0);
+				if (Needs.getInstance().getAsociality() > 1)
+					Needs.getInstance().setAsociality(1);				
 			}
-			if (effects.getName().equals("stock")) {
-				Needs.getInstance().setStock(Needs.getInstance().getStock()+effects.getEffect());
-				if (Needs.getInstance().getStock() < 0)
-					Needs.getInstance().setStock(0);
-				if (Needs.getInstance().getStock() > 1)
-					Needs.getInstance().setStock(1);				
+			if (effects.getName().equals("outofstock")) {
+				Needs.getInstance().setOutOfStock(Needs.getInstance().getOutOfStock()+effects.getEffect());
+				if (Needs.getInstance().getOutOfStock() < 0)
+					Needs.getInstance().setOutOfStock(0);
+				if (Needs.getInstance().getOutOfStock() > 1)
+					Needs.getInstance().setOutOfStock(1);				
 			}
 			if (effects.getName().equals("dirtiness")) {
 				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()+effects.getEffect());

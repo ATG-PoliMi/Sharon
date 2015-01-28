@@ -27,13 +27,13 @@ public class Constants {
 	
 	//Behavior Simulator NeedsParameters
 	public static double HUNGER = 0.0033;
-	public static double HYGIENE = 0.0006;
-	public static double COMFORT = 0.003;
-	public static double BLADDER = 0.005;//0.0056
-	public static double ENERGY = 0.0025;
-	public static double FUN = 0.004;
-	public static double SOCIALITY = 0.001;
+	public static double STRESS = 0.003;
+	public static double SWEAT = 0.0006;	
+	public static double TOILETING = 0.005;//0.0056
+	public static double TIREDINESS = 0.0025;
+	public static double BOREDOM = 0.004;
+	public static double ASOCIALITY = 0.001;
 	public static double DIRTINESS = 0.0001;
-	public static double STOCK = 0.0001;
+	public static double OUTOFSTOCK = 0.0001;
 	
 }

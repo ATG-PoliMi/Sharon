@@ -8,56 +8,30 @@ public class Needs {
 	
 	//Actor Needs
 	private double hunger;
-	private double comfort;
-	private double hygiene;
-	private double bladder;
-	private double energy;
-	private double fun;
-	private double sociality;
+	private double stress;
+	private double sweat;
+	private double toileting;
+	private double tirediness;
+	private double boredom;
+	private double asociality;
 	
 	//House Needs
-	private double stock;
+	private double outOfStock;
 	private double dirtiness;
 
 
 	private Needs(){
-		this.hunger		=	0.2;
-		this.comfort	=	1.0;
-		this.hygiene	=	0.0;
-		this.bladder	=	0.0;
-		this.energy		=	1.0;
-		this.fun		=	0.0;
-		this.stock		= 	0.0;
-		this.dirtiness	= 	0.0;
-		this.sociality	= 	0.0;
+		this.hunger			=	0.2;
+		this.stress			=	1.0;
+		this.sweat			=	0.0;
+		this.toileting		=	0.0;
+		this.tirediness		=	1.0;
+		this.boredom		=	0.0;
+		this.outOfStock		= 	0.0;
+		this.dirtiness		= 	0.0;
+		this.asociality		= 	0.0;
 	}
 	
-	public double []loadNeeds () {
-		
-		double needs [] = {hunger, comfort, hygiene, bladder, energy, fun, sociality, stock, dirtiness};
-		return needs;
-	}
-	
-	public void setNeeds(double [] needs){
-		this.hunger		=	needs[0];
-		this.comfort	=	needs[1];
-		this.hygiene	=	needs[2];
-		this.bladder	=	needs[3];
-		this.energy		=	needs[4];
-		this.fun		=	needs[5];
-		this.sociality	=	needs[6];
-		this.stock		= 	needs[7];
-		this.dirtiness	= 	needs[8];
-	}
-	
-	public double getSociality() {
-		return sociality;
-	}
-
-	public void setSociality(double sociality) {
-		this.sociality = sociality;
-	}
-
 	public double getHunger() {
 		return hunger;
 	}
@@ -66,51 +40,60 @@ public class Needs {
 		this.hunger = hunger;
 	}
 
-	public double getComfort() {
-		return comfort;
+	public double getStress() {
+		return stress;
 	}
 
-	public void setComfort(double comfort) {
-		this.comfort = comfort;
+	public void setStress(double stress) {
+		this.stress = stress;
 	}
 
-	public double getHygiene() {
-		return hygiene;
+	public double getSweat() {
+		return sweat;
 	}
 
-	public void setHygiene(double hygiene) {
-		this.hygiene = hygiene;
+	public void setSweat(double sweat) {
+		this.sweat = sweat;
 	}
 
-	public double getBladder() {
-		return bladder;
+	public double getToileting() {
+		return toileting;
 	}
 
-	public void setBladder(double bladder) {
-		this.bladder = bladder;
+	public void setToileting(double toileting) {
+		this.toileting = toileting;
 	}
 
-	public double getEnergy() {
-		return energy;
+	public double getTirediness() {
+		return tirediness;
 	}
 
-	public void setEnergy(double energy) {
-		this.energy = energy;
+	public void setTirediness(double tirediness) {
+		this.tirediness = tirediness;
 	}
 
-	public double getFun() {
-		return fun;
+	public double getBoredom() {
+		return boredom;
 	}
 
-	public void setFun(double fun) {
-		this.fun = fun;
-	}
-	public double getStock() {
-		return stock;
+	public void setBoredom(double boredom) {
+		this.boredom = boredom;
 	}
 
-	public void setStock(double stock) {
-		this.stock = stock;
+	public double getAsociality() {
+		return asociality;
+	}
+
+	public void setAsociality(double asociality) {
+		this.asociality = asociality;
+	}
+
+	public double getOutOfStock() {
+		return outOfStock;
+	}
+
+	public void setOutOfStock(double outOfStock) {
+		this.outOfStock = outOfStock;
 	}
 
 	public double getDirtiness() {
@@ -120,6 +103,26 @@ public class Needs {
 	public void setDirtiness(double dirtiness) {
 		this.dirtiness = dirtiness;
 	}
+
+	public double []loadNeeds () {
+		
+		double needs [] = {hunger, stress, sweat, toileting, tirediness, boredom, asociality, outOfStock, dirtiness};
+		return needs;
+	}
+	
+	public void setNeeds(double [] needs){
+		this.hunger		=	needs[0];
+		this.stress	=	needs[1];
+		this.sweat	=	needs[2];
+		this.toileting	=	needs[3];
+		this.tirediness		=	needs[4];
+		this.boredom		=	needs[5];
+		this.asociality	=	needs[6];
+		this.outOfStock		= 	needs[7];
+		this.dirtiness	= 	needs[8];
+	}
+	
+	
 
 	public static void setInstance(Needs instance) {
 		Needs.instance = instance;
