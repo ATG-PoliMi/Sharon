@@ -156,8 +156,7 @@ public class HighLevelDaySimulator {
 	private static void computeADLRank(int minute) {
 		double r;
 		double active;
-		Random r1 = new Random();
-
+		
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			

@@ -10,23 +10,24 @@ import javax.media.jai.Histogram;
 
 
 public class PseudoCount {
+	//Parameters:
+	static String House ="HouseA"; 	//Options: "HouseA" || "HouseB"
+	static int person 	= 20;		//Options: 20: person 1, 21: person 2
+	static int format 	= 2;		//Options: 1: vertical, 2: horizontal (print layout)
+	static int print 	= 1;		//Options: 1: ADLSmoothing, 2: ADLNotSmoothed (Array to print)
+	//***END PARAMETERS***
+	
 	static int R = 86400;
 	static int C = 27;
 
 	static BufferedReader reader = null;
-	static float [][] ADLs = new float [R][C];
-	static float [][] ADLSmoothing = new float [R][C];
-	static float [][] ADLUnderSampling = new float [R/60][C];
+	static float [][] ADLs 				= new float [R][C];
+	static float [][] ADLSmoothing 		= new float [R][C];
+	static float [][] ADLNotSmoothed 	= new float [R/60][C];
 	static float p, pCount;
 
 	static int rowNumber = 0;
 	static String[] splitted;
-
-	//Parameters:
-	static String House ="HouseA"; 	//Options: "HouseA" || "HouseB"
-	static int person = 20;			//Options: 20: person 1, 21: person 2
-	static int format = 2;			//Options: 1: vertical, 2: horizontal
-
 
 	public static void main (String[] args) {
 
@@ -63,16 +64,16 @@ public class PseudoCount {
 		readFile("data/ARAS/"+House+"/DAY_29.txt");
 		readFile("data/ARAS/"+House+"/DAY_30.txt");
 
-		//smoothing ();
-		computationADLs(5);
-		computationADLs(6);
-		computationADLs(7);
-		computationADLs(8);
+		computationADLs(1); //Merge of unused ADLs
+		
+		computationADLs(2);	//ADLNotSmoothed: reduce dimensionality and normalization to 30
+		
+		computationADLs(4);	//ADLSmoothed: reduce dimensionality with overlap (60+60)
+		computationADLs(5);	//Smoothing	
+		computationADLs(6);	//Normalization to 1
 
-		//computationADLs(2);
-		//computationADLs(3);
 
-		writeADLs("data/histResults.txt", format); 
+		writeADLs("data/histResults.txt", format, print); 
 		System.out.println("END!");
 	}
 
@@ -109,111 +110,61 @@ public class PseudoCount {
 		}
 	}
 
-	private static void readFileX (String nameFile) {
-		rowNumber=0;
-		int k=0,p=0;
-		try {
-			reader = new BufferedReader(new FileReader(nameFile));
-			String line = null;
-			try {
-				while ((line = reader.readLine()) != null) {
-					splitted = line.split("\\s+");					
-					for (int i=0; i<splitted.length; i++) {						
-						if (i==21) { //i=20: person 1, i=21: person 2
-							if((int) Math.floor(rowNumber/120)+k < 1440) {
-								ADLUnderSampling[(int) Math.floor(rowNumber/120)+k][Integer.parseInt(splitted[i])]++;
-								System.out.print("A:");
-								System.out.print((int) Math.floor(rowNumber/120)+k+" ");
-
-								if ((i>60)&&(i<1440)) {
-									ADLUnderSampling[(int) Math.floor((60+rowNumber)/120)+p][Integer.parseInt(splitted[i])]++;
-									System.out.print("B:");
-									System.out.println((int) Math.floor((60+rowNumber)/120)+p);
-								}
-							}
-						}
-						if (i%120==0)
-							k++;
-						if (i%180==0)
-							p++;
-					}  
-					rowNumber++;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	private static void smoothing() {
-		for (int j=0; j<C; j++) {
-			for (int i=0; i<R; i++) {
-				p=0;		//Partial sum of elements			
-				pCount=0;	//# of elements summed
-
-				for (int k = (i>=60) ? i-60 : 0; (i+60<R) ? k<i+60 : k<R; k++){
-					p += ADLs[i][j];
-					pCount++;
-				}
-				ADLSmoothing[i][j] = p/(pCount * 30f);
-				if (i>60) {
-					//System.out.println();
-				}
-			}
-		}		
-	}
-
 	private static void computationADLs(int operation) {
 		switch (operation) {
-		case 1:
-			for (int i=0; i<R; i++) {		    	
-				for (int j=0; j<C; j++) {	    		 
-					ADLs[i][j] = ADLs[i][j] / 30.0f;
+		
+		case 1: //Merge of ADLs
+			for (int i=0; i<R; i++) {
+				for (int j=0; j<C; j++) {
+					ADLs [i][3] += ADLs[i][2];
+					ADLs[i][2] = 0;
+
+					ADLs [i][5] += ADLs[i][4];
+					ADLs[i][4] = 0;
+
+					ADLs [i][7] += ADLs[i][6];
+					ADLs[i][6] = 0;
+
+					ADLs [i][13] += 	ADLs[i][8] + 
+							ADLs [i][19] + ADLs [i][20];
+					ADLs[i][8] = 0;
+					ADLs[i][19] = 0;
+					ADLs[i][20] = 0;
+
+					ADLs [i][21] += ADLs [i][24] + 
+							ADLs [i][25];
+					ADLs[i][24] = 0;
+					ADLs[i][25] = 0;					
 				}
 			}
 			break;
-		case 2:
-			for (int j=0; j<C; j++) {
-				for (int i=0; i<R; i++) {
-					ADLs[i][j] = (int) Math.ceil(ADLs[i][j] / 30.0f);					
-				}
-			}
-			break;
-		case 3: //Histogram (Unused)
-			int [] array = new int[1440];
-			double [] arrayD = new double [1440];
 
-			for (int i=0; i<R; i++){
-				array[i] 	= 	(ADLs[i][5]<=0) ? 1 	: (int) ADLs[i][5];
-				arrayD[i] 	=	(ADLs[i][5]<=0) ? 1.0 	:  		ADLs[i][5];
-
-			}
-			Histogram h = new Histogram(array, arrayD, arrayD);
-			System.out.println(h.getSmoothed(true, 1));
-			break;
-		case 4: //UnderSampling
+		case 2: //UnderSampling into ADLNot Smoothed
 			for (int i=0; i<R; i+=60) {
 				for (int j=0; j<C; j++) {
-					ADLUnderSampling[i/60][j] = ADLSmoothing[i][j];
+					ADLNotSmoothed[i/60][j] = ADLs[i][j];
 				}
 			}			
 			for (int i=0; i<R/60; i++) {
 				for (int j=0; j<C; j++) {
-					ADLUnderSampling[i/60][j] /= 60.0f;
+					ADLNotSmoothed[i][j] /= 30.0f;					
 				}
 			}
 			break;
-		case 5:
+
+		case 3: //UnderSampling (NO)
+			for (int j=0; j<C; j++) {
+				for (int i=0; i< R/60; i++) {
+					ADLNotSmoothed[i][j] = 0;
+					for (int w = Math.max(i-30, 0); ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
+						ADLNotSmoothed[i][j] += (float) ADLSmoothing [w][j];
+					}
+					ADLNotSmoothed[i][j] /= 120.0f * 30.0f;
+				}
+			}
+			break;
+
+		case 4: //Reduce dimensionality with overlap (60+60)
 			int k,p;
 			for (int j=0; j<C; j++) {
 				k=0;
@@ -232,33 +183,8 @@ public class PseudoCount {
 				}
 			}
 			break;
-		case 6: //Merge of ADLs
-			for (int i=0; i<R/60; i++) {
-				for (int j=0; j<C; j++) {
-					ADLSmoothing [i][3] += ADLSmoothing[i][2];
-					ADLSmoothing[i][2] = 0;
 
-					ADLSmoothing [i][5] += ADLSmoothing[i][4];
-					ADLSmoothing[i][4] = 0;
-
-					ADLSmoothing [i][7] += ADLSmoothing[i][6];
-					ADLSmoothing[i][6] = 0;
-
-					ADLSmoothing [i][13] += 	ADLSmoothing[i][8] + 
-							ADLSmoothing [i][19] + ADLSmoothing [i][20];
-					ADLSmoothing[i][8] = 0;
-					ADLSmoothing[i][19] = 0;
-					ADLSmoothing[i][20] = 0;
-
-					ADLSmoothing [i][21] += ADLSmoothing [i][24] + 
-							ADLSmoothing [i][25];
-					ADLSmoothing[i][24] = 0;
-					ADLSmoothing[i][25] = 0;					
-				}
-			}
-
-			break;
-		case 7: //Smoothing		
+		case 5: //Smoothing		
 			float[][] temp = new float [R][C];
 
 			for (int j=0; j<C; j++) {
@@ -270,41 +196,42 @@ public class PseudoCount {
 			for (int j=0; j<C; j++) {
 				for (int i=0; i< R/60; i++) {
 					ADLSmoothing[i][j] = 0;
-					for (int w = (i>30) ? i-30 : 0; ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
+					for (int w = Math.max(i-30, 0); ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
 						ADLSmoothing[i][j] += (float) temp [w][j];
 					}
-					//System.out.println();
 					ADLSmoothing[i][j] /= 60.0f;
 				}
 			}
 			break;
-		case 8: //Mean with 120 samples		
+		case 6: //Normalization to 1	
 			for (int j=0; j<C; j++) {
 				float max=0;
 				for (int i=0; i<R/60; i++) {
-					max = (ADLSmoothing[i][j]>max) ? ADLSmoothing[i][j] : max;  
+					max = Math.max(ADLSmoothing[i][j], max);  
 				}
 
 				for (int i=0; i<R/60; i++) {
 					ADLSmoothing[i][j] = (max>0) ? ADLSmoothing[i][j]/max : ADLSmoothing[i][j];
-					ADLSmoothing[i][j] = (ADLSmoothing[i][j]+0.05f<=1.0f) ? ADLSmoothing[i][j]+0.05f : 1.0f;
+					ADLSmoothing[i][j] = Math.min(ADLSmoothing[i][j] + 0.05f, 1.0f);
 				}
 			}
 			break;
-
 		}
 	}
 
 
-	private static void writeADLs(String outputFile, int target) {
+	private static void writeADLs(String outputFile, int target, int printing) {
 		PrintWriter out;
 		switch(target) {
 		case 1: //Print ADL Smoothing VERTICAL
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int i=0; i<R/60; i++) {		    	
-					for (int j=0; j<C; j++) {	    		 
-						out.print(ADLSmoothing[i][j]+"\t");	    		
+					for (int j=0; j<C; j++) {
+						if (printing == 1)
+							out.print(ADLSmoothing[i][j]+"\t");
+						else
+							out.print(ADLNotSmoothed[i][j]+"\t");
 					}
 					out.println();
 				}
@@ -319,7 +246,10 @@ public class PseudoCount {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int j=0; j<C; j++) {
 					for (int i=0; i<R/60; i++) {
-						out.print(ADLSmoothing[i][j]+" ");	    		
+						if (printing == 1)
+							out.print(ADLSmoothing[i][j]+"\t");
+						else
+							out.print(ADLNotSmoothed[i][j]+"\t");	    		
 					}
 					out.println();
 				}
