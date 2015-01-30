@@ -49,32 +49,18 @@ public class HighLevelDaySimulator {
 		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 		finishingADL= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 
-		for (tick=0; tick >=0; tick++) {
+		for (tick=0; tick <= 86400*300; tick++) {
 			usedTime++;
 
 			if (tick % 86400 == 0){
 				newDay();
-				/*
-				//System.out.println();
-				if (Day.getInstance().getWeekDay()==102){
-					hist.printHistogram();
-					for (ADL a : hLADL.values()) {
-						//a.get
-					}
-					try {
-						System.in.read();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}*/
 			}
 			if (tick % 60 == 0) {				
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
 				computeADLRank((int) tick % 86400);
 				changedADL = checkBetterADL();
-				//Logs(3);
-				//Logs(4);
+				//Logs(3); Hour histogram
+				Logs(4);
 			}
 			if (changedADL == 1) {
 				//Operations when a new ADL is selected
@@ -83,6 +69,8 @@ public class HighLevelDaySimulator {
 				usedTime=0;
 			}
 		}
+		hist.refineHistogram(300.0f);
+		hist.printToFile("data/histResults.txt",1);		
 	}	
 
 	private static int checkBetterADL() {
@@ -130,7 +118,7 @@ public class HighLevelDaySimulator {
 		case 3: System.out.print("Sunny\n"); break;
 		default: System.out.print("Error\n");
 		}
-		
+
 	}
 
 	private static void eraseNeeds() {
@@ -177,7 +165,7 @@ public class HighLevelDaySimulator {
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i];					
 			}
-			
+
 			r *= a.getExactTimeDescription(minute/60) * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
 					active * (0.80+Math.random()*(1-0.80));
 			a.setRank(r);
@@ -269,12 +257,10 @@ public class HighLevelDaySimulator {
 			break;
 
 		case 3:
-			hist.updateHistogram(tick, badl.getId());
+			hist.updateHistogramH(tick, badl.getId());
 			break;
 		case 4:
-			if (badl.getName().equals("Sleeping")) {
-				System.out.print("\t"+badl.getRank());
-			}
+			hist.updateHistogramM(tick, badl.getId());
 			break;
 		}
 	}

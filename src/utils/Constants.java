@@ -29,7 +29,7 @@ public class Constants {
 	public static double HUNGER = 0.0033;
 	public static double STRESS = 0.003;
 	public static double SWEAT = 0.0006;	
-	public static double TOILETING = 0.005;//0.0056
+	public static double TOILETING = 0.009;//0.0056
 	public static double TIREDINESS = 0.0025;
 	public static double BOREDOM = 0.004;
 	public static double ASOCIALITY = 0.001;

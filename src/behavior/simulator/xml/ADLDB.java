@@ -108,14 +108,11 @@ public class ADLDB {
 		for (int i=0; i<updateNeed.length; i++) {
 			updateNeed [i] += d;
 		}
-		TimeDependancy.set(index, updateNeed);
-
-		
+		TimeDependancy.set(index, updateNeed);		
 	}
 
 	private static ArrayList<Float[]> loadTimeDependancy(String fileName) {
-		
-		
+				
 		ArrayList<Float[]> timeDependancyAL = new ArrayList<Float[]>();		
 	    BufferedReader reader = null;
 	    Float[] td = new Float[1440];

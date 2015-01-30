@@ -22,42 +22,46 @@ public class PseudoCount {
 	static int rowNumber = 0;
 	static String[] splitted;
 
+	//Parameters:
+	static String House ="HouseA"; 	//Options: "HouseA" || "HouseB"
+	static int person = 20;			//Options: 20: person 1, 21: person 2
+	static int format = 2;			//Options: 1: vertical, 2: horizontal
 
 
 	public static void main (String[] args) {
 
-		readFile("data/ARAS/DAY_1.txt");
-		readFile("data/ARAS/DAY_2.txt");
-		readFile("data/ARAS/DAY_3.txt");
-		readFile("data/ARAS/DAY_4.txt");
-		readFile("data/ARAS/DAY_5.txt");
-		readFile("data/ARAS/DAY_6.txt");
-		readFile("data/ARAS/DAY_7.txt");
-		readFile("data/ARAS/DAY_8.txt");
-		readFile("data/ARAS/DAY_9.txt");		
-		readFile("data/ARAS/DAY_10.txt");
+		readFile("data/ARAS/"+House+"/DAY_1.txt");
+		readFile("data/ARAS/"+House+"/DAY_2.txt");
+		readFile("data/ARAS/"+House+"/DAY_3.txt");
+		readFile("data/ARAS/"+House+"/DAY_4.txt");
+		readFile("data/ARAS/"+House+"/DAY_5.txt");
+		readFile("data/ARAS/"+House+"/DAY_6.txt");
+		readFile("data/ARAS/"+House+"/DAY_7.txt");
+		readFile("data/ARAS/"+House+"/DAY_8.txt");
+		readFile("data/ARAS/"+House+"/DAY_9.txt");		
+		readFile("data/ARAS/"+House+"/DAY_10.txt");
 
-		readFile("data/ARAS/DAY_11.txt");
-		readFile("data/ARAS/DAY_12.txt");
-		readFile("data/ARAS/DAY_13.txt");
-		readFile("data/ARAS/DAY_14.txt");
-		readFile("data/ARAS/DAY_15.txt");
-		readFile("data/ARAS/DAY_16.txt");
-		readFile("data/ARAS/DAY_17.txt");
-		readFile("data/ARAS/DAY_18.txt");
-		readFile("data/ARAS/DAY_19.txt");		
-		readFile("data/ARAS/DAY_20.txt");
+		readFile("data/ARAS/"+House+"/DAY_11.txt");
+		readFile("data/ARAS/"+House+"/DAY_12.txt");
+		readFile("data/ARAS/"+House+"/DAY_13.txt");
+		readFile("data/ARAS/"+House+"/DAY_14.txt");
+		readFile("data/ARAS/"+House+"/DAY_15.txt");
+		readFile("data/ARAS/"+House+"/DAY_16.txt");
+		readFile("data/ARAS/"+House+"/DAY_17.txt");
+		readFile("data/ARAS/"+House+"/DAY_18.txt");
+		readFile("data/ARAS/"+House+"/DAY_19.txt");		
+		readFile("data/ARAS/"+House+"/DAY_20.txt");
 
-		readFile("data/ARAS/DAY_21.txt");
-		readFile("data/ARAS/DAY_22.txt");
-		readFile("data/ARAS/DAY_23.txt");
-		readFile("data/ARAS/DAY_24.txt");
-		readFile("data/ARAS/DAY_25.txt");
-		readFile("data/ARAS/DAY_26.txt");
-		readFile("data/ARAS/DAY_27.txt");
-		readFile("data/ARAS/DAY_28.txt");
-		readFile("data/ARAS/DAY_29.txt");
-		readFile("data/ARAS/DAY_30.txt");
+		readFile("data/ARAS/"+House+"/DAY_21.txt");
+		readFile("data/ARAS/"+House+"/DAY_22.txt");
+		readFile("data/ARAS/"+House+"/DAY_23.txt");
+		readFile("data/ARAS/"+House+"/DAY_24.txt");
+		readFile("data/ARAS/"+House+"/DAY_25.txt");
+		readFile("data/ARAS/"+House+"/DAY_26.txt");
+		readFile("data/ARAS/"+House+"/DAY_27.txt");
+		readFile("data/ARAS/"+House+"/DAY_28.txt");
+		readFile("data/ARAS/"+House+"/DAY_29.txt");
+		readFile("data/ARAS/"+House+"/DAY_30.txt");
 
 		//smoothing ();
 		computationADLs(5);
@@ -68,7 +72,7 @@ public class PseudoCount {
 		//computationADLs(2);
 		//computationADLs(3);
 
-		writeADLs("data/histResults.txt", 2); //1: vertical, 2: horizontal
+		writeADLs("data/histResults.txt", format); 
 		System.out.println("END!");
 	}
 
@@ -81,7 +85,7 @@ public class PseudoCount {
 				while ((line = reader.readLine()) != null) {
 					splitted = line.split("\\s+");					
 					for (int i=0; i<splitted.length; i++) {
-						if (i==20) { //i=20: person 1, i=21: person 2
+						if (i==person) { 
 							ADLs[rowNumber][Integer.parseInt(splitted[i])-1]++;
 							Float.parseFloat(splitted[i]);							
 						}
@@ -115,7 +119,7 @@ public class PseudoCount {
 				while ((line = reader.readLine()) != null) {
 					splitted = line.split("\\s+");					
 					for (int i=0; i<splitted.length; i++) {						
-						if (i==20) { //i=20: person 1, i=21: person 2
+						if (i==21) { //i=20: person 1, i=21: person 2
 							if((int) Math.floor(rowNumber/120)+k < 1440) {
 								ADLUnderSampling[(int) Math.floor(rowNumber/120)+k][Integer.parseInt(splitted[i])]++;
 								System.out.print("A:");
@@ -254,6 +258,26 @@ public class PseudoCount {
 			}
 
 			break;
+		case 7: //Smoothing		
+			float[][] temp = new float [R][C];
+
+			for (int j=0; j<C; j++) {
+				for (int i=0; i< R/60; i++) {
+					temp [i][j] = ADLSmoothing[i][j];
+				}
+			}
+
+			for (int j=0; j<C; j++) {
+				for (int i=0; i< R/60; i++) {
+					ADLSmoothing[i][j] = 0;
+					for (int w = (i>30) ? i-30 : 0; ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
+						ADLSmoothing[i][j] += (float) temp [w][j];
+					}
+					//System.out.println();
+					ADLSmoothing[i][j] /= 60.0f;
+				}
+			}
+			break;
 		case 8: //Mean with 120 samples		
 			for (int j=0; j<C; j++) {
 				float max=0;
@@ -267,26 +291,7 @@ public class PseudoCount {
 				}
 			}
 			break;
-		case 7: //Smoothing		
-			float[][] temp = new float [R][C];
-			
-			for (int j=0; j<C; j++) {
-				for (int i=0; i< R/60; i++) {
-					temp [i][j] = ADLSmoothing[i][j];
-				}
-			}
-			
-			for (int j=0; j<C; j++) {
-				for (int i=0; i< R/60; i++) {
-					ADLSmoothing[i][j] = 0;
-					for (int w = (i>30) ? i-30 : 0; ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
-						ADLSmoothing[i][j] += (float) temp [w][j];
-					}
-					System.out.println();
-					ADLSmoothing[i][j] /= 60.0f;
-				}
-			}
-			break;
+
 		}
 	}
 
