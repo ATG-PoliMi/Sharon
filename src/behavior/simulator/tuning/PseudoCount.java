@@ -10,7 +10,7 @@ import javax.media.jai.Histogram;
 
 
 public class PseudoCount {
-	//Parameters:
+	//***PARAMETERS:***
 	static String House ="HouseA"; 	//Options: "HouseA" || "HouseB"
 	static int person 	= 20;		//Options: 20: person 1, 21: person 2
 	static int format 	= 2;		//Options: 1: vertical, 2: horizontal (print layout)
@@ -250,6 +250,7 @@ public class PseudoCount {
 				e.printStackTrace();
 			}
 			break;
+			
 		case 2: //Print ADLSmoothing HORIZONTAL
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));

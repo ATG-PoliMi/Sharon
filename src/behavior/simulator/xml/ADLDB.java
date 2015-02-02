@@ -51,7 +51,14 @@ public class ADLDB {
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("stress", -0.05)))));
 		adl.put(2, new ADL (2, "Going Out", days, independent, TimeDependancy.get(1), 45,
 				new ArrayList<String>(Arrays.asList("asociality","stock")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("asociality", -0.001), new ADLEffect("stock", -0.001)))));
+				new ArrayList<ADLEffect>(Arrays.asList(
+						new ADLEffect("stress", 	-Constants.STRESS/4), 
+						new ADLEffect("hunger", 	-Constants.HUNGER/3), 
+						new ADLEffect("boredom", 	-Constants.BOREDOM/3), 
+						new ADLEffect("sweat", 		-Constants.SWEAT/3), 
+						new ADLEffect("toileting", 	-Constants.TOILETING), 
+						new ADLEffect("stock", 		-Constants.OUTOFSTOCK/3), 
+						new ADLEffect("dirtiness", 	-Constants.DIRTINESS/3)))));
 		adl.put(3, new ADL (3, "Breakfast", days, independent, TimeDependancy.get(3), 20,
 				new ArrayList<String>(Arrays.asList("hunger")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.05)))));
@@ -66,7 +73,14 @@ public class ADLDB {
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.04)))));
 		adl.put(7, new ADL (7, "Sleeping", days, independent, TimeDependancy.get(10), 200,
 				new ArrayList<String>(Arrays.asList("tirediness")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("tirediness", -(Constants.TIREDINESS + 0.002)),new ADLEffect("stress", -Constants.STRESS/4), new ADLEffect("hunger", -Constants.HUNGER/3), new ADLEffect("boredom", -Constants.BOREDOM/3), new ADLEffect("sweat", -Constants.SWEAT/3), new ADLEffect("toileting", -Constants.TOILETING*0.8), new ADLEffect("stock", -Constants.OUTOFSTOCK/3), new ADLEffect("dirtiness", -Constants.DIRTINESS/3)))));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("tirediness", -(Constants.TIREDINESS + 0.002)),
+						new ADLEffect("stress", 	-Constants.STRESS/4), 
+						new ADLEffect("hunger", 	-Constants.HUNGER/3), 
+						new ADLEffect("boredom", 	-Constants.BOREDOM/3), 
+						new ADLEffect("sweat", 		-Constants.SWEAT/3), 
+						new ADLEffect("toileting", 	-Constants.TOILETING), 
+						new ADLEffect("stock", 		-Constants.OUTOFSTOCK/3), 
+						new ADLEffect("dirtiness", 	-Constants.DIRTINESS/3)))));
 		adl.put(8, new ADL (8, "WatchingTV", days, independent, TimeDependancy.get(11), 45,
 				new ArrayList<String>(Arrays.asList("boredom","stress")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("boredom", -0.05), new ADLEffect("stress", -0.02)))));		
@@ -76,9 +90,9 @@ public class ADLDB {
 		adl.put(9,new ADL (9, "Shower", days, independent, TimeDependancy.get(13), 20,
 				new ArrayList<String>(Arrays.asList("sweat")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("sweat", -0.05)))));
-		adl.put(10, new ADL (10, "Toileting", days, independent, TimeDependancy.get(14), 5,
+		adl.put(10, new ADL (10, "Toileting", days, independent, TimeDependancy.get(14), 9,
 				new ArrayList<String>(Arrays.asList("toileting")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("toileting", -0.08)))));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("toileting", -0.1)))));
 		adl.put(11, new ADL (11, "Napping", days, independent, TimeDependancy.get(15), 10,
 				new ArrayList<String>(Arrays.asList("tirediness")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("tirediness", -0.01),new ADLEffect("stress", -0.01)))));
@@ -151,8 +165,6 @@ public class ADLDB {
 				e.printStackTrace();
 			}
 	    }
-	    
-
 		return timeDependancyAL;
 	}
 }

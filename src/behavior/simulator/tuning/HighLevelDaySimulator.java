@@ -78,7 +78,8 @@ public class HighLevelDaySimulator {
 		//Check Better ADL
 		for (ADL a : hLADL.values()) {
 
-			if ((a != badl) && (a.getRank() > badl.getRank()) && (usedTime > 60 * badl.getMinTime())) {
+			if ((a != badl) && (a.getRank() > badl.getRank()) && 
+					(usedTime > 60 * badl.getMinTime())) {
 				changedADL		= 1;
 				badl.setActive(0);
 				badl 			= a;
@@ -165,7 +166,7 @@ public class HighLevelDaySimulator {
 				r += needsEffort(a, i) * needs[i];					
 			}
 
-			r *= (Math.random() < a.getExactTimeDescription(minute/60)) ? 1 : 0 * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
+			r *= (Math.random() < a.getExactTimeDescription(minute/60)) ? 1 : a.getExactTimeDescription(minute/60) * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
 					active * (0.80 + Math.random()*(1-0.80));
 			a.setRank(r);
 		}
@@ -274,19 +275,19 @@ public class HighLevelDaySimulator {
 				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 			+ Constants.HUNGER);
 			if (Needs.getInstance().getStress() 	< 1.0) 
 				Needs.getInstance().setStress(Needs.getInstance().getStress() 			+ Constants.STRESS);
-			if (Needs.getInstance().getSweat() 	< 1.0) 
+			if (Needs.getInstance().getSweat() 		< 1.0) 
 				Needs.getInstance().setSweat(Needs.getInstance().getSweat()				+ Constants.SWEAT);
 			if (Needs.getInstance().getToileting() 	< 1.0) 
 				Needs.getInstance().setToileting(Needs.getInstance().getToileting()		+ Constants.TOILETING);
-			if (Needs.getInstance().getTirediness() 	< 1.0) 
+			if (Needs.getInstance().getTirediness() < 1.0) 
 				Needs.getInstance().setTirediness(Needs.getInstance().getTirediness()	+ Constants.TIREDINESS);
-			if (Needs.getInstance().getBoredom() 		< 1.0) 
+			if (Needs.getInstance().getBoredom() 	< 1.0) 
 				Needs.getInstance().setBoredom(Needs.getInstance().getBoredom()			+ Constants.BOREDOM);
-			if (Needs.getInstance().getAsociality() 	< 1.0) 
+			if (Needs.getInstance().getAsociality() < 1.0) 
 				Needs.getInstance().setAsociality(Needs.getInstance().getAsociality()	+ Constants.ASOCIALITY);
 			if (Needs.getInstance().getDirtiness() 	< 1.0) 
 				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()		+ Constants.DIRTINESS);
-			if (Needs.getInstance().getOutOfStock() 		< 1.0) 
+			if (Needs.getInstance().getOutOfStock() < 1.0) 
 				Needs.getInstance().setOutOfStock(Needs.getInstance().getOutOfStock()	+ Constants.OUTOFSTOCK);
 			updateADLNeeds(badl);
 		}		
