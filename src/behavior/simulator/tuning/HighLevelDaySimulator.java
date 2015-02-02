@@ -160,13 +160,13 @@ public class HighLevelDaySimulator {
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
-			active = (a.getActive() > 0) ? 1 : 0.5;
+			active = (a.getActive() > 0) ? 1 : 0.7;
 			for (int i=0; i<needs.length; i++) {
 				r += needsEffort(a, i) * needs[i];					
 			}
 
-			r *= a.getExactTimeDescription(minute/60) * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
-					active * (0.80+Math.random()*(1-0.80));
+			r *= (Math.random() < a.getExactTimeDescription(minute/60)) ? 1 : 0 * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
+					active * (0.80 + Math.random()*(1-0.80));
 			a.setRank(r);
 		}
 	}

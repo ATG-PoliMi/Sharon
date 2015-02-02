@@ -16,7 +16,7 @@ public class PseudoCount {
 	static int format 	= 2;		//Options: 1: vertical, 2: horizontal (print layout)
 	static int print 	= 1;		//Options: 1: ADLSmoothing, 2: ADLNotSmoothed (Array to print)
 	//***END PARAMETERS***
-	
+
 	static int R = 86400;
 	static int C = 27;
 
@@ -65,12 +65,14 @@ public class PseudoCount {
 		readFile("data/ARAS/"+House+"/DAY_30.txt");
 
 		computationADLs(1); //Merge of unused ADLs
-		
+
 		computationADLs(2);	//ADLNotSmoothed: reduce dimensionality and normalization to 30
-		
+
 		computationADLs(4);	//ADLSmoothed: reduce dimensionality with overlap (60+60)
-		computationADLs(5);	//Smoothing	
-		computationADLs(6);	//Normalization to 1
+		computationADLs(5);	//Smoothing
+
+		//computationADLs(6);	//Normalization to 1
+		computationADLs(7);		//Normalization (120*30)
 
 
 		writeADLs("data/histResults.txt", format, print); 
@@ -112,7 +114,7 @@ public class PseudoCount {
 
 	private static void computationADLs(int operation) {
 		switch (operation) {
-		
+
 		case 1: //Merge of ADLs
 			for (int i=0; i<R; i++) {
 				for (int j=0; j<C; j++) {
@@ -125,7 +127,7 @@ public class PseudoCount {
 					ADLs [i][7] += ADLs[i][6];
 					ADLs[i][6] = 0;
 
-					ADLs [i][13] += 	ADLs[i][8] + 
+					ADLs [i][13] += ADLs[i][8] + 
 							ADLs [i][19] + ADLs [i][20];
 					ADLs[i][8] = 0;
 					ADLs[i][19] = 0;
@@ -213,6 +215,13 @@ public class PseudoCount {
 				for (int i=0; i<R/60; i++) {
 					ADLSmoothing[i][j] = (max>0) ? ADLSmoothing[i][j]/max : ADLSmoothing[i][j];
 					ADLSmoothing[i][j] = Math.min(ADLSmoothing[i][j] + 0.05f, 1.0f);
+				}
+			}
+			break;
+		case 7: //Normalization (120*30)
+			for (int i=0; i<R/60; i++){
+				for (int j=0; j<C; j++) {
+					ADLSmoothing[i][j] /= 120.0f*30.0f;
 				}
 			}
 			break;
