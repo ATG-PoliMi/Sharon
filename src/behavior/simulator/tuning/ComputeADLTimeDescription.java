@@ -51,9 +51,9 @@ public class ComputeADLTimeDescription {
 			//			description [i] += timeDependence(i, 2.0, 2.0, 21*60, 60)/2;
 			//WC
 			//description [i] = ((i<400)||(i>1310)) ? (Math.random()*0.05) : 0.30;
-			description [i] += timeDependence(i, 2.0, 2.0, 12*60, 360)/6;
-			description [i] += timeDependence(i, 2.0, 2.0, 16*60, 300)/6;
-			description [i] += timeDependence(i, 2.0, 2.0, 23*60, 30)/2;			
+			//			description [i] += timeDependence(i, 2.0, 2.0, 12*60, 360)/6;
+			//			description [i] += timeDependence(i, 2.0, 2.0, 16*60, 300)/6;
+			//			description [i] += timeDependence(i, 2.0, 2.0, 23*60, 30)/2;			
 			//description [i] += Math.random()*0.05;
 
 			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0

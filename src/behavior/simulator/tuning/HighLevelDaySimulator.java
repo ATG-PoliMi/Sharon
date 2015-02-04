@@ -7,6 +7,7 @@ import java.util.Random;
 
 import utils.Constants;
 import utils.CumulateHistogram;
+import utils.Distributions;
 import utils.Time;
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.extractor.ADLEffect;
@@ -70,7 +71,9 @@ public class HighLevelDaySimulator {
 			}
 		}
 		hist.refineHistogram(300.0f);
-		hist.printToFile("data/histResults.txt",1);		
+		hist.printToFile("data/histResults.txt",2);
+		//Distributions.loadDistributions("data/TimeDependancyArray.txt", "data/histResults.txt");
+		Distributions.loadDistributions("data/TimeDependancyArray.txt", "data/TimeDependancyArray.txt");
 	}	
 
 	private static int checkBetterADL() {
