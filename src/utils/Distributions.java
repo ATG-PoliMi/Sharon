@@ -70,7 +70,7 @@ public class Distributions {
 			//Somm(Pi*ln(Pi/Qi))
 			for (int i=0; i<P.length; i++) {
 				if ((P[i]>0)&&(Q[i]>0))
-					divergence += P[i] * Math.log1p((P[i]/Q[i]));
+					divergence += P[i] * Math.log((P[i]/Q[i]));				
 			}
 			return divergence;
 		} else {
@@ -81,12 +81,22 @@ public class Distributions {
 
 	public static float bhattacharyya (Float [] P, Float [] Q){
 		if (P.length == Q.length) {
-			float distance = 0;
-			//-ln(Somm(sqrt(Pi*Qi))
+			float distance = 0, b, max=0;
+			float Pmean=0, Qmean=0;
 			for (int i=0; i<P.length; i++) {
 				distance += Math.sqrt(P[i]*Q[i]);
+				Pmean += P[i];
+				Qmean += Q[i];
+				max = Math.max(max, P[i]);
 			}
-			distance = (float) -Math.log1p(distance);
+			
+			Pmean /= P.length;
+			Qmean /= Q.length;
+			
+			b = (float) (((Pmean * Qmean * P.length * P.length) > 0) ? 
+					1/(Math.sqrt(Pmean * Qmean * P.length * P.length)) : 0.0f);			
+			
+			distance = (float) Math.sqrt(1-(b*distance));
 			return distance;
 		} else {
 			System.out.println("Distribution with different lengths");
