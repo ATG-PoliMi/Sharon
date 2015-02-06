@@ -69,7 +69,8 @@ public class Distributions {
 			float divergence = 0;
 			//Somm(Pi*ln(Pi/Qi))
 			for (int i=0; i<P.length; i++) {
-				divergence += P[i] * Math.log1p((P[i]/Q[i]));
+				if ((P[i]>0)&&(Q[i]>0))
+					divergence += P[i] * Math.log1p((P[i]/Q[i]));
 			}
 			return divergence;
 		} else {
