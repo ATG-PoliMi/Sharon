@@ -72,8 +72,12 @@ public class HighLevelDaySimulator {
 		}
 		hist.refineHistogram(300.0f);
 		hist.printToFile("data/histResults.txt",2);
-		//Distributions.loadDistributions("data/TimeDependancyArray.txt", "data/histResults.txt");
-		Distributions.loadDistributions("data/TimeDependancyArray.txt", "data/TimeDependancyArray.txt");
+//		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
+//				"data/TimeDependancyArray.txt");
+		Distributions.loadDistributions("data/histResults.txt",
+				"data/TimeDependancyArray.txt");
+//		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
+//				"data/histResults.txt"); //A > B : error
 	}	
 
 	private static int checkBetterADL() {

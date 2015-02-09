@@ -149,7 +149,7 @@ public class PseudoCount {
 			}			
 			for (int i=0; i<R/60; i++) {
 				for (int j=0; j<C; j++) {
-					ADLNotSmoothed[i][j] /= 30.0f;					
+					ADLNotSmoothed[i][j] /= 30.0f;		//# of days			
 				}
 			}
 			break;

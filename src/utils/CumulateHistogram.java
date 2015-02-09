@@ -70,8 +70,6 @@ public class CumulateHistogram {
 		for (int i=0; i<timeGranularity; i++) {
 			for (int j=0; j<Constants.ADLCOUNT; j++) {
 				System.out.print(
-						//(int)Math.ceil(ADLsCount[i][j]/(1))
-						//(int)Math.ceil(ADLsCount[i][j]/(100))
 						(float)ADLsCount[i][j]
 						+"\t");
 			}
@@ -79,6 +77,10 @@ public class CumulateHistogram {
 		}
 	}
 	
+	/**
+	 * This method prints exactly ADL obtained
+	 * TODO: correct the input ADL and then remove if clause
+	 */
 	public void printToFile (String outputFile, int target) {		
 			PrintWriter out;
 			switch(target) {
@@ -97,10 +99,21 @@ public class CumulateHistogram {
 					e.printStackTrace();
 				}
 				break;
+				
 			case 2: //Print ADLSmoothing HORIZONTAL
 				try {
 					out = new PrintWriter(new FileWriter(outputFile));
 					for (int j=0; j<Constants.ADLCOUNT; j++) {
+						
+						if ((j ==2)||(j ==4)||(j ==6)||(j ==8)||
+								(j ==19)||(j ==20)||(j ==24)||(j ==25)) {
+							
+							for (int i=0; i<timeGranularity; i++) {
+								out.print("0.0 ");
+							}
+							out.println();
+						}
+						
 						for (int i=0; i<timeGranularity; i++) {
 							out.print(ADLsCount[i][j]+" ");	    		
 						}

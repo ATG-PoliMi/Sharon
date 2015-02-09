@@ -81,16 +81,15 @@ public class Distributions {
 
 	public static float bhattacharyya (Float [] P, Float [] Q){
 		if (P.length == Q.length) {
-			float distance = 0;
-			float Ps=0, Qs=0, den=0, num=0;
+			float distance, Ps=0, Qs=0, den=0, num=0;
 			
 			for (int i=0; i<P.length; i++) {
 				num += (float) Math.sqrt(P[i]*Q[i]);
 				Ps += P[i];
-				Qs += P[i];
+				Qs += Q[i];
 			}
-			den = (float) Math.sqrt(Ps*Qs);						
-			distance = (float) Math.sqrt(1-(num/den));		
+			den = (float) Math.sqrt(Ps*Qs);
+			distance = (den == 0) ? 0 : (float) Math.sqrt(1-(num/den));		
 			
 			return distance;
 		} else {
