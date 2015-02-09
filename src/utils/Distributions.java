@@ -81,22 +81,17 @@ public class Distributions {
 
 	public static float bhattacharyya (Float [] P, Float [] Q){
 		if (P.length == Q.length) {
-			float distance = 0, b, max=0;
-			float Pmean=0, Qmean=0;
+			float distance = 0;
+			float Ps=0, Qs=0, den=0, num=0;
+			
 			for (int i=0; i<P.length; i++) {
-				distance += Math.sqrt(P[i]*Q[i]);
-				Pmean += P[i];
-				Qmean += Q[i];
-				max = Math.max(max, P[i]);
+				num += (float) Math.sqrt(P[i]*Q[i]);
+				Ps += P[i];
+				Qs += P[i];
 			}
+			den = (float) Math.sqrt(Ps*Qs);						
+			distance = (float) Math.sqrt(1-(num/den));		
 			
-			Pmean /= P.length;
-			Qmean /= Q.length;
-			
-			b = (float) (((Pmean * Qmean * P.length * P.length) > 0) ? 
-					1/(Math.sqrt(Pmean * Qmean * P.length * P.length)) : 0.0f);			
-			
-			distance = (float) Math.sqrt(1-(b*distance));
 			return distance;
 		} else {
 			System.out.println("Distribution with different lengths");
