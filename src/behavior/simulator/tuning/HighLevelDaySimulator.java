@@ -70,10 +70,12 @@ public class HighLevelDaySimulator {
 				usedTime=0;
 			}
 		}
-		hist.refineHistogram(300.0f);
+		//hist.refineHistogram(300.0f);		
+		hist.normalizationTo1Histogram();
 		hist.printToFile("data/histResults.txt",2);
 //		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
 //				"data/TimeDependancyArray.txt");
+		//histResults, ARAS_ADL_Normalized
 		Distributions.loadDistributions("data/histResults.txt",
 				"data/ARAS_ADL_Normalized.txt");
 //		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
@@ -162,8 +164,7 @@ public class HighLevelDaySimulator {
 	 * @param minute
 	 */
 	private static void computeADLRank(int minute) {
-		double r;
-		double active;
+		double r, active;
 		
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {

@@ -19,7 +19,7 @@ public class Distributions {
 
 		for (int i=0; i < Math.min(P.size(), Q.size()); i++) {			
 			divergenceKL[i] 	= kullbackLeibler	(P.get(i),	Q.get(i));
-			distanceBC	[i] 	= bhattacharyya	(P.get(i),	Q.get(i));
+			distanceBC	[i] 	= bhattacharyya		(P.get(i),	Q.get(i));
 		}
 		printDistribution(divergenceKL, "data/distributions/KL.txt");
 		printDistribution(distanceBC, 	"data/distributions/BC.txt");
@@ -78,7 +78,6 @@ public class Distributions {
 			return 0;
 		}
 	}
-
 	public static float bhattacharyya (Float [] P, Float [] Q){
 		if (P.length == Q.length) {
 			float distance, Ps=0, Qs=0, den=0, num=0;
@@ -90,11 +89,10 @@ public class Distributions {
 			}
 			den = (float) Math.sqrt(Ps*Qs);
 			distance = (den == 0) ? 0 : (float) Math.sqrt(1-(num/den));		
-			
 			return distance;
 		} else {
 			System.out.println("Distribution with different lengths");
 			return 0;			
 		}
-	}
+	}	
 }

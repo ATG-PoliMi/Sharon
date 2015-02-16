@@ -72,15 +72,15 @@ public class PseudoCount {
 
 		//The sum of all the elements of each ADL is 1.0
 		computationADLs(3);
-		
+
 		//ADLSmoothed
 		computationADLs(4);	//ADLSmoothed: reduce dimensionality with overlap (60+60)
 		computationADLs(5);	//Smoothing
 
 		//computationADLs(6);	//Normalization to 1 and minimum value 0.05
 		computationADLs(7);		//Normalization (120*30)
-		
-		
+
+
 		writeADLs("data/ARAS_ADL_Normalized.txt", format, print); 
 		System.out.println("END!");
 	}
@@ -214,7 +214,7 @@ public class PseudoCount {
 				}
 			}
 			break;
-			
+
 		case 6: //Normalization to 1 and minimum value 0.05
 			for (int j=0; j<C; j++) {
 				float max=0;
@@ -228,7 +228,7 @@ public class PseudoCount {
 				}
 			}
 			break;
-			
+
 		case 7: //Normalization (120*30)
 			for (int i=0; i<R/60; i++){
 				for (int j=0; j<C; j++) {
@@ -236,7 +236,7 @@ public class PseudoCount {
 				}
 			}
 			break;
-	
+
 		}
 	}
 
@@ -249,10 +249,15 @@ public class PseudoCount {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int i=0; i<R/60; i++) {		    	
 					for (int j=0; j<C; j++) {
-						if (printing == 1)
-							out.print(ADLSmoothing[i][j]+"\t");
-						else
-							out.print(ADLNotSmoothed[i][j]+"\t");
+						if ((j!=2)&&(j!=4)&&(j!=6)&&(j!=8)&&(j!=19)
+								&&(j!=20)&&(j!=24)&&(j!=25)){
+							if (printing == 1)
+								out.print(ADLSmoothing[i][j]+"\t");
+							else if (printing == 2)
+								out.print(ADLNotSmoothed[i][j]+"\t");
+							else
+								out.print(ADLNormalizedTo1[i][j]+"\t");
+						}
 					}
 					out.println();
 				}
@@ -262,19 +267,29 @@ public class PseudoCount {
 				e.printStackTrace();
 			}
 			break;
-			
-		case 2: //Print ADLSmoothing HORIZONTAL
+
+		case 2: //Print ADLS HORIZONTAL
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int j=0; j<C; j++) {
-					for (int i=0; i<R/60; i++) {
-						if (printing == 1)
-							out.print(ADLSmoothing[i][j]+"\t");
-						else
-							out.print(ADLNotSmoothed[i][j]+"\t");	    		
+					if ((j==0)||(j==1)||(j==3)||(j==5)||(j==7)||
+							(j==9)||(j==10)||(j==11)||(j==13)||(j==14)||
+							(j==15)||(j==16)||(j==17)||(j==18)||(j==21)||
+							(j==22)||(j==23)) {
+						for (int i=0; i<R/60; i++) {
+							if (printing == 1)
+								out.print(ADLSmoothing[i][j]+"\t");
+							else if (printing == 2)
+								out.print(ADLNotSmoothed[i][j]+"\t");
+							else {
+								out.print(ADLNormalizedTo1[i][j]+"\t");
+							}
+						}
+						out.println();
+
 					}
-					out.println();
 				}
+
 				out.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

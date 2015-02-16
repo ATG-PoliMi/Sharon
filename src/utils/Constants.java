@@ -4,8 +4,6 @@ import behavior.simulator.extractor.Needs;
 
 public class Constants {	
 
-
-
 	//Repast Simphony
 	public static final int mapID = 1;
 	public static final int mapSizeH = 30;
