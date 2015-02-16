@@ -75,7 +75,7 @@ public class HighLevelDaySimulator {
 //		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
 //				"data/TimeDependancyArray.txt");
 		Distributions.loadDistributions("data/histResults.txt",
-				"data/TimeDependancyArray.txt");
+				"data/ARAS_ADL_Normalized.txt");
 //		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
 //				"data/histResults.txt"); //A > B : error
 	}	

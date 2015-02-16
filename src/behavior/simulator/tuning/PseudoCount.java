@@ -14,7 +14,7 @@ public class PseudoCount {
 	static String House ="HouseA"; 	//Options: "HouseA" || "HouseB"
 	static int person 	= 20;		//Options: 20: person 1, 21: person 2
 	static int format 	= 2;		//Options: 1: vertical, 2: horizontal (print layout)
-	static int print 	= 1;		//Options: 1: ADLSmoothing, 2: ADLNotSmoothed (Array to print)
+	static int print 	= 3;		//Options: 1: ADLSmoothing, 2: ADLNotSmoothed, 3:ADLNormalizedTo1 (Array to print)
 	//***END PARAMETERS***
 
 	static int R = 86400;
@@ -24,6 +24,7 @@ public class PseudoCount {
 	static float [][] ADLs 				= new float [R][C];
 	static float [][] ADLSmoothing 		= new float [R][C];
 	static float [][] ADLNotSmoothed 	= new float [R/60][C];
+	static float [][] ADLNormalizedTo1 	= new float [R/60][C];
 	static float p, pCount;
 
 	static int rowNumber = 0;
@@ -66,16 +67,21 @@ public class PseudoCount {
 
 		computationADLs(1); //Merge of unused ADLs
 
+		//ADLNotSmoothed
 		computationADLs(2);	//ADLNotSmoothed: reduce dimensionality and normalization to 30
 
+		//The sum of all the elements of each ADL is 1.0
+		computationADLs(3);
+		
+		//ADLSmoothed
 		computationADLs(4);	//ADLSmoothed: reduce dimensionality with overlap (60+60)
 		computationADLs(5);	//Smoothing
 
-		//computationADLs(6);	//Normalization to 1
+		//computationADLs(6);	//Normalization to 1 and minimum value 0.05
 		computationADLs(7);		//Normalization (120*30)
-
-
-		writeADLs("data/histResults.txt", format, print); 
+		
+		
+		writeADLs("data/ARAS_ADL_Normalized.txt", format, print); 
 		System.out.println("END!");
 	}
 
@@ -154,17 +160,20 @@ public class PseudoCount {
 			}
 			break;
 
-		case 3: //UnderSampling (NO)
-			for (int j=0; j<C; j++) {
-				for (int i=0; i< R/60; i++) {
-					ADLNotSmoothed[i][j] = 0;
-					for (int w = Math.max(i-30, 0); ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
-						ADLNotSmoothed[i][j] += (float) ADLSmoothing [w][j];
-					}
-					ADLNotSmoothed[i][j] /= 120.0f * 30.0f;
+		case 3: //Normalization to 1 as MAX Values
+			float [] sum= new float[C];
+			for (int i=0; i<R; i+=60) {
+				for (int j=0; j<C; j++) {
+					ADLNormalizedTo1[i/60][j] = ADLs[i][j];
+					sum[j] += ADLs[i][j];
+				}				
+			}			
+			for (int i=0; i<R/60; i++) {
+				for (int j=0; j<C; j++) {
+					ADLNormalizedTo1[i][j] /= sum[j];		//The sum of all the elements of the histogram is 1.0 			
 				}
 			}
-			break;
+			break;	
 
 		case 4: //Reduce dimensionality with overlap (60+60)
 			int k,p;
@@ -205,7 +214,8 @@ public class PseudoCount {
 				}
 			}
 			break;
-		case 6: //Normalization to 1	
+			
+		case 6: //Normalization to 1 and minimum value 0.05
 			for (int j=0; j<C; j++) {
 				float max=0;
 				for (int i=0; i<R/60; i++) {
@@ -214,10 +224,11 @@ public class PseudoCount {
 
 				for (int i=0; i<R/60; i++) {
 					ADLSmoothing[i][j] = (max>0) ? ADLSmoothing[i][j]/max : ADLSmoothing[i][j];
-					ADLSmoothing[i][j] = Math.min(ADLSmoothing[i][j] + 0.05f, 1.0f);
+					ADLSmoothing[i][j] = Math.min(ADLSmoothing[i][j] + 0.05f, 1.0f); 				//Adds a minimum value for each ADL
 				}
 			}
 			break;
+			
 		case 7: //Normalization (120*30)
 			for (int i=0; i<R/60; i++){
 				for (int j=0; j<C; j++) {
@@ -225,6 +236,7 @@ public class PseudoCount {
 				}
 			}
 			break;
+	
 		}
 	}
 
