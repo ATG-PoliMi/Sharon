@@ -29,7 +29,7 @@ public class Constants {
 	public static double SWEAT = 0.0006;	
 	public static double TOILETING = 0.009;//0.0056
 	public static double TIREDINESS = 0.0010; //0.0025
-	public static double BOREDOM = 0.004;
+	public static double BOREDOM = 0.006;
 	public static double ASOCIALITY = 0.001;
 	public static double DIRTINESS = 0.0001;
 	public static double OUTOFSTOCK = 0.0001;

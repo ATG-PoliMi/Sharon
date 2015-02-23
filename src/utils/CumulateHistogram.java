@@ -109,12 +109,10 @@ public class CumulateHistogram {
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int j=0; j<Constants.ADLCOUNT; j++) {
-
-					for (int i=0; i<timeGranularity; i++) {
-						out.print(ADLsCount[i][j]+" ");	    		
-					}
-					out.println();
-
+						for (int i=0; i<timeGranularity; i++) {
+							out.print(ADLsCount[i][j]+" ");	    		
+						}
+						out.println();					
 				}
 				out.close();
 			} catch (IOException e) {

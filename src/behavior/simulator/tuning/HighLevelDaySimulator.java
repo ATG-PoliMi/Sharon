@@ -34,7 +34,7 @@ public class HighLevelDaySimulator {
 	static RandomGaussian gaussian = new RandomGaussian();
 	static long 	tick;
 	static long 	usedTime = 0;
-	static int 		changedADL = 0;
+
 	static CumulateHistogram hist = new CumulateHistogram();
 
 	//Support ADL
@@ -77,24 +77,22 @@ public class HighLevelDaySimulator {
 
 	private static void checkBetterADL() {
 		ADL cadl = hLADL.get(1);		
-		changedADL=0;
 
 		if (usedTime > 60*badl.getMinTime()){
-			
+
 			//Check Better ADL
 			for (ADL a : hLADL.values()) {			
-				if ((a.getActive()<1) && (a.getRank() > cadl.getRank())) {				
-					changedADL		= 1;				
+				if ((a.getRank() >= cadl.getRank())) {
 					cadl 			= a;
 				}			
-			}			
+			}		
 
-			if (changedADL>0){
+			if(cadl.getRank() > 0.01 && cadl.getName() != badl.getName()) {
 				badl.setActive(0);
 				badl = cadl;
 				badl.setActive(1);
 				usedTime=0;
-				Logs(1);
+				Logs(1);		
 			}
 		}
 	}

@@ -208,10 +208,10 @@ public class PseudoCount {
 			for (int j=0; j<C; j++) {
 				for (int i=0; i< R/60; i++) {
 					ADLSmoothing[i][j] = 0;
-					for (int w = Math.max(i-15, 0); ((i+15)<(R/30)) ? w<i+15 : w<R/30-1; w++) {
+					for (int w = Math.max(i-8, 0); ((i+8)<(R/16)) ? w<i+8 : w<R/16-1; w++) {
 						ADLSmoothing[i][j] += (float) temp [w][j];
 					}
-					ADLSmoothing[i][j] /= 30.0f;
+					ADLSmoothing[i][j] /= 16.0f;
 				}
 			}
 			break;
@@ -294,7 +294,7 @@ public class PseudoCount {
 			}
 			break;
 
-		case 2: //Print ADLS HORIZONTAL
+		case 3: //Print ADLS HORIZONTAL
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int j=0; j<C; j++) {
@@ -318,14 +318,14 @@ public class PseudoCount {
 				e.printStackTrace();
 			}
 			break;		
-		case 3: //Print ADLS HORIZONTAL
+		case 2: //Print ADLS HORIZONTAL
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int j=0; j<C; j++) {
 					if ((j==0)||(j==1)||(j==3)||(j==5)||(j==7)||
 							(j==9)||(j==10)||(j==11)||(j==13)||(j==14)||
 							(j==15)||(j==16)||(j==17)||(j==18)||(j==21)||
-							(j==22)||(j==23)) {
+							(j==22)||(j==23)) { 
 						for (int i=0; i<R/60; i++) {
 							if (printing == 1)
 								out.print(ADLSmoothing[i][j]+	"\t");
