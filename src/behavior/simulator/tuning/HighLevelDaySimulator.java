@@ -3,7 +3,7 @@ package behavior.simulator.tuning;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
+
 
 import utils.Constants;
 import utils.CumulateHistogram;
@@ -33,14 +33,12 @@ public class HighLevelDaySimulator {
 	//Utils
 	static RandomGaussian gaussian = new RandomGaussian();
 	static long 	tick;
-	static int 		keyBadl;
 	static long 	usedTime = 0;
 	static int 		changedADL = 0;
 	static CumulateHistogram hist = new CumulateHistogram();
 
 	//Support ADL
 	static ADL badl;
-	static ADL finishingADL;
 
 	public static void main(String[] args) {	
 
@@ -48,7 +46,7 @@ public class HighLevelDaySimulator {
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
 		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
-		finishingADL= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
+
 
 		for (tick=0; tick <= 86400*300; tick++) {
 			usedTime++;
@@ -59,48 +57,46 @@ public class HighLevelDaySimulator {
 			if (tick % 60 == 0) {				
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
 				computeADLRank((int) tick % 86400);
-				changedADL = checkBetterADL();
+				checkBetterADL();
 				//Logs(3); Hour histogram
 				Logs(4);
 			}
-			if (changedADL == 1) {
-				//Operations when a new ADL is selected
-				changedADL=0;
-				Logs(1);
-				usedTime=0;
-			}
+
 		}
 		//hist.refineHistogram(300.0f);		
 		hist.normalizationTo1Histogram();
 		hist.printToFile("data/histResults.txt",2);
-//		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
-//				"data/TimeDependancyArray.txt");
+		//		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
+		//				"data/TimeDependancyArray.txt");
 		//histResults, ARAS_ADL_Normalized
 		Distributions.loadDistributions("data/histResults.txt",
 				"data/ARAS_ADL_Normalized.txt");
-//		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
-//				"data/histResults.txt"); //A > B : error
+		//		Distributions.loadDistributions("data/TimeDependancyArray.txt", 
+		//				"data/histResults.txt"); //A > B : error
 	}	
 
-	private static int checkBetterADL() {
+	private static void checkBetterADL() {
+		ADL cadl = hLADL.get(1);		
 		changedADL=0;
-		//Check Better ADL
-		for (ADL a : hLADL.values()) {
 
-			if ((a != badl) && (a.getRank() > badl.getRank()) && 
-					(usedTime > 60 * badl.getMinTime())) {
-				changedADL		= 1;
+		if (usedTime > 60*badl.getMinTime()){
+			
+			//Check Better ADL
+			for (ADL a : hLADL.values()) {			
+				if ((a.getActive()<1) && (a.getRank() > cadl.getRank())) {				
+					changedADL		= 1;				
+					cadl 			= a;
+				}			
+			}			
+
+			if (changedADL>0){
 				badl.setActive(0);
-				badl 			= a;
-				keyBadl 		= a.getId();
+				badl = cadl;
+				badl.setActive(1);
+				usedTime=0;
+				Logs(1);
 			}
-			badl.setActive(1);
-
 		}
-		if (changedADL>0){
-			//Logs(1);
-		}
-		return changedADL;
 	}
 
 	private static void newDay() {
@@ -165,7 +161,7 @@ public class HighLevelDaySimulator {
 	 */
 	private static void computeADLRank(int minute) {
 		double r, active;
-		
+
 		double needs[] = Needs.getInstance().loadNeeds();
 		for (ADL a : hLADL.values()) {
 			r = 0;			
@@ -189,13 +185,13 @@ public class HighLevelDaySimulator {
 		if (a.getNeeds() != null) {
 			switch (i) {
 			case 0: 
-				needed += a.getNeeds().contains("hunger") 	? 1 : 0;
+				needed += a.getNeeds().contains("hunger") 		? 1 : 0;
 				break;
 			case 1: 
-				needed += a.getNeeds().contains("stress") 	? 1 : 0;
+				needed += a.getNeeds().contains("stress") 		? 1 : 0;
 				break;
 			case 2: 
-				needed += a.getNeeds().contains("sweat") 	? 1 : 0;
+				needed += a.getNeeds().contains("sweat") 		? 1 : 0;
 				break;
 			case 3: 
 				needed += a.getNeeds().contains("toileting") 	? 1 : 0;
@@ -207,13 +203,13 @@ public class HighLevelDaySimulator {
 				needed += a.getNeeds().contains("boredom") 		? 1 : 0;
 				break;
 			case 6: 
-				needed += a.getNeeds().contains("asociality")? 1 : 0;
+				needed += a.getNeeds().contains("asociality")	? 1 : 0;
 				break;
 			case 7: 
 				needed += a.getNeeds().contains("outofstock") 	? 1 : 0;
 				break;
 			case 8: 
-				needed += a.getNeeds().contains("dirtiness")? 1 : 0;
+				needed += a.getNeeds().contains("dirtiness")	? 1 : 0;
 				break;
 			}
 		}
@@ -238,9 +234,15 @@ public class HighLevelDaySimulator {
 			System.out.printf (", Di:%.2f", 	Needs.getInstance().getDirtiness());		
 			System.out.println();
 
+			double cBest=0;
 			for (ADL a : hLADL.values())  {
-				if (a.getRank()>0)
-					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());											
+
+				//				if (a.getRank()>0)
+				//					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
+				if (a.getRank()>cBest){
+					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
+					cBest = a.getRank();
+				}
 			}
 			System.out.println();
 			System.out.print ("ADL SELECTED: "+ badl.getName() +" with rank ");
@@ -274,7 +276,7 @@ public class HighLevelDaySimulator {
 	}
 
 	/**
-	 * Updates user's and house's needs
+	 * Updates user's and house needs
 	 */
 	private static void updateNeeds(int times) {
 

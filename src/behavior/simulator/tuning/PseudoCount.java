@@ -13,8 +13,8 @@ public class PseudoCount {
 	//***PARAMETERS:***
 	static String House ="HouseA"; 	//Options: "HouseA" || "HouseB"
 	static int person 	= 20;		//Options: 20: person 1, 21: person 2
-	static int format 	= 2;		//Options: 1: vertical, 2: horizontal (print layout)
-	static int print 	= 3;		//Options: 1: ADLSmoothing, 2: ADLNotSmoothed, 3:ADLNormalizedTo1 (Array to print)
+	static int format 	= 2;		//Print layout, options: 1: vertical, 2: horizontal
+	static int print 	= 1;		//Array to print, options: 1: ADLSmoothing, 2: ADLNotSmoothed, 3:ADLNormalizedTo1
 	//***END PARAMETERS***
 
 	static int R = 86400;
@@ -71,7 +71,8 @@ public class PseudoCount {
 		computationADLs(2);	//ADLNotSmoothed: reduce dimensionality and normalization to 30
 
 		//The sum of all the elements of each ADL is 1.0
-		computationADLs(3);
+		//computationADLs(3); //not smoothed
+		computationADLs(8); //smoothed
 
 		//ADLSmoothed
 		computationADLs(4);	//ADLSmoothed: reduce dimensionality with overlap (60+60)
@@ -207,10 +208,10 @@ public class PseudoCount {
 			for (int j=0; j<C; j++) {
 				for (int i=0; i< R/60; i++) {
 					ADLSmoothing[i][j] = 0;
-					for (int w = Math.max(i-30, 0); ((i+30)<(R/60)) ? w<i+30 : w<R/60-1; w++) {
+					for (int w = Math.max(i-15, 0); ((i+15)<(R/30)) ? w<i+15 : w<R/30-1; w++) {
 						ADLSmoothing[i][j] += (float) temp [w][j];
 					}
-					ADLSmoothing[i][j] /= 60.0f;
+					ADLSmoothing[i][j] /= 30.0f;
 				}
 			}
 			break;
@@ -236,6 +237,31 @@ public class PseudoCount {
 				}
 			}
 			break;
+		case 8: //Normalization to 1 as MAX Values
+			float [] sum1= new float[C];
+			int k1,p1;
+			for (int j=0; j<C; j++) {
+				k1=0;
+				p1=0;
+				for (int i=0; i<R; i++) {
+					if ((i>0)&&(i%120==0))
+						k1++;
+					if ((i>120)&&((60+i)%120==0))
+						p1++;
+					if((int) Math.floor(i/120)+k1 < 1440) {
+						ADLNormalizedTo1[(int) Math.floor(i/120)+k1][j]+=ADLs[i][j];
+						if (i>60) {
+							ADLNormalizedTo1[(int) Math.floor((60+i)/120)+p1][j]+=ADLs[i][j];							
+						}
+					}
+				}
+			}	
+			for (int i=0; i<R/60; i++) {
+				for (int j=0; j<C; j++) {
+					ADLNormalizedTo1[i][j] /= sum1[j];		//The sum of all the elements of the histogram is 1.0 			
+				}
+			}
+			break;	
 
 		}
 	}
@@ -272,15 +298,39 @@ public class PseudoCount {
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int j=0; j<C; j++) {
+						for (int i=0; i<R/60; i++) {
+							if (printing == 1)
+								out.print(ADLSmoothing[i][j]+	"\t");
+							else if (printing == 2)
+								out.print(ADLNotSmoothed[i][j]+	"\t");
+							else {
+								out.print(ADLNormalizedTo1[i][j]+"\t");
+							}
+						}
+						out.println();
+
+					
+				}
+
+				out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;		
+		case 3: //Print ADLS HORIZONTAL
+			try {
+				out = new PrintWriter(new FileWriter(outputFile));
+				for (int j=0; j<C; j++) {
 					if ((j==0)||(j==1)||(j==3)||(j==5)||(j==7)||
 							(j==9)||(j==10)||(j==11)||(j==13)||(j==14)||
 							(j==15)||(j==16)||(j==17)||(j==18)||(j==21)||
 							(j==22)||(j==23)) {
 						for (int i=0; i<R/60; i++) {
 							if (printing == 1)
-								out.print(ADLSmoothing[i][j]+"\t");
+								out.print(ADLSmoothing[i][j]+	"\t");
 							else if (printing == 2)
-								out.print(ADLNotSmoothed[i][j]+"\t");
+								out.print(ADLNotSmoothed[i][j]+	"\t");
 							else {
 								out.print(ADLNormalizedTo1[i][j]+"\t");
 							}
