@@ -16,13 +16,16 @@ public class Distributions {
 
 		Float [] divergenceKL 	= new Float [P.size()];
 		Float [] distanceBC 	= new Float [P.size()];
+		Float [] distanceEM 	= new Float [P.size()];
 
 		for (int i=0; i < Math.min(P.size(), Q.size()); i++) {			
-			divergenceKL[i] 	= kullbackLeibler	(P.get(i),	Q.get(i));
-			distanceBC	[i] 	= bhattacharyya		(P.get(i),	Q.get(i));
+			divergenceKL[i] 	= kullbackLeibler		(P.get(i),	Q.get(i));
+			distanceBC	[i] 	= bhattacharyya			(P.get(i),	Q.get(i));
+			distanceEM	[i] 	= earthMoverDistance	(P.get(i),	Q.get(i));
 		}
 		printDistribution(divergenceKL, "data/distributions/KL.txt");
 		printDistribution(distanceBC, 	"data/distributions/BC.txt");
+		printDistribution(distanceEM, 	"data/distributions/EM.txt");
 
 	}
 
@@ -65,12 +68,14 @@ public class Distributions {
 	}
 
 	public static float kullbackLeibler (Float[] P, Float[] Q){
+		float p,q;
 		if (P.length == Q.length) {
 			float divergence = 0;
 			//Somm(Pi*ln(Pi/Qi))
 			for (int i=0; i<P.length; i++) {
-				if ((P[i]>0)&&(Q[i]>0))
-					divergence += P[i] * Math.log((P[i]/Q[i]));				
+				p = (float) Math.max(P[i], 0.00000001);
+				q = (float) Math.max(Q[i], 0.00000001);
+					divergence += p * Math.log(p/q);				
 			}
 			return divergence;
 		} else {
@@ -94,5 +99,29 @@ public class Distributions {
 			System.out.println("Distribution with different lengths");
 			return 0;			
 		}
-	}	
+	}
+	public static float earthMoverDistance (Float [] P,Float [] Q){
+		if (P.length == Q.length) {
+			Float [] D = new Float[P.length];
+			float distance = 0;
+			for (int i=0; i<P.length; i++) {
+				if (i>0)
+					D[i] = D[i-1] + P[i] - Q[i];
+				else
+					D[i] = 0 + P[i] - Q[i];
+			}
+			for (int i=0; i<P.length; i++) {
+				distance += Math.max(-D[i], D[i]);
+			}			
+			return distance;
+		} else {
+			System.out.println("Distribution with different lengths");
+			return 0;			
+		}
+		
+	}
+	//EMD0 = 0
+	//EMDi+1 = ( Ai + EMDi ) - Bi
+	//TotalDistance = S | EMDi |
+
 }
