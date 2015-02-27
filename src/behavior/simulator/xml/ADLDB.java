@@ -40,7 +40,7 @@ public class ADLDB {
 		double rainy []			= {0.0, 0.0, 1.0};		
 		double independent []	= {1.0, 1.0, 1.0};
 		
-		TimeDependancy = loadTimeDependancy("data/TimeDependancyArray.txt");
+		TimeDependancy = loadTimeDependancy("data/InputTD.txt");
 		updateTimeDependancy (14, 0.15f);
 		
 		//ID, NAME, DAYS, WEATHER, TIMEDESCRIPTIONARRAY, MINTIME,  

@@ -6,16 +6,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.media.jai.Histogram;
 
 
 public class PseudoCount {
 	//***PARAMETERS:***
 	static String House 	="HouseA"; 	//Options: "HouseA" || "HouseB"
 	static int person 		= 20;		//Options: 20: person 1, 21: person 2
-	static int format 		= 2;		//Print layout, options: 1: vertical, 2: horizontal, 3: horizontal skipped
+	static int format 		= 3;		//Print layout, options: 1: vertical, 2: horizontal, 3: horizontal skipped
 	static int print 		= 3;		//Array to print, options: 1: ADLSmoothing, 2: ADLNotSmoothed, 3:ADLNormalizedTo1
-	static float days		= 7.0f;		//30: full dataset, 23: test, 7: validation
+	static float days		= 7.0f;	//30: full dataset, 23: test, 7: validation
+	static String oFile		= "data/InputTD_light.txt";	
+	//InputTD.txt 		: system input; 
+	//InputTD_light.txt : system input without unused;
+
 	//***END PARAMETERS***
 
 	static int R = 86400;
@@ -33,32 +36,32 @@ public class PseudoCount {
 
 	public static void main (String[] args) {
 
-//		readFile("data/ARAS/"+House+"/DAY_1.txt");
-//		readFile("data/ARAS/"+House+"/DAY_2.txt");
-//		readFile("data/ARAS/"+House+"/DAY_3.txt");
-//		readFile("data/ARAS/"+House+"/DAY_4.txt");
-//		readFile("data/ARAS/"+House+"/DAY_5.txt");
-//		readFile("data/ARAS/"+House+"/DAY_6.txt");
-//		readFile("data/ARAS/"+House+"/DAY_7.txt");
-//		readFile("data/ARAS/"+House+"/DAY_8.txt");
-//		readFile("data/ARAS/"+House+"/DAY_9.txt");		
-//		readFile("data/ARAS/"+House+"/DAY_10.txt");
-//
-//		readFile("data/ARAS/"+House+"/DAY_11.txt");
-//		readFile("data/ARAS/"+House+"/DAY_12.txt");
-//		readFile("data/ARAS/"+House+"/DAY_13.txt");
-//		readFile("data/ARAS/"+House+"/DAY_14.txt");
-//		readFile("data/ARAS/"+House+"/DAY_15.txt");
-//		readFile("data/ARAS/"+House+"/DAY_16.txt");
-//		readFile("data/ARAS/"+House+"/DAY_17.txt");
-//		readFile("data/ARAS/"+House+"/DAY_18.txt");
-//		readFile("data/ARAS/"+House+"/DAY_19.txt");		
-//		readFile("data/ARAS/"+House+"/DAY_20.txt");
-//
-//		readFile("data/ARAS/"+House+"/DAY_21.txt");
-//		readFile("data/ARAS/"+House+"/DAY_22.txt");
-//		readFile("data/ARAS/"+House+"/DAY_23.txt");
+				readFile("data/ARAS/"+House+"/DAY_1.txt");
+				readFile("data/ARAS/"+House+"/DAY_2.txt");
+				readFile("data/ARAS/"+House+"/DAY_3.txt");
+				readFile("data/ARAS/"+House+"/DAY_4.txt");
+				readFile("data/ARAS/"+House+"/DAY_5.txt");
+				readFile("data/ARAS/"+House+"/DAY_6.txt");
+				readFile("data/ARAS/"+House+"/DAY_7.txt");
+				readFile("data/ARAS/"+House+"/DAY_8.txt");
+				readFile("data/ARAS/"+House+"/DAY_9.txt");		
+				readFile("data/ARAS/"+House+"/DAY_10.txt");
 		
+				readFile("data/ARAS/"+House+"/DAY_11.txt");
+				readFile("data/ARAS/"+House+"/DAY_12.txt");
+				readFile("data/ARAS/"+House+"/DAY_13.txt");
+				readFile("data/ARAS/"+House+"/DAY_14.txt");
+				readFile("data/ARAS/"+House+"/DAY_15.txt");
+				readFile("data/ARAS/"+House+"/DAY_16.txt");
+				readFile("data/ARAS/"+House+"/DAY_17.txt");
+				readFile("data/ARAS/"+House+"/DAY_18.txt");
+				readFile("data/ARAS/"+House+"/DAY_19.txt");		
+				readFile("data/ARAS/"+House+"/DAY_20.txt");
+		
+				readFile("data/ARAS/"+House+"/DAY_21.txt");
+				readFile("data/ARAS/"+House+"/DAY_22.txt");
+				readFile("data/ARAS/"+House+"/DAY_23.txt");
+
 		readFile("data/ARAS/"+House+"/DAY_24.txt");
 		readFile("data/ARAS/"+House+"/DAY_25.txt");
 		readFile("data/ARAS/"+House+"/DAY_26.txt");
@@ -84,7 +87,7 @@ public class PseudoCount {
 		computationADLs(7);		//Normalization (120*30)
 
 
-		writeADLs("data/ARAS_ADL_Normalized.txt", format, print);
+		writeADLs(oFile, format, print);
 		//writeADLs("data/histResults.txt", format, print);
 		System.out.println("END!");
 	}
@@ -174,7 +177,9 @@ public class PseudoCount {
 			}			
 			for (int i=0; i<R/60; i++) {
 				for (int j=0; j<C; j++) {
-					ADLNormalizedTo1[i][j] /= sum[j];		//The sum of all the elements of the histogram is 1.0 			
+					if (sum[j] > 0){
+						ADLNormalizedTo1[i][j] /= sum[j];		//The sum of all the elements of the histogram is 1.0
+					}
 				}
 			}
 			break;	
@@ -325,9 +330,10 @@ public class PseudoCount {
 			try {
 				out = new PrintWriter(new FileWriter(outputFile));
 				for (int j=0; j<C; j++) {
-					for (int i=0; i<R/60; i++) {
-						if ((j!=2)&&(j!=4)&&(j!=6)&&(j!=8)&&(j!=19)
-								&&(j!=20)&&(j!=24)&&(j!=25)){
+					if ((j!=2)&&(j!=4)&&(j!=6)&&(j!=8)&&(j!=19)
+							&&(j!=20)&&(j!=24)&&(j!=25)&&
+							(j!=12)&&(j!=26)){
+						for (int i=0; i<R/60; i++) {
 							if (printing == 1)
 								out.print(ADLSmoothing[i][j]+	"\t");
 							else if (printing == 2)
@@ -335,10 +341,11 @@ public class PseudoCount {
 							else {
 								out.print(ADLNormalizedTo1[i][j]+"\t");
 							}
-							out.println();
-						}						
-					}					
-				}
+						}
+						out.println();
+					}
+				}					
+
 
 				out.close();
 			} catch (IOException e) {
