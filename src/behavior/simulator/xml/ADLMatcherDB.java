@@ -9,7 +9,6 @@ import behavior.simulator.planner.ADLMatcher;
 
 
 public class ADLMatcherDB {
-	
 
 	public static Map<Integer, ADLMatcher> addADLMatch() {
 		
