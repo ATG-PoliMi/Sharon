@@ -14,7 +14,9 @@ public class ADLMatcherDB {
 	public static Map<Integer, ADLMatcher> addADLMatch() {
 		
 		Map<Integer, ADLMatcher> m = new HashMap<>();
-		
+//NEW:		
+		m.put(1, new ADLMatcher(1, new ArrayList<Integer>(Arrays.asList(8)), new ArrayList<Double>(Arrays.asList(1.0))));
+//OLD:		
 		m.put(100, new ADLMatcher(100, new ArrayList<Integer>(Arrays.asList(8)), new ArrayList<Double>(Arrays.asList(1.0))));
 		m.put(101, new ADLMatcher(101, new ArrayList<Integer>(Arrays.asList(1)), new ArrayList<Double>(Arrays.asList(1.0))));
 		m.put(102, new ADLMatcher(102, new ArrayList<Integer>(Arrays.asList(9)), new ArrayList<Double>(Arrays.asList(1.0))));
