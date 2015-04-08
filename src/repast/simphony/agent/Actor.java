@@ -1,7 +1,9 @@
 package repast.simphony.agent;
 
+import utils.CumulateHistogram;
 import utils.Time;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,19 +62,20 @@ public class Actor {
 
 	//Utils
 	RandomGaussian gaussian = new RandomGaussian();
-	static double tick;
+	static long tick;
 	static int keyBadl;
-	static int usedTime;
-
-	//BADL
-	static ADL badl;
+	static long usedTime = 0;
 
 	//TARGETS
 	private Integer llADLIndex; 
 	private ArrayList<Integer> tTime = new ArrayList<Integer>();
 	private static int stationCounter = 0; //Station Counter
 
+	//Support ADL
+	static ADL badl;
+	static CumulateHistogram hist = new CumulateHistogram();
 
+	
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space=space;
 		this.grid=grid;
@@ -155,7 +158,7 @@ public class Actor {
 
 			} else {
 				agentStatus = 1;
-				completeADL(keyBadl);
+				//completeADL(keyBadl);
 				Logs(2);
 				updateNeeds((int) usedTime/3600);
 				stationCounter=0;
@@ -229,78 +232,6 @@ public class Actor {
 		activeSensors = activeSensors.substring(0, activeSensors.length()-2);
 		
 		return activeSensors;
-	}
-
-	private static int wake() {
-		Needs.getInstance().setEnergy(0);
-		Needs.getInstance().setComfort(0);
-		RandomGaussian gaussian = new RandomGaussian();
-		return (int) gaussian.getGaussian (8*60, 10);
-	}
-
-	private static double timeDependence(ADL a, int minute) {
-		BetaDistribution b = new BetaDistribution(a.getActivationShapeA(), a.getActivationShapeB());
-		double test = b.density((0.5 + (minute - a.getBestTime()) / (2 * a.getRangeTime())));
-
-		return test;
-	}
-
-
-
-
-	/**
-	 * Actions to perform when the ADL has been completed
-	 * @param ADLindex: Index of the ADL just executed
-	 */
-	private static void completeADL(int ADLindex) {
-		Iterator<ADLEffect> x = hLADL.get(ADLindex).getEffects().iterator();
-		while (x.hasNext()) {
-			ADLEffect badl;
-			badl = x.next();
-			if (badl.getName().equals("hunger")) {
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger()+badl.getEffect());
-				if (Needs.getInstance().getHunger() < 0)
-					Needs.getInstance().setHunger(0);
-				if (Needs.getInstance().getHunger() > 1)
-					Needs.getInstance().setHunger(1);				
-			}
-			if (badl.getName().equals("comfort")) {
-				Needs.getInstance().setComfort(Needs.getInstance().getComfort()+badl.getEffect());
-				if (Needs.getInstance().getComfort() < 0)
-					Needs.getInstance().setComfort(0);
-				if (Needs.getInstance().getComfort() > 1)
-					Needs.getInstance().setComfort(1);	
-			}
-			if (badl.getName().equals("hygiene")) {
-				Needs.getInstance().setHygiene(Needs.getInstance().getHygiene()+badl.getEffect());
-				if (Needs.getInstance().getHygiene() < 0)
-					Needs.getInstance().setHygiene(0);
-				if (Needs.getInstance().getHygiene() > 1)
-					Needs.getInstance().setHygiene(1);
-			}
-			if (badl.getName().equals("bladder")) {
-				Needs.getInstance().setBladder(Needs.getInstance().getBladder()+badl.getEffect());
-				if (Needs.getInstance().getBladder() < 0)
-					Needs.getInstance().setBladder(0);
-				if (Needs.getInstance().getBladder() > 1)
-					Needs.getInstance().setBladder(1);				
-			}
-			if (badl.getName().equals("energy")) {
-				Needs.getInstance().setEnergy(Needs.getInstance().getEnergy()+badl.getEffect());
-				if (Needs.getInstance().getEnergy() < 0)
-					Needs.getInstance().setEnergy(0);
-				if (Needs.getInstance().getEnergy() > 1)
-					Needs.getInstance().setEnergy(1);	
-			}
-			if (badl.getName().equals("fun")) {
-				if (Needs.getInstance().getFun() < 0)
-					Needs.getInstance().setFun(0);
-				if (Needs.getInstance().getFun() > 1)
-					Needs.getInstance().setFun(1);	
-				Needs.getInstance().setFun(Needs.getInstance().getFun()+badl.getEffect());
-			}
-		}
-		hLADL.get(keyBadl).setDoneToday(1);
 	}
 
 	
