@@ -63,11 +63,12 @@ public class HighLevelDaySimulator {
 			}
 
 		}
-		//hist.refineHistogram(300.0f);		
-		hist.normalizationTo1Histogram();
+		hist.refineHistogram(300.0f);		//normalized for days number
+		//hist.normalizationTo1Histogram(); 	//normalized to 1
+		
 		hist.printToFile("data/OutputHistogram.txt",2);
-		Distributions.loadDistributions("data/OutputHistogram.txt",
-				"data/InputTD_light.txt");
+		Distributions.loadDistributions("data/OutputHistogram.txt","data/t/norm1_7d.txt");
+		//Distributions.loadDistributions("data/t/norm1_23d.txt","data/t/norm1_7d.txt");
 	}	
 
 	private static void checkBetterADL() {

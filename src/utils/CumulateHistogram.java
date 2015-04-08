@@ -69,6 +69,9 @@ public class CumulateHistogram {
 			}
 		}
 	}
+	
+
+	
 	public void printHistogram() {
 		for (int i=0; i<timeGranularity; i++) {
 			for (int j=0; j<Constants.ADLCOUNT; j++) {

@@ -61,6 +61,7 @@ public class HomeMap {
 			s[5] = new Sensor ("BathSink",2,29,12);
 			s[6] = new Sensor ("BathWashingMachine",2,29,16);
 			s[7] = new Sensor ("BathDoor",2,23,18);
+			
 			s[8] = new Sensor ("ExitDoor",2,33,18);
 
 			s[9] = new Sensor ("LivingroomChair1",2,45,8);

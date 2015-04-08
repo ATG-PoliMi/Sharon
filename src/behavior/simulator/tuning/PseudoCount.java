@@ -11,14 +11,17 @@ import java.io.PrintWriter;
 public class PseudoCount {
 	//***PARAMETERS:***
 	static String House 	="HouseA"; 	//Options: "HouseA" || "HouseB"
-	static int person 		= 20;		//Options: 20: person 1, 21: person 2
-	static int format 		= 3;		//Print layout, options: 1: vertical, 2: horizontal, 3: horizontal skipped
-	static int print 		= 3;		//Array to print, options: 1: ADLSmoothing, 2: ADLNotSmoothed, 3:ADLNormalizedTo1
-	static float days		= 23.0f;	//30: full dataset, 23: test, 7: validation
-	static String oFile		= "data/InputTD_light.txt";	
-	//InputTD.txt 		: system input; 
-	//InputTD_light.txt : system input without unused;
 
+	static int 	person 		= 20;		//Options: 20: person 1, 21: person 2
+	static int 	format 		= 3;		//Print layout, options: 1: vertical, 2: horizontal, 3: horizontal skipped
+	static int 	print 		= 2;		//Array to print, options: 1: ADLSmoothing, 2: ADLNotSmoothed, 3:ADLNormalizedTo1
+	static float days		= 7.0f;	//30: full dataset, 23: test, 7: validation
+
+	static String oFile		= "data/InputTD_light.txt";	
+	//InputTD.txt 			: system input; 
+	//InputTD_light.txt 	: system input without unused;
+	//data/t/norm1_7d.txt 	: test 7days
+	//data/t/norm1_23d.txt	: test 23days
 	//***END PARAMETERS***
 
 	static int R = 86400;
@@ -36,31 +39,31 @@ public class PseudoCount {
 
 	public static void main (String[] args) {
 
-				readFile("data/ARAS/"+House+"/DAY_1.txt");
-				readFile("data/ARAS/"+House+"/DAY_2.txt");
-				readFile("data/ARAS/"+House+"/DAY_3.txt");
-				readFile("data/ARAS/"+House+"/DAY_4.txt");
-				readFile("data/ARAS/"+House+"/DAY_5.txt");
-				readFile("data/ARAS/"+House+"/DAY_6.txt");
-				readFile("data/ARAS/"+House+"/DAY_7.txt");
-				readFile("data/ARAS/"+House+"/DAY_8.txt");
-				readFile("data/ARAS/"+House+"/DAY_9.txt");		
-				readFile("data/ARAS/"+House+"/DAY_10.txt");
-		
-				readFile("data/ARAS/"+House+"/DAY_11.txt");
-				readFile("data/ARAS/"+House+"/DAY_12.txt");
-				readFile("data/ARAS/"+House+"/DAY_13.txt");
-				readFile("data/ARAS/"+House+"/DAY_14.txt");
-				readFile("data/ARAS/"+House+"/DAY_15.txt");
-				readFile("data/ARAS/"+House+"/DAY_16.txt");
-				readFile("data/ARAS/"+House+"/DAY_17.txt");
-				readFile("data/ARAS/"+House+"/DAY_18.txt");
-				readFile("data/ARAS/"+House+"/DAY_19.txt");		
-				readFile("data/ARAS/"+House+"/DAY_20.txt");
-		
-				readFile("data/ARAS/"+House+"/DAY_21.txt");
-				readFile("data/ARAS/"+House+"/DAY_22.txt");
-				readFile("data/ARAS/"+House+"/DAY_23.txt");
+//				readFile("data/ARAS/"+House+"/DAY_1.txt");
+//				readFile("data/ARAS/"+House+"/DAY_2.txt");
+//				readFile("data/ARAS/"+House+"/DAY_3.txt");
+//				readFile("data/ARAS/"+House+"/DAY_4.txt");
+//				readFile("data/ARAS/"+House+"/DAY_5.txt");
+//				readFile("data/ARAS/"+House+"/DAY_6.txt");
+//				readFile("data/ARAS/"+House+"/DAY_7.txt");
+//				readFile("data/ARAS/"+House+"/DAY_8.txt");
+//				readFile("data/ARAS/"+House+"/DAY_9.txt");		
+//				readFile("data/ARAS/"+House+"/DAY_10.txt");
+//		
+//				readFile("data/ARAS/"+House+"/DAY_11.txt");
+//				readFile("data/ARAS/"+House+"/DAY_12.txt");
+//				readFile("data/ARAS/"+House+"/DAY_13.txt");
+//				readFile("data/ARAS/"+House+"/DAY_14.txt");
+//				readFile("data/ARAS/"+House+"/DAY_15.txt");
+//				readFile("data/ARAS/"+House+"/DAY_16.txt");
+//				readFile("data/ARAS/"+House+"/DAY_17.txt");
+//				readFile("data/ARAS/"+House+"/DAY_18.txt");
+//				readFile("data/ARAS/"+House+"/DAY_19.txt");		
+//				readFile("data/ARAS/"+House+"/DAY_20.txt");
+//		
+//				readFile("data/ARAS/"+House+"/DAY_21.txt");
+//				readFile("data/ARAS/"+House+"/DAY_22.txt");
+//				readFile("data/ARAS/"+House+"/DAY_23.txt");
 
 //		readFile("data/ARAS/"+House+"/DAY_24.txt");
 //		readFile("data/ARAS/"+House+"/DAY_25.txt");
@@ -167,7 +170,7 @@ public class PseudoCount {
 			}
 			break;
 
-		case 3: //Normalization to 1 as MAX Values
+		case 3: //Normalization to 1 as MAX Value
 			float [] sum= new float[C];
 			for (int i=0; i<R; i+=60) {
 				for (int j=0; j<C; j++) {
@@ -224,7 +227,7 @@ public class PseudoCount {
 			}
 			break;
 
-		case 6: //Normalization to 1 and minimum value 0.05
+		case 6: //Normalization to 1 and minimum value 0.05 {unused}
 			for (int j=0; j<C; j++) {
 				float max=0;
 				for (int i=0; i<R/60; i++) {
@@ -245,7 +248,7 @@ public class PseudoCount {
 				}
 			}
 			break;
-		case 8: //Normalization to 1 as MAX Values
+		case 8: //Normalization to 1 as MAX Value
 			float [] sum1= new float[C];
 			int k1,p1;
 			for (int j=0; j<C; j++) {
@@ -269,8 +272,7 @@ public class PseudoCount {
 					ADLNormalizedTo1[i][j] /= sum1[j];		//The sum of all the elements of the histogram is 1.0 			
 				}
 			}
-			break;	
-
+			break;
 		}
 	}
 
