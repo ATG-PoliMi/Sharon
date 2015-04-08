@@ -61,8 +61,8 @@ public class Actor implements Runnable{
 	static Map<Integer, ADLMatcher> matchADL;
 
 	//User actions
-	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
-	static int idling;	
+	static int agentStatus	=	1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
+	static int idling 		= 	0;	
 
 	//Utils
 	RandomGaussian gaussian = new RandomGaussian();
@@ -86,6 +86,7 @@ public class Actor implements Runnable{
 	private BlockingQueue<ADLQueue> queue1;	//run
 	private BlockingQueue<ADLQueue> queue2;	//step
 	private HighLevelADLProducer producer;
+	private Actor consumer;
 	ADLQueue ADLQ;
 
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
@@ -93,6 +94,10 @@ public class Actor implements Runnable{
 		this.grid=grid;
 		importADL();
 		badl = hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping //TODO: replicata con r90
+	}
+
+	public Actor(BlockingQueue<ADLQueue> q) {
+		this.queue1=q;
 	}
 
 	private void importADL () {
@@ -106,24 +111,25 @@ public class Actor implements Runnable{
 	public void threadStart () {
 		queue1 = new ArrayBlockingQueue<>(10);
 		producer = new HighLevelADLProducer(queue1);
-		//Consumer consumer = new Consumer(queue);
+		consumer = new Actor(queue1);
 
 		//starting producer to produce messages in queue
 		new Thread(producer).start();
 		//starting consumer to consume messages from queue
-		//new Thread(consumer).start();
+		new Thread(consumer).start();
 		System.out.println("Producer and Consumer has been started");
 	}
 
 	@ScheduledMethod(start = 0, interval = 1, priority=0)
 	public void step() {
 		tick = (long) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		idling++;
 		switch (agentStatus) {
 		case 1: //Extracting + computing
 			ADLQueue CADL;
 			try {
 				if (tick == 0.0) {
-					CADL = new ADLQueue(Constants.SLEEP_ID, 3000);
+					CADL = new ADLQueue(Constants.SLEEP_ID, 500);
 				} else {
 					CADL = queue2.take();
 				}
@@ -139,10 +145,7 @@ public class Actor implements Runnable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-
 		break;
-
 
 		case 2:	//Walking+Acting
 			if (!tTime.isEmpty()) {
@@ -307,7 +310,7 @@ public class Actor implements Runnable{
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		Needs.getInstance().setToileting(0);

@@ -1,0 +1,11 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>printSensors</name>
+  <dataSet>Sensors</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>printActiveSensors</string>
+  </sourceIds>
+  <fileName>C:\Users\Daniele\Desktop\mySensors.txt</fileName>
+  <addTimeStamp>false</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>
