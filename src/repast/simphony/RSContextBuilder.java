@@ -3,6 +3,8 @@ package repast.simphony;
 
 
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.planner.ADLMatcher;
@@ -80,6 +82,8 @@ public class RSContextBuilder implements ContextBuilder<Object> {
 				new GridBuilderParameters<Object>(new WrapAroundBorders(),
 						new SimpleGridAdder<Object>(), true, Constants.mapSizeW, Constants.mapSizeH));
 		context.add(new Actor(space, grid));
+		
+
 		
 		// Create a background layer for the displayed grid
 		structureLayer = new GridValueLayer(

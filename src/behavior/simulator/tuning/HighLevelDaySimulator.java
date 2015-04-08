@@ -47,7 +47,6 @@ public class HighLevelDaySimulator {
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
 		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
 
-
 		for (tick=0; tick <= 86400*300; tick++) {
 			usedTime++;
 
