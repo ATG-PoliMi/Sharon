@@ -1,28 +1,26 @@
 package repast.simphony.agent;
 
-import utils.CumulateHistogram;
-import utils.Time;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import repast.simphony.common.HomeMap;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.space.SpatialMath;
+import repast.simphony.space.continuous.ContinuousSpace;
+import repast.simphony.space.continuous.NdPoint;
+import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridPoint;
 import utils.Constants;
-
-import org.apache.commons.math3.distribution.BetaDistribution;
-
-import javolution.context.Context;
+import utils.CumulateHistogram;
+import utils.Time;
 import behavior.simulator.extractor.ADL;
 import behavior.simulator.extractor.ADLEffect;
 import behavior.simulator.extractor.ADLQueue;
 import behavior.simulator.extractor.Day;
-import behavior.simulator.extractor.HighLevelADLProducer;
 import behavior.simulator.extractor.Needs;
 import behavior.simulator.extractor.RandomGaussian;
 import behavior.simulator.planner.ADLMatcher;
@@ -31,21 +29,8 @@ import behavior.simulator.xml.ADLDB;
 import behavior.simulator.xml.ADLMatcherDB;
 import behavior.simulator.xml.LLADLDB;
 import dijsktra.DijkstraEngine;
-import repast.simphony.common.HomeMap;
-import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.schedule.Schedule;
-import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.query.space.grid.GridCell;
-import repast.simphony.query.space.grid.GridCellNgh;
-import repast.simphony.random.RandomHelper;
-import repast.simphony.space.SpatialMath;
-import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.continuous.NdPoint;
-import repast.simphony.space.grid.Grid;
-import repast.simphony.space.grid.GridPoint;
-import repast.simphony.util.SimUtilities;
 
-public class Actor implements Runnable{
+public class Actor {
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
@@ -61,7 +46,7 @@ public class Actor implements Runnable{
 	static Map<Integer, ADLMatcher> matchADL;
 
 	//User actions
-	static int agentStatus	=	1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
+	static int agentStatus	=	1; //1: extracting; 2: acting
 	static int idling 		= 	0;	
 
 	//Utils
@@ -83,12 +68,16 @@ public class Actor implements Runnable{
 	static int init=0;
 
 	//Thread
-	private BlockingQueue<ADLQueue> queue1;	//run
-	private BlockingQueue<ADLQueue> queue2;	//step
-	private HighLevelADLProducer producer;
-	private Actor consumer;
+//	private BlockingQueue<ADLQueue> queue1;	//run
+//	private BlockingQueue<ADLQueue> queue2 = new ArrayBlockingQueue<>(10);	//step
+//	private HighLevelADLProducer producer;
+//	private Actor consumer;
 	ADLQueue ADLQ;
 
+	//ADL QUEUE
+	private BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100);
+
+	
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space=space;
 		this.grid=grid;
@@ -96,9 +85,7 @@ public class Actor implements Runnable{
 		badl = hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping //TODO: replicata con r90
 	}
 
-	public Actor(BlockingQueue<ADLQueue> q) {
-		this.queue1=q;
-	}
+	//public Actor(BlockingQueue<ADLQueue> q) {this.queue1=q;}
 
 	private void importADL () {
 		hLADL		= 	ADLDB.addADL();
@@ -108,32 +95,42 @@ public class Actor implements Runnable{
 	}
 
 
-	public void threadStart () {
-		queue1 = new ArrayBlockingQueue<>(10);
-		producer = new HighLevelADLProducer(queue1);
-		consumer = new Actor(queue1);
+/*	public void threadStart () {
+//		queue1 = new ArrayBlockingQueue<>(10);
+//		producer = new HighLevelADLProducer(queue1);
+//		consumer = new Actor(queue1);
 
 		//starting producer to produce messages in queue
 		new Thread(producer).start();
+		
 		//starting consumer to consume messages from queue
 		new Thread(consumer).start();
 		System.out.println("Producer and Consumer has been started");
 	}
-
-	@ScheduledMethod(start = 0, interval = 1, priority=0)
+*/
+		
+	@ScheduledMethod(start = 60, interval = 1, priority=0)
 	public void step() {
+		
 		tick = (long) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		idling++;
+		
+		
+		
 		switch (agentStatus) {
 		case 1: //Extracting + computing
 			ADLQueue CADL;
+			System.out.println("idling "+idling+" step at "+ tick);
 			try {
-				if (tick == 0.0) {
-					CADL = new ADLQueue(Constants.SLEEP_ID, 500);
+				if (queue.isEmpty()) {
+					CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
+					System.out.println("empty. ADL: ID: "+ CADL.getADLId());
 				} else {
-					CADL = queue2.take();
+					CADL = queue.take();
+					System.out.println("Queue taken: "+ CADL.getADLId());
 				}
 				if (CADL != null) {
+					System.out.println("CADL not null, executing");
 					llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!		
 					tTime.clear();				
 	
@@ -144,6 +141,7 @@ public class Actor implements Runnable{
 				}				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				System.out.println("ERROR!");
 			}
 		break;
 
@@ -249,38 +247,68 @@ public class Actor implements Runnable{
 		return activeSensors;
 	}
 
-
+//TODO: NEWCODE
 	/*
 	 * 
 	 * NEW CODE:
 	 * 
 	 */
-
-
-	private static void checkBetterADL() {
-		ADL cadl = hLADL.get(1);		
+//TODO: NEWCODE
+	
+	@ScheduledMethod(start = 0, interval = 1, priority=1)
+	public void scheduler() {		
+		//for (tick=0; tick <= 86400*300; tick++) {
+		tick = (long) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+			System.out.println("scheduler at "+ tick);
+			usedTime++;
+			if (tick % 86400 == 0){
+				newDay();
+			}
+			if (tick % 60 == 0) {				
+				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
+				computeADLRank((int) tick % 86400);
+				ADLQueue ADLQ = changeADL();
+				//Logs(3); Hour histogram
+				Logs(4);
+				if (ADLQ != null) { 
+					try {
+						queue.put(ADLQ);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}		
+				}
+			}
+		//}
+	}
+	
+	private static ADLQueue changeADL() {
+		ADL cadl = hLADL.get(1);
 
 		if (usedTime > 60*badl.getMinTime()){
 
 			//Check Better ADL
 			for (ADL a : hLADL.values()) {			
 				if ((a.getRank() >= cadl.getRank())) {
-					cadl 			= a;
+					cadl 			= a;					
 				}			
 			}		
 
 			if(cadl.getRank() > 0.01 && cadl.getName() != badl.getName()) {
+				ADLQueue ADLQ = new ADLQueue(badl.getId(), usedTime);
 				badl.setActive(0);
 				badl = cadl;
 				badl.setActive(1);
 				usedTime=0;
-				Logs(1);		
+				Logs(1);
+				return ADLQ;
 			}
 		}
+		return null;
 	}
 
 	private static void newDay() {
 
+		dayInitADL();
 		Day.getInstance().nextDay();
 
 		//eraseNeeds();
@@ -303,25 +331,16 @@ public class Actor implements Runnable{
 		case 3: System.out.print("Sunny\n"); break;
 		default: System.out.print("Error\n");
 		}
-
 	}
 
-	private static void eraseNeeds() {
-		try {
-			System.in.read();
-		} catch (IOException e) {
-
-			e.printStackTrace();
+	/**
+	 * Operations applied to all the ADL each day
+	 */
+	private static void dayInitADL() {
+		//TODO: Con nuova f peso da rimuovere?
+		for (ADL a : hLADL.values())  {
+			a.setDoneToday(0); //In this way I avoid duplication of activities			
 		}
-		Needs.getInstance().setToileting(0);
-		Needs.getInstance().setStress(0);
-		Needs.getInstance().setDirtiness(0);
-		Needs.getInstance().setTirediness(0);
-		Needs.getInstance().setBoredom(0);
-		Needs.getInstance().setHunger(0);
-		Needs.getInstance().setSweat(0);
-		Needs.getInstance().setAsociality(0);
-		Needs.getInstance().setOutOfStock(0);		
 	}
 
 	/**
@@ -406,6 +425,8 @@ public class Actor implements Runnable{
 			double cBest=0;
 			for (ADL a : hLADL.values())  {
 
+				//				if (a.getRank()>0)
+				//					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
 				if (a.getRank()>cBest){
 					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
 					cBest = a.getRank();
@@ -543,19 +564,5 @@ public class Actor implements Runnable{
 					Needs.getInstance().setDirtiness(1);				
 			}
 		}
-	}
-
-	@Override
-	public void run() {
-		try{
-			ADLQueue temp1 = queue1.take();
-			if (temp1 != null)
-				queue2.put(temp1);
-			Thread.sleep(10);
-
-		}catch(InterruptedException e) {
-			e.printStackTrace();
-		}
-
 	}
 }

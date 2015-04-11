@@ -44,8 +44,7 @@ public class HighLevelADLProducer implements Runnable {
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
-		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping
-		
+		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping		
 	}
 
 	@Override
@@ -71,6 +70,7 @@ public class HighLevelADLProducer implements Runnable {
 			}
 		}
 	}
+	
 	private static ADLQueue changeADL() {
 		ADL cadl = hLADL.get(1);
 
@@ -128,7 +128,6 @@ public class HighLevelADLProducer implements Runnable {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Needs.getInstance().setToileting(0);
