@@ -68,16 +68,16 @@ public class Actor {
 	static int init=0;
 
 	//Thread
-//	private BlockingQueue<ADLQueue> queue1;	//run
-//	private BlockingQueue<ADLQueue> queue2 = new ArrayBlockingQueue<>(10);	//step
-//	private HighLevelADLProducer producer;
-//	private Actor consumer;
+	//	private BlockingQueue<ADLQueue> queue1;	//run
+	//	private BlockingQueue<ADLQueue> queue2 = new ArrayBlockingQueue<>(10);	//step
+	//	private HighLevelADLProducer producer;
+	//	private Actor consumer;
 	ADLQueue ADLQ;
 
 	//ADL QUEUE
 	private BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100);
 
-	
+
 	public Actor (ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space=space;
 		this.grid=grid;
@@ -95,45 +95,45 @@ public class Actor {
 	}
 
 
-/*	public void threadStart () {
+	/*	public void threadStart () {
 //		queue1 = new ArrayBlockingQueue<>(10);
 //		producer = new HighLevelADLProducer(queue1);
 //		consumer = new Actor(queue1);
 
 		//starting producer to produce messages in queue
 		new Thread(producer).start();
-		
+
 		//starting consumer to consume messages from queue
 		new Thread(consumer).start();
 		System.out.println("Producer and Consumer has been started");
 	}
-*/
-		
+	 */
+
 	@ScheduledMethod(start = 60, interval = 1, priority=0)
 	public void step() {
-		
+
 		tick = (long) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		idling++;
-		
-		
-		
+
+
+
 		switch (agentStatus) {
 		case 1: //Extracting + computing
 			ADLQueue CADL;
 			System.out.println("idling "+idling+" step at "+ tick);
 			try {
 				if (queue.isEmpty()) {
-					CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
-					System.out.println("empty. ADL: ID: "+ CADL.getADLId());
+					//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
+					CADL = new ADLQueue(15, 86400);
+					System.out.println("A: EMPTY. ADL: ID: "+ CADL.getADLId());
 				} else {
 					CADL = queue.take();
-					System.out.println("Queue taken: "+ CADL.getADLId());
+					System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime());
 				}
 				if (CADL != null) {
-					System.out.println("CADL not null, executing");
 					llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!		
 					tTime.clear();				
-	
+
 					for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
 						tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
 					}
@@ -143,7 +143,7 @@ public class Actor {
 				e.printStackTrace();
 				System.out.println("ERROR!");
 			}
-		break;
+			break;
 
 		case 2:	//Walking+Acting
 			if (!tTime.isEmpty()) {
@@ -247,40 +247,41 @@ public class Actor {
 		return activeSensors;
 	}
 
-//TODO: NEWCODE
+	//TODO: NEWCODE
 	/*
 	 * 
 	 * NEW CODE:
 	 * 
 	 */
-//TODO: NEWCODE
-	
+	//TODO: NEWCODE
+
 	@ScheduledMethod(start = 0, interval = 1, priority=1)
 	public void scheduler() {		
 		//for (tick=0; tick <= 86400*300; tick++) {
 		tick = (long) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-			System.out.println("scheduler at "+ tick);
-			usedTime++;
-			if (tick % 86400 == 0){
-				newDay();
+		
+		usedTime++;
+		if (tick % 86400 == 0){
+			newDay();
+		}
+		if (tick % 60 == 0) {				
+			updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
+			computeADLRank((int) tick % 86400);
+			ADLQueue ADLQ = changeADL();
+			//Logs(3); Hour histogram
+			Logs(4);
+			if (ADLQ != null) { 
+				try {
+					System.out.println("S: at "+ tick+" inserted "+ADLQ.getADLId()+" lasting "+ADLQ.getTime());
+					queue.put(ADLQ);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}		
 			}
-			if (tick % 60 == 0) {				
-				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
-				computeADLRank((int) tick % 86400);
-				ADLQueue ADLQ = changeADL();
-				//Logs(3); Hour histogram
-				Logs(4);
-				if (ADLQ != null) { 
-					try {
-						queue.put(ADLQ);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}		
-				}
-			}
+		}
 		//}
 	}
-	
+
 	private static ADLQueue changeADL() {
 		ADL cadl = hLADL.get(1);
 
@@ -299,7 +300,7 @@ public class Actor {
 				badl = cadl;
 				badl.setActive(1);
 				usedTime=0;
-				Logs(1);
+				//Logs(1);
 				return ADLQ;
 			}
 		}
