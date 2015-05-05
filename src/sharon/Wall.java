@@ -51,6 +51,5 @@ public class Wall {
 					"Cannot locate value layer with ID="
 							+ Constants.STRUCTURE_LAYER_ID + ".");
 		}
-		//ValueLayer.set(1, x, y);
 	}
 }
