@@ -109,7 +109,7 @@ public class Actor {
 	}
 	 */
 
-	@ScheduledMethod(start = 60, interval = 1, priority=0)
+	@ScheduledMethod(start = 0, interval = 1, priority=0)
 	public void step() {
 
 		tick = (long) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
@@ -124,21 +124,32 @@ public class Actor {
 			try {
 				if (queue.isEmpty()) {
 					//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
-					CADL = new ADLQueue(15, 86400);
-					System.out.println("A: EMPTY. ADL: ID: "+ CADL.getADLId());
+					//Fake ADLS for demo: start demo:
+					queue.put(new ADLQueue(8, 300));
+					queue.put(new ADLQueue(6, 300));
+					queue.put(new ADLQueue(3, 666));
+					queue.put(new ADLQueue(2, 300));
+					queue.put(new ADLQueue(2, 300));
+					
+					//end demo
+
+					//CADL = new ADLQueue(15, 86400);
+					//System.out.println("A: EMPTY. ADL: ID: "+ CADL.getADLId());
 				} else {
 					CADL = queue.take();
+					CADL.getClass().getName();
 					System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime());
-				}
-				if (CADL != null) {
-					llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!		
-					tTime.clear();				
 
-					for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
-						tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
-					}
-					agentStatus=2;
-				}				
+					if (CADL != null) {
+						llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!		
+						tTime.clear();				
+
+						for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
+							tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
+						}
+						agentStatus=2;
+					}	
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				System.out.println("ERROR!");
@@ -257,9 +268,9 @@ public class Actor {
 
 	@ScheduledMethod(start = 0, interval = 1, priority=1)
 	public void scheduler() {		
-		//for (tick=0; tick <= 86400*300; tick++) {
+
 		tick = (long) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		
+
 		usedTime++;
 		if (tick % 86400 == 0){
 			newDay();
@@ -279,7 +290,6 @@ public class Actor {
 				}		
 			}
 		}
-		//}
 	}
 
 	private static ADLQueue changeADL() {
