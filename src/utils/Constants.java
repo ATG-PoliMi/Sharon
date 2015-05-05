@@ -1,6 +1,6 @@
 package utils;
 
-import behavior.simulator.extractor.Needs;
+import sharon.extractor.Needs;
 
 public class Constants {	
 
