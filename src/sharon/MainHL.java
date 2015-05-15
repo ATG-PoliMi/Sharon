@@ -8,11 +8,11 @@ import java.util.Map;
 
 
 
+
 import sharon.extractor.ADL;
 import sharon.extractor.ADLEffect;
 import sharon.extractor.Day;
 import sharon.extractor.Needs;
-import sharon.extractor.RandomGaussian;
 import sharon.planner.ADLMatcher;
 import sharon.planner.LowLevelADL;
 import sharon.xml.ADLDB;
@@ -21,6 +21,7 @@ import sharon.xml.LLADLDB;
 import utils.Constants;
 import utils.CumulateHistogram;
 import utils.Distributions;
+import utils.RandomGaussian;
 import utils.Time;
 
 public class MainHL {

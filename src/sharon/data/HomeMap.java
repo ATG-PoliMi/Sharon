@@ -1,8 +1,7 @@
-package sharon.map;
+package sharon.data;
 
 import java.io.Console;
 
-import sharon.data.Sensor;
 import utils.Constants;
 
 /**

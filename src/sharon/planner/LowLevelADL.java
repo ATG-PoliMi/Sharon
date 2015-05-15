@@ -11,9 +11,9 @@ public class LowLevelADL {
 	
 	public LowLevelADL(int id, String name, ArrayList<Station> stations) {
 		super();
-		this.id = id;
-		this.name = name;
-		this.stations = stations;
+		this.id 		= id;
+		this.name 		= name;
+		this.stations 	= stations;
 	}
 	
 	public int getId() {

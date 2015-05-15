@@ -1,4 +1,4 @@
-package sharon.extractor;
+package sharon.extractor.thread;
 
 public class ADLQueue {
 

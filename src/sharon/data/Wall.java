@@ -1,7 +1,6 @@
-package sharon.map;
+package sharon.data;
 
 
-import sharon.map.HomeMap;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.valueLayer.GridValueLayer;

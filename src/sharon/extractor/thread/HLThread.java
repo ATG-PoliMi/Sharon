@@ -1,10 +1,14 @@
-package sharon.extractor;
+package sharon.extractor.thread;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import sharon.extractor.ADL;
+import sharon.extractor.ADLEffect;
+import sharon.extractor.Day;
+import sharon.extractor.Needs;
 import sharon.planner.ADLMatcher;
 import sharon.planner.LowLevelADL;
 import sharon.xml.ADLDB;
@@ -12,10 +16,11 @@ import sharon.xml.ADLMatcherDB;
 import sharon.xml.LLADLDB;
 import utils.Constants;
 import utils.CumulateHistogram;
+import utils.RandomGaussian;
 import utils.Time;
 
 
-public class HighLevelADLProducer implements Runnable {
+public class HLThread implements Runnable {
 
 	//ADL QUEUE
 	private BlockingQueue<ADLQueue> queue;
@@ -29,18 +34,18 @@ public class HighLevelADLProducer implements Runnable {
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
 
 	//Utils
-	static RandomGaussian gaussian = new RandomGaussian();
-	static long 	tick;
-	static long 	usedTime = 0;
+	static RandomGaussian gaussian 	= new RandomGaussian();
+	static long 	tick			= 0;
+	static long 	usedTime 		= 0;
 
 	static CumulateHistogram hist = new CumulateHistogram();
 
 	//Support ADL
 	static ADL badl;
 
-	public HighLevelADLProducer(BlockingQueue<ADLQueue> q){
+	public HLThread(BlockingQueue<ADLQueue> q){
 		this.queue=q;
-		
+
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
@@ -49,28 +54,29 @@ public class HighLevelADLProducer implements Runnable {
 
 	@Override
 	public void run() {
-		for (tick=0; tick <= 86400*300; tick++) {
-			usedTime++;
-			if (tick % 86400 == 0){
-				newDay();
-			}
-			if (tick % 60 == 0) {				
-				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
-				computeADLRank((int) tick % 86400);
-				ADLQueue ADLQ = changeADL();
-				//Logs(3); Hour histogram
-				Logs(4);
-				if (ADLQ != null) { 
-					try {
-						queue.put(ADLQ);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}		
-				}
+		tick++;
+		System.out.println("HL tick:"+tick);
+		usedTime++;
+		if (tick % 86400 == 0){
+			newDay();
+		}
+		if (tick % 60 == 0) {
+			System.out.println("HL MIN: "+(int)tick/60);
+			updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
+			computeADLRank((int) tick % 86400);
+			ADLQueue ADLQ = changeADL();
+			Logs(4);			
+			if (ADLQ != null) { 
+				try {
+					queue.put(ADLQ);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}		
 			}
 		}
 	}
-	
+
+
 	private static ADLQueue changeADL() {
 		ADL cadl = hLADL.get(1);
 
