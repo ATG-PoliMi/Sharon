@@ -1,4 +1,5 @@
-package sharon;
+package sharon.data;
+
 
 public class Sensor extends SensorAbstract {
 

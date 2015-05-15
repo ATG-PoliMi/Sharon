@@ -1,4 +1,4 @@
-package sharon;
+package sharon.map;
 
 import java.util.ArrayList;
 

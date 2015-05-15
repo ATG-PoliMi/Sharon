@@ -1,4 +1,4 @@
-package sharon.tuning;
+package sharon.map;
 
 import repast.simphony.common.HomeMap;
 

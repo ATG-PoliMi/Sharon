@@ -1,4 +1,4 @@
-package sharon.tuning;
+package sharon;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
-public class PseudoCount {
+public class ADLProfileExtractor {
 	//***PARAMETERS:***
 	static String House 	="HouseA"; 	//Options: "HouseA" || "HouseB"
 

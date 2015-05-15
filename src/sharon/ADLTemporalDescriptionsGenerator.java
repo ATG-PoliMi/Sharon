@@ -1,4 +1,4 @@
-package sharon.tuning;
+package sharon;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import sharon.extractor.ADL;
 			double centralTime, double rangeTime );
  *
  */
-public class ComputeADLTimeDescription {
+public class ADLTemporalDescriptionsGenerator {
 
 	public static double description [] = new double [1440];
 

@@ -1,4 +1,4 @@
-package sharon;
+package sharon.data;
 
 public abstract class SensorAbstract {
 	private int value,x,y;
