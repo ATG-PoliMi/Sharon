@@ -1,7 +1,5 @@
 package sharon.data;
 
-import java.io.Console;
-
 import utils.Constants;
 
 /**

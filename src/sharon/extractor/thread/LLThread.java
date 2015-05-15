@@ -9,12 +9,15 @@ import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
+import sharon.data.Coordinate;
 import sharon.data.HomeMap;
 import sharon.data.Sensor;
 import sharon.extractor.ADL;
 import sharon.extractor.Needs;
 import sharon.planner.ADLMatcher;
 import sharon.planner.LowLevelADL;
+import sharon.xml.ADLMatcherDB;
+import sharon.xml.LLADLDB;
 import utils.Constants;
 import utils.CumulateHistogram;
 import utils.RandomGaussian;
@@ -24,7 +27,7 @@ import utils.dijsktra.DijkstraEngine;
 public class LLThread implements Runnable{
 
 	private ContinuousSpace<Object> space;
-	private Grid<Object> grid;
+	private Coordinate actor = new Coordinate (10,10);
 	private GridPoint Target = new GridPoint(15, 25);
 	private DijkstraEngine DE;
 	int[][] worldMapMatrix;
@@ -61,39 +64,44 @@ public class LLThread implements Runnable{
 	public LLThread(BlockingQueue<ADLQueue> q, int simulatedDays){
 		this.queue=q;
 		this.simulatedDays = simulatedDays;
+
+		lLADL 		= 	LLADLDB.addLLADL();
+		matchADL 	= 	ADLMatcherDB.addADLMatch();
 	}
 
 	@Override
 	public void run() {
+		int emptyN=0;
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e1) {
 			System.out.println("Sleep Error");
 			e1.printStackTrace();
-			
+
 		}
+
 		for (tick=0; tick < 86400*simulatedDays; tick++) {
-			
+
 			//if (tick % 60 == 0) {System.out.println("LL MIN: "+(int)tick/60);}
 			idling++;
 
 			switch (agentStatus) {
 			case 1: //Extracting + computing
 				ADLQueue CADL;
-				System.out.println("idling "+idling+" step at "+ tick);
 				try {
 					if (queue.isEmpty()) {
 						//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
 						//Fake ADLS for demo: start demo:		//queue.put(new ADLQueue(8, 300));queue.put(new ADLQueue(6, 300));queue.put(new ADLQueue(3, 666));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));				//end demo
-						System.out.println("***** A: EMPTY queue *****");
+						//System.out.println("***** A: EMPTY queue *****");
+						tick--;
+						emptyN++;
 
 					} else {
 						CADL = queue.take();
 						System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime());
 
 						if (CADL != null) {
-							llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!
-							System.out.println("INDEX: "+llADLIndex);
+							llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); 
 							tTime.clear();				
 
 							for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
@@ -120,8 +128,8 @@ public class LLThread implements Runnable{
 							path.remove(0);
 							String[] tokens = x.split(delims);
 
-							GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-							moveTowards(pt2);
+							Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
+							moveTowards(target);
 						}
 					} else {
 						idling=0;
@@ -139,20 +147,16 @@ public class LLThread implements Runnable{
 				break;
 			}
 		}
+		System.out.println("Empty Seconds: "+emptyN);
 		System.out.println("Consumer Thread ends");
 	}
 
-	public void moveTowards(GridPoint pt) {
-		// only move if we are not already in this grid location
-		if (!pt.equals(grid.getLocation(this))) {
-			NdPoint myPoint = space.getLocation(this);
-			NdPoint otherPoint = new NdPoint(pt.getX(), pt.getY());
-			double angle = SpatialMath.calcAngleFor2DMovement(space, myPoint,
-					otherPoint);
-			space.moveByVector(this, 1, angle, 0);
-			myPoint = space.getLocation(this);
-			grid.moveTo(this, (int) myPoint.getX(), (int) myPoint.getY());
-		}
+	public void moveTowards(Coordinate trgt) {
+
+			if (!trgt.equals(actor)) {
+				actor.setX(trgt.getX());
+				actor.setY(trgt.getY());
+			}
 	}
 
 
@@ -166,11 +170,12 @@ public class LLThread implements Runnable{
 		Target = new GridPoint(s[indexSensor].getX(), s[indexSensor].getY());
 
 		// Start point:
-		DE.setInitial((int)grid.getLocation(this).getX() + ","+ (int)grid.getLocation(this).getY());
+		DE.setInitial(actor.getX() + ","+ actor.getY());
 
 		// End point:
 		path = DE.computePath(Target.getX()+","+Target.getY());
 		//System.out.println("PATH:"+path);
+
 	}
 
 	private static void Logs(int logType) {

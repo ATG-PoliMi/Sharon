@@ -108,7 +108,8 @@ public class HLThread implements Runnable {
 				badl = cadl;
 				badl.setActive(1);
 				usedTime=0;
-				Logs(1);		
+				//Logs(1); //TODO: remove comment
+				return new ADLQueue(badl.getId(), badl.getMinTime());
 			}
 		}
 		return null;
@@ -173,9 +174,6 @@ public class HLThread implements Runnable {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private static double needsEffort(ADL a, int i) {
 		double ADLeffort = 0.0;
 		int needed = 0;
