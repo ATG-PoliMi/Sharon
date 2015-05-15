@@ -9,21 +9,32 @@ import sharon.extractor.thread.LLThread;
 
 public class MainHLLL {
 
+	//*****SIMULATION PARAMETERS:*****
+	private static int simulatedDays = 10; 	//Days to simulate
+	private static int mode 		= 0;	//0: only High Level, 1: High Level + Low Level
+	private static int printLog 	= 1;	//0: no log print, 1: print (histograms...)
+	//***** END PARAMETERS *****
+	
+	
+	
 	//Thread
 	private static HLThread producer;
 	private static LLThread consumer;
 	ADLQueue ADLQ;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
 
-	
 	public static void main(String[] args) { 
 
-		producer = new HLThread(queue); //High 	Level 	simulation
-		consumer = new LLThread(queue);	//Low 	Level 	simulation
-
+		//HIGH LEVEL SIMULATION
+		producer = new HLThread(queue, simulatedDays, printLog); 	
 		new Thread(producer).start();
-		new Thread(consumer).start();
-		
-		System.out.println("Producer and Consumer has been started");
+		System.out.println("Producer Starts");
+
+		//LOW LEVEL SIMULATION
+		if (mode == 1) {
+			consumer = new LLThread(queue, simulatedDays);
+			new Thread(consumer).start();
+			System.out.println("Consumer Starts");	
+		}			
 	}
 }

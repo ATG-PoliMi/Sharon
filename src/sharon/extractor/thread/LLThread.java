@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
@@ -57,89 +56,92 @@ public class LLThread implements Runnable{
 	static CumulateHistogram hist = new CumulateHistogram();
 
 	private BlockingQueue<ADLQueue> queue;
+	private int simulatedDays;
 
-	public LLThread(BlockingQueue<ADLQueue> q){
+	public LLThread(BlockingQueue<ADLQueue> q, int simulatedDays){
 		this.queue=q;
+		this.simulatedDays = simulatedDays;
 	}
 
 	@Override
 	public void run() {
-		tick++;
-		idling++;
-		System.out.println("LL tick:"+tick);
-		switch (agentStatus) {
-		case 1: //Extracting + computing
-			ADLQueue CADL;
-			System.out.println("idling "+idling+" step at "+ tick);
-			try {
-				if (queue.isEmpty()) {
-					//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
-					//Fake ADLS for demo: start demo:
-					queue.put(new ADLQueue(8, 300));
-					queue.put(new ADLQueue(6, 300));
-					queue.put(new ADLQueue(3, 666));
-					queue.put(new ADLQueue(2, 300));
-					queue.put(new ADLQueue(2, 300));
-					queue.put(new ADLQueue(2, 300));					
-					//end demo
-					System.out.println("A: EMPTY. Fake ADLs inserted");
-					
-				} else {
-					CADL = queue.take();
-					CADL.getClass().getName();
-					System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime());
-
-					if (CADL != null) {
-						llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!		
-						tTime.clear();				
-
-						for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
-							tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
-						}
-						agentStatus=2;
-					}	
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				System.out.println("ERROR!");
-			}
-			break;
-
-		case 2:	//Walking+Acting
-			if (!tTime.isEmpty()) {
-				if (idling < tTime.get(0)) {
-
-					GridPoint pt = grid.getLocation(this);
-					if (path.isEmpty()) {
-						newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
-					}
-					if (path.size() > 0) {
-						String x = path.get(0);
-						path.remove(0);
-						String[] tokens = x.split(delims);
-
-						GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-						moveTowards(pt2);
-					}
-				} else {
-					idling=0;
-					stationCounter++;
-					tTime.remove(0);					
-				}
-
-			} else {
-				agentStatus = 1;
-				//completeADL(keyBadl);
-				Logs(2);
-				//updateNeeds((int) usedTime/3600);
-				stationCounter=0;
-			}
-
-			break;
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			System.out.println("Sleep Error");
+			e1.printStackTrace();
+			
 		}
-		
+		for (tick=0; tick < 86400*simulatedDays; tick++) {
+			
+			//if (tick % 60 == 0) {System.out.println("LL MIN: "+(int)tick/60);}
+			idling++;
+
+			switch (agentStatus) {
+			case 1: //Extracting + computing
+				ADLQueue CADL;
+				System.out.println("idling "+idling+" step at "+ tick);
+				try {
+					if (queue.isEmpty()) {
+						//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
+						//Fake ADLS for demo: start demo:		//queue.put(new ADLQueue(8, 300));queue.put(new ADLQueue(6, 300));queue.put(new ADLQueue(3, 666));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));				//end demo
+						System.out.println("***** A: EMPTY queue *****");
+
+					} else {
+						CADL = queue.take();
+						System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime());
+
+						if (CADL != null) {
+							llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); //TODO: 	Implement probabilities in LLADL extraction!!!
+							System.out.println("INDEX: "+llADLIndex);
+							tTime.clear();				
+
+							for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
+								tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
+							}
+							agentStatus=2;
+						}	
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					System.out.println("ERROR!");
+				}
+				break;
+
+			case 2:	//Walking+Acting
+				if (!tTime.isEmpty()) {
+					if (idling < tTime.get(0)) {
+
+						if (path.isEmpty()) {
+							newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
+						}
+						if (path.size() > 0) {
+							String x = path.get(0);
+							path.remove(0);
+							String[] tokens = x.split(delims);
+
+							GridPoint pt2 = new GridPoint(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
+							moveTowards(pt2);
+						}
+					} else {
+						idling=0;
+						stationCounter++;
+						tTime.remove(0);					
+					}
+
+				} else {
+					agentStatus = 1;
+					//completeADL(keyBadl);
+					Logs(2);
+					//updateNeeds((int) usedTime/3600);
+					stationCounter=0;
+				}
+				break;
+			}
+		}
+		System.out.println("Consumer Thread ends");
 	}
-	
+
 	public void moveTowards(GridPoint pt) {
 		// only move if we are not already in this grid location
 		if (!pt.equals(grid.getLocation(this))) {

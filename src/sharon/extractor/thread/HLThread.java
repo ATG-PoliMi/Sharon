@@ -1,6 +1,5 @@
 package sharon.extractor.thread;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -16,6 +15,7 @@ import sharon.xml.ADLMatcherDB;
 import sharon.xml.LLADLDB;
 import utils.Constants;
 import utils.CumulateHistogram;
+import utils.Distributions;
 import utils.RandomGaussian;
 import utils.Time;
 
@@ -35,16 +35,17 @@ public class HLThread implements Runnable {
 
 	//Utils
 	static RandomGaussian gaussian 	= new RandomGaussian();
-	static long 	tick			= 0;
 	static long 	usedTime 		= 0;
-
-	static CumulateHistogram hist = new CumulateHistogram();
-
-	//Support ADL
+	static long 	tick 			= 0;
+	static CumulateHistogram hist 	= new CumulateHistogram();
 	static ADL badl;
+	private int simulatedDays;
+	private int printLog;
 
-	public HLThread(BlockingQueue<ADLQueue> q){
+	public HLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog){
 		this.queue=q;
+		this.simulatedDays=simulatedDays;
+		this.printLog=printLog;
 
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
@@ -54,49 +55,60 @@ public class HLThread implements Runnable {
 
 	@Override
 	public void run() {
-		tick++;
-		System.out.println("HL tick:"+tick);
-		usedTime++;
-		if (tick % 86400 == 0){
-			newDay();
-		}
-		if (tick % 60 == 0) {
-			System.out.println("HL MIN: "+(int)tick/60);
-			updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
-			computeADLRank((int) tick % 86400);
-			ADLQueue ADLQ = changeADL();
-			Logs(4);			
-			if (ADLQ != null) { 
-				try {
-					queue.put(ADLQ);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}		
+		for (tick=0; tick< 86400*simulatedDays; tick++){
+
+			usedTime++;
+			if (tick % 86400 == 0){
+				newDay();
 			}
+			if (tick % 60 == 0) {
+				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
+				computeADLRank((int) tick % 86400);
+				ADLQueue ADLQ = changeADL();
+
+				//Logs(3); Hour histogram
+				Logs(4);			
+
+
+				if (ADLQ != null) { 
+					try {
+						queue.put(ADLQ);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		System.out.println("Producer Thread ends");
+		if (printLog == 1) {
+			hist.refineHistogram(simulatedDays);			//normalized for days number
+			//hist.normalizationTo1Histogram(); 	//normalized to 1
+
+			hist.printToFile("data/OutputHistogram.txt",2);
+			Distributions.loadDistributions("data/OutputHistogram.txt","data/t/norm1_7d.txt");
+			//Distributions.loadDistributions("data/t/norm1_23d.txt","data/t/norm1_7d.txt");
 		}
 	}
 
 
 	private static ADLQueue changeADL() {
-		ADL cadl = hLADL.get(1);
+		ADL cadl = hLADL.get(1);		
 
 		if (usedTime > 60*badl.getMinTime()){
 
 			//Check Better ADL
 			for (ADL a : hLADL.values()) {			
 				if ((a.getRank() >= cadl.getRank())) {
-					cadl 			= a;					
+					cadl 			= a;
 				}			
 			}		
 
 			if(cadl.getRank() > 0.01 && cadl.getName() != badl.getName()) {
-				ADLQueue ADLQ = new ADLQueue(badl.getId(), usedTime);
 				badl.setActive(0);
 				badl = cadl;
 				badl.setActive(1);
 				usedTime=0;
-				Logs(1);
-				return ADLQ;
+				Logs(1);		
 			}
 		}
 		return null;
@@ -128,23 +140,6 @@ public class HLThread implements Runnable {
 		default: System.out.print("Error\n");
 		}
 
-	}
-
-	private static void eraseNeeds() {
-		try {
-			System.in.read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Needs.getInstance().setToileting(0);
-		Needs.getInstance().setStress(0);
-		Needs.getInstance().setDirtiness(0);
-		Needs.getInstance().setTirediness(0);
-		Needs.getInstance().setBoredom(0);
-		Needs.getInstance().setHunger(0);
-		Needs.getInstance().setSweat(0);
-		Needs.getInstance().setAsociality(0);
-		Needs.getInstance().setOutOfStock(0);		
 	}
 
 	/**
