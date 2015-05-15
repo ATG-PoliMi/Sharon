@@ -21,7 +21,7 @@ public class MainHLLL {
 	private static HLThread producer;
 	private static LLThread consumer;
 	ADLQueue ADLQ;
-	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(1000); //ADL QUEUE
+	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(10); //ADL QUEUE
 
 
 	public static void main(String[] args) { 
