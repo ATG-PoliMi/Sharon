@@ -2,8 +2,13 @@ package sharon.map;
 
 import java.io.Console;
 
-import repast.simphony.agent.Sensor;
+import sharon.data.Sensor;
 import utils.Constants;
+
+/**
+ * This class describes the structure of the used map (dimension, walls, sensors)
+ *
+ */
 public class HomeMap {
 
 	private int map [][] = new int [Constants.mapSizeW][Constants.mapSizeH];
@@ -106,6 +111,11 @@ public class HomeMap {
 		this.s = s;
 	}
 
+	/**
+	 * * @param x: User Coord X
+	 * @param y: User Coord Y
+	 * @return current user room
+	 */
 	public int getHouseArea (double x, double y) {
 		if (x>40)
 			return 5;

@@ -1,7 +1,7 @@
 package sharon.map;
 
 
-import repast.simphony.common.HomeMap;
+import sharon.map.HomeMap;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.valueLayer.GridValueLayer;
@@ -24,6 +24,7 @@ public class Wall {
 	 *            the specified <code>y</code> coordinate; <i>must be
 	 *            non-negative</i>
 	 */
+	
 	public Wall(final int x, final int y) {
 		if (x < 0) {
 			throw new IllegalArgumentException(String.format(
