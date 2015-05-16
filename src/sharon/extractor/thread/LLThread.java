@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 
-import repast.simphony.space.grid.GridPoint;
+
 import sharon.data.Coordinate;
 import sharon.data.HomeMap;
 import sharon.data.Sensor;
@@ -16,14 +16,13 @@ import sharon.xml.ADLMatcherDB;
 import sharon.xml.LLADLDB;
 import utils.Constants;
 import utils.CumulateHistogram;
-import utils.RandomGaussian;
 import utils.dijsktra.DijkstraEngine;
 
 public class LLThread implements Runnable{
 
 
 	private Coordinate actor = new Coordinate (10,10);
-	private GridPoint Target = new GridPoint(15, 25);
+	private Coordinate Target = new Coordinate(15, 25);
 	private DijkstraEngine DE;
 	int[][] worldMapMatrix;
 	private ArrayList<String> path = new ArrayList<String>();
@@ -39,9 +38,7 @@ public class LLThread implements Runnable{
 	static int idling 		= 	0;	
 
 	//Utils
-	RandomGaussian gaussian = new RandomGaussian();
 	static long tick = 0;
-	static int keyBadl;
 	static long usedTime = 0;
 
 	//TARGETS
@@ -50,16 +47,17 @@ public class LLThread implements Runnable{
 	private static int stationCounter = 0; //Station Counter
 
 	//Support ADL
-	static ADL badl;
 	static CumulateHistogram hist = new CumulateHistogram();
 
 	private BlockingQueue<ADLQueue> queue;
 	private int simulatedDays;
 	private int action;
+	private int dijkstra;
 
-	public LLThread(BlockingQueue<ADLQueue> q, int simulatedDays){
+	public LLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int dijkstra){
 		this.queue=q;
 		this.simulatedDays = simulatedDays;
+		this.dijkstra = dijkstra;
 
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
@@ -69,7 +67,7 @@ public class LLThread implements Runnable{
 	public void run() {
 		int emptyN=0;
 
-		for (tick=0; tick < 86400*simulatedDays; tick++) {
+		for (tick=0; tick < (86400*simulatedDays)-5000; tick++) {
 
 			idling++;
 			switch (agentStatus) {
@@ -99,51 +97,65 @@ public class LLThread implements Runnable{
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					System.out.println("ERROR!");
+					System.out.println("QUEUE ERROR!");
 				}
 				break;
 
 			case 2:	//Walking+Acting
-				if (!tTime.isEmpty()) {
+				if (!tTime.isEmpty()) {	//tTime contains timings for each station
 					if (idling < tTime.get(0)) {
+						if (dijkstra == 0 ) {
+							
+							Sensor [] s= HomeMap.getInstance().getS();
+							Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getX(),
+									s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getY());
+							if (Target.getX()>actor.getX()) 
+								actor.setX(actor.getX()+1);
+							if (Target.getX()<actor.getX()) 
+								actor.setX(actor.getX()-1);
+							
+							if (Target.getY()>actor.getY()) 
+								actor.setY(actor.getY()+1);
+							if (Target.getY()>actor.getY()) 
+								actor.setY(actor.getY()-1);							
+							
+						} else {
+							if (path.isEmpty()) {	//New station case
+								newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
+							}
 
-						if (path.isEmpty()) {
-							newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
-						}
-						if (path.size() > 0) {
-							String x = path.get(0);
-							path.remove(0);
-							String[] tokens = x.split(delims);
+							if (path.size() > 0) {	//With a target the target moves toward that direction
+								String x = path.get(0);
+								//System.out.println(x);	//TODO: row log 
 
-							Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-							moveTowards(target);
+								path.remove(0);
+								String[] tokens = x.split(delims);
+								Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
+								if (!target.equals(actor)) {
+									actor.setX(target.getX());
+									actor.setY(target.getY());
+								}
+							}
 						}
-					} else {
+
+					} else {	//Time at the station ended
 						idling=0;
 						stationCounter++;
 						tTime.remove(0);					
 					}					
-				} else {
+				} else {	//	ADL completed
 					agentStatus = 1;
 					stationCounter=0;
 					action = 0; //(Walking)
 				}
 				break;
 			}
-			if (tick%1000==0)
-				System.out.println(printActiveSensors(action));	//TODO: Log row
+			//			if (tick%10000==0)
+			System.out.println(printActiveSensors(action));	//TODO: Log row
 		}
-		System.out.println("Empty Seconds: "+emptyN);
+		System.out.println("Empty ticks: "+emptyN);
 		System.out.println("Consumer Thread ends");
-		
-	}
 
-	public void moveTowards(Coordinate trgt) {
-
-			if (!trgt.equals(actor)) {
-				actor.setX(trgt.getX());
-				actor.setY(trgt.getY());
-			}
 	}
 
 
@@ -154,7 +166,7 @@ public class LLThread implements Runnable{
 
 		Sensor [] s= HomeMap.getInstance().getS();
 
-		Target = new GridPoint(s[indexSensor].getX(), s[indexSensor].getY());
+		Target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
 
 		// Start point:
 		DE.setInitial(actor.getX() + ","+ actor.getY());
