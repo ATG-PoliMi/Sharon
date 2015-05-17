@@ -1,8 +1,17 @@
 package sharon.extractor.thread;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.io.IOException;
+
+
+
+
+
+
 
 
 
@@ -53,11 +62,13 @@ public class LLThread implements Runnable{
 	private int simulatedDays;
 	private int action;
 	private int dijkstra;
+	private String sensorsOutput;
 
-	public LLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int dijkstra){
+	public LLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int dijkstra, String sOutput){
 		this.queue=q;
 		this.simulatedDays = simulatedDays;
 		this.dijkstra = dijkstra;
+		this.sensorsOutput = sOutput;
 
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
@@ -65,94 +76,103 @@ public class LLThread implements Runnable{
 
 	@Override
 	public void run() {
+
 		int emptyN=0;
+		PrintWriter out;
+		try {
+			Thread.sleep(1000);
+			out = new PrintWriter(new FileWriter("data/sensorsOutput.txt"));
+			
+			for (tick=0; tick < (86400*simulatedDays)-5000; tick++) {
 
-		for (tick=0; tick < (86400*simulatedDays)-5000; tick++) {
+				idling++;
+				switch (agentStatus) {
+				case 1: //Extracting + computing
+					ADLQueue CADL;
+					try {
+						if (queue.isEmpty()) {
+							//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
+							//Fake ADLS for demo: start demo:		//queue.put(new ADLQueue(8, 300));queue.put(new ADLQueue(6, 300));queue.put(new ADLQueue(3, 666));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));				//end demo
+							System.out.println("***** A: EMPTY queue *****");
+							tick--;
+							emptyN++;
 
-			idling++;
-			switch (agentStatus) {
-			case 1: //Extracting + computing
-				ADLQueue CADL;
-				try {
-					if (queue.isEmpty()) {
-						//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
-						//Fake ADLS for demo: start demo:		//queue.put(new ADLQueue(8, 300));queue.put(new ADLQueue(6, 300));queue.put(new ADLQueue(3, 666));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));				//end demo
-						System.out.println("***** A: EMPTY queue *****");
-						tick--;
-						emptyN++;
-
-					} else {
-						CADL = queue.take();
-						//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
-						action=CADL.getADLId();
-						if (CADL != null) {
-							llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); 
-							tTime.clear();				
-
-							for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
-								tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
-							}
-							agentStatus=2;							
-						}	
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					System.out.println("QUEUE ERROR!");
-				}
-				break;
-
-			case 2:	//Walking+Acting
-				if (!tTime.isEmpty()) {	//tTime contains timings for each station
-					if (idling < tTime.get(0)) {
-						if (dijkstra == 0 ) {
-							
-							Sensor [] s= HomeMap.getInstance().getS();
-							Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getX(),
-									s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getY());
-							if (Target.getX()>actor.getX()) 
-								actor.setX(actor.getX()+1);
-							if (Target.getX()<actor.getX()) 
-								actor.setX(actor.getX()-1);
-							
-							if (Target.getY()>actor.getY()) 
-								actor.setY(actor.getY()+1);
-							if (Target.getY()>actor.getY()) 
-								actor.setY(actor.getY()-1);							
-							
 						} else {
-							if (path.isEmpty()) {	//New station case
-								newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
-							}
+							CADL = queue.take();
+							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
+							action=CADL.getADLId();
+							if (CADL != null) {
+								llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); 
+								tTime.clear();				
 
-							if (path.size() > 0) {	//With a target the target moves toward that direction
-								String x = path.get(0);
-								//System.out.println(x);	//TODO: row log 
+								for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
+									tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
+								}
+								agentStatus=2;							
+							}	
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						System.out.println("QUEUE ERROR!");
+					}
+					break;
 
-								path.remove(0);
-								String[] tokens = x.split(delims);
-								Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-								if (!target.equals(actor)) {
-									actor.setX(target.getX());
-									actor.setY(target.getY());
+				case 2:	//Walking+Acting
+					if (!tTime.isEmpty()) {	//tTime contains timings for each station
+						if (idling < tTime.get(0)) {
+							if (dijkstra == 0 ) {
+
+								Sensor [] s= HomeMap.getInstance().getS();
+								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getX(),
+										s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getY());
+								if (Target.getX()>actor.getX()) 
+									actor.setX(actor.getX()+1);
+								if (Target.getX()<actor.getX()) 
+									actor.setX(actor.getX()-1);
+
+								if (Target.getY()>actor.getY()) 
+									actor.setY(actor.getY()+1);
+								if (Target.getY()>actor.getY()) 
+									actor.setY(actor.getY()-1);							
+
+							} else {
+								if (path.isEmpty()) {	//New station case
+									newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
+								}
+
+								if (path.size() > 0) {	//With a target the target moves toward that direction
+									String x = path.get(0);
+									//System.out.println(x);	//TODO: row log 
+
+									path.remove(0);
+									String[] tokens = x.split(delims);
+									Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
+									if (!target.equals(actor)) {
+										actor.setX(target.getX());
+										actor.setY(target.getY());
+									}
 								}
 							}
-						}
 
-					} else {	//Time at the station ended
-						idling=0;
-						stationCounter++;
-						tTime.remove(0);					
-					}					
-				} else {	//	ADL completed
-					agentStatus = 1;
-					stationCounter=0;
-					action = 0; //(Walking)
+						} else {	//Time at the station ended
+							idling=0;
+							stationCounter++;
+							tTime.remove(0);					
+						}					
+					} else {	//	ADL completed
+						agentStatus = 1;
+						stationCounter=0;
+						action = 0; //(Walking)
+					}
+					break;
 				}
-				break;
+				out.println(printActiveSensors(action));	//TODO: Log row
 			}
-			//			if (tick%10000==0)
-			System.out.println(printActiveSensors(action));	//TODO: Log row
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 		System.out.println("Empty ticks: "+emptyN);
 		System.out.println("Consumer Thread ends");
 

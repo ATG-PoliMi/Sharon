@@ -10,10 +10,11 @@ import sharon.extractor.thread.LLThread;
 public class MainHLLL {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int simulatedDays 	= 1; 	//Days to simulate
+	private static int simulatedDays 	= 10; 	//Days to simulate
 	private static int mode 			= 1;	//0: only High Level, 1: High Level + Low Level
 	private static int printLog 		= 0;	//0: no log print, 1: print (histograms...)
 	private static int dijkstra 		= 0;	//0: no dijkstra, 1: dijkstra (slower)
+	private static String sOutput 		= "data/sensors.txt";	//this file is heavy. Open it from explorer.
 	//***** END PARAMETERS *****
 		
 	
@@ -33,7 +34,7 @@ public class MainHLLL {
 
 		//LOW LEVEL SIMULATION
 		if (mode == 1) {
-			consumer = new LLThread(queue, simulatedDays, dijkstra);
+			consumer = new LLThread(queue, simulatedDays, dijkstra, sOutput);
 			new Thread(consumer).start();
 			System.out.println("Consumer Starts");	
 		}			
