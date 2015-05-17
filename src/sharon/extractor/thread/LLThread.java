@@ -131,9 +131,9 @@ public class LLThread implements Runnable{
 									actor.setX(actor.getX()-1);
 
 								if (Target.getY()>actor.getY()) 
-									actor.setY(actor.getY()+1);
+									actor.setY(actor.getY()-1);
 								if (Target.getY()>actor.getY()) 
-									actor.setY(actor.getY()-1);							
+									actor.setY(actor.getY()+1);							
 
 							} else {
 								if (path.isEmpty()) {	//New station case
