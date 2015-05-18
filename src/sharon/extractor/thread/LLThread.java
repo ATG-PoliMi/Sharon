@@ -81,7 +81,7 @@ public class LLThread implements Runnable{
 		PrintWriter out;
 		try {
 			Thread.sleep(1000);
-			out = new PrintWriter(new FileWriter("data/sensorsOutput.txt"));
+			out = new PrintWriter(new FileWriter(sensorsOutput+"0.txt"));
 			
 			for (tick=0; tick < (86400*simulatedDays)-5000; tick++) {
 
@@ -165,6 +165,11 @@ public class LLThread implements Runnable{
 						action = 0; //(Walking)
 					}
 					break;
+				}
+				
+				if ((tick%86400==0)&&(tick>0)) {
+					out.close();
+					out = new PrintWriter(new FileWriter(sensorsOutput+(int)tick/86400+".txt"));
 				}
 				out.println(printActiveSensors(action));	//TODO: Log row
 			}
