@@ -1,6 +1,6 @@
 package sharon;
 
-import sharon.data.HomeMap;
+import sharon.xml.HomeMap;
 
 /**
  * This class prints the map matrix.

@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import sharon.extractor.Day;
+import sharon.data.Day;
 
 public class CumulateHistogram {
 

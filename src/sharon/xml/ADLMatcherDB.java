@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import sharon.planner.ADLMatcher;
+import sharon.engine.ADLMatcher;
 
 
 public class ADLMatcherDB {

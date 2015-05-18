@@ -1,22 +1,21 @@
-package sharon.extractor.thread;
+package sharon.engine.thread;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import sharon.extractor.ADL;
-import sharon.extractor.ADLEffect;
-import sharon.extractor.Day;
-import sharon.extractor.Needs;
-import sharon.planner.ADLMatcher;
-import sharon.planner.LowLevelADL;
+import sharon.data.Day;
+import sharon.engine.ADL;
+import sharon.engine.ADLEffect;
+import sharon.engine.ADLMatcher;
+import sharon.engine.LowLevelADL;
+import sharon.engine.Needs;
 import sharon.xml.ADLDB;
 import sharon.xml.ADLMatcherDB;
 import sharon.xml.LLADLDB;
 import utils.Constants;
 import utils.CumulateHistogram;
 import utils.Distributions;
-import utils.RandomGaussian;
 import utils.Time;
 
 
@@ -34,7 +33,6 @@ public class HLThread implements Runnable {
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
 
 	//Utils
-	static RandomGaussian gaussian 	= new RandomGaussian();
 	static long 	usedTime 		= 0;
 	static long 	tick 			= 0;
 	static CumulateHistogram hist 	= new CumulateHistogram();

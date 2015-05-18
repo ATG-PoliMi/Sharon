@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 import org.apache.commons.math3.distribution.BetaDistribution;
 
-import sharon.extractor.ADL;
+import sharon.engine.ADL;
 
 /***
  * 

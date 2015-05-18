@@ -1,5 +1,6 @@
-package sharon.data;
+package sharon.xml;
 
+import sharon.data.Sensor;
 import utils.Constants;
 
 /**

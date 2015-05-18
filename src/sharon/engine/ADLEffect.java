@@ -1,4 +1,4 @@
-package sharon.extractor;
+package sharon.engine;
 
 public class ADLEffect {
 	private String name;

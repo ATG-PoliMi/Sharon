@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import sharon.extractor.ADL;
-import sharon.extractor.ADLEffect;
+import sharon.engine.ADL;
+import sharon.engine.ADLEffect;
 import utils.Constants;
 
 public class ADLDB {

@@ -1,4 +1,4 @@
-package sharon.planner;
+package sharon.data;
 
 public class Station {
 

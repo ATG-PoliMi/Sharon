@@ -1,6 +1,6 @@
 package utils;
 
-import sharon.extractor.Needs;
+import sharon.engine.Needs;
 
 public class Constants {	
 

@@ -1,4 +1,4 @@
-package sharon.extractor.thread;
+package sharon.engine.thread;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -15,13 +15,16 @@ import java.io.IOException;
 
 
 
+
+
+
 import sharon.data.Coordinate;
-import sharon.data.HomeMap;
 import sharon.data.Sensor;
-import sharon.extractor.ADL;
-import sharon.planner.ADLMatcher;
-import sharon.planner.LowLevelADL;
+import sharon.engine.ADL;
+import sharon.engine.ADLMatcher;
+import sharon.engine.LowLevelADL;
 import sharon.xml.ADLMatcherDB;
+import sharon.xml.HomeMap;
 import sharon.xml.LLADLDB;
 import utils.Constants;
 import utils.CumulateHistogram;

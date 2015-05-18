@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import sharon.planner.LowLevelADL;
-import sharon.planner.Station;
+import sharon.data.Station;
+import sharon.engine.LowLevelADL;
 
 public class LLADLDB {
 

@@ -3,9 +3,9 @@ package sharon;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import sharon.extractor.thread.ADLQueue;
-import sharon.extractor.thread.HLThread;
-import sharon.extractor.thread.LLThread;
+import sharon.engine.thread.ADLQueue;
+import sharon.engine.thread.HLThread;
+import sharon.engine.thread.LLThread;
 
 public class MainHLLL {
 
