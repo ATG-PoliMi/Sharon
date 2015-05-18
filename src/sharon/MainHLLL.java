@@ -28,7 +28,7 @@ public class MainHLLL {
 	public static void main(String[] args) { 
 
 		//HIGH LEVEL SIMULATION
-		producer = new HLThread(queue, simulatedDays, printLog); 	
+		producer = new HLThread(queue, simulatedDays, printLog, mode); 	
 		new Thread(producer).start();
 		System.out.println("Producer Starts");
 

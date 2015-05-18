@@ -40,10 +40,13 @@ public class HLThread implements Runnable {
 	private int simulatedDays;
 	private int printLog;
 
-	public HLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog){
+	private int mode;
+
+	public HLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode){
 		this.queue=q;
 		this.simulatedDays=simulatedDays;
 		this.printLog=printLog;
+		this.mode=mode;
 
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
@@ -70,7 +73,8 @@ public class HLThread implements Runnable {
 
 				if (ADLQ != null) { 
 					try {
-						queue.put(ADLQ);
+						if (mode !=0)
+							queue.put(ADLQ);
 						System.out.println("TIME: "+tick+ ", ID: "+ADLQ.getADLId()+", T:"+ADLQ.getTime());
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -108,7 +112,7 @@ public class HLThread implements Runnable {
 				badl = cadl;
 				badl.setActive(1);				
 				usedTime=0;
-				//Logs(1); //TODO: Log row
+				Logs(1); //TODO: Log row
 				return X;
 			}
 		}
