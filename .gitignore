@@ -100,6 +100,12 @@ dist*
 test.db
 test_msg_archive.db
 app/config/config_dev.ini
+*.iml
 
 # database for work in progress, not sense to add to git
 demo_wip.db
+
+# -- very specific!! -- #
+/data/t
+/data/ARAS
+/data/SensorOutput/*.txt

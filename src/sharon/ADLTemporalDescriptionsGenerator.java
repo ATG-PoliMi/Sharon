@@ -57,8 +57,8 @@ public class ADLTemporalDescriptionsGenerator {
 			description [i] = description [i] > 1.0 ? 1.0 : description [i]; //Saturation to 1.0
 		}
 
-		//print (1); 		//Histogram
-		//print (2);		//Description
+		print (1); 		//Histogram
+		print (2);		//Description
 		print (3);		//Description on file
 
 	}
