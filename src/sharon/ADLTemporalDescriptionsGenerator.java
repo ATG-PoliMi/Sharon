@@ -4,8 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.apache.commons.math3.distribution.BetaDistribution;
-
 import sharon.engine.ADL;
 
 /***
@@ -99,11 +97,4 @@ public class ADLTemporalDescriptionsGenerator {
 		}
 	}
 
-	private static double timeDependence(double currentMinute, double betaA, double betaB, 
-			double centralTime, double rangeTime ) {
-
-		BetaDistribution b = new BetaDistribution(betaA, betaB);		
-		double test = b.density((0.5 + (((double)currentMinute - centralTime) / (rangeTime)))); 
-		return test;
-	}
 }
