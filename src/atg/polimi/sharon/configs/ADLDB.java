@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import atg.polimi.sharon.engine.ADLEffect;
-import atg.polimi.sharon.utils.Constants;
+import atg.polimi.sharon.configs.Parameters;
 import atg.polimi.sharon.engine.ADL;
 
 public class ADLDB {
@@ -50,13 +50,13 @@ public class ADLDB {
 		adl.put(2, new ADL (2, "Going Out", days, independent, TimeDependancy.get(1), 45,
 				new ArrayList<String>(Arrays.asList("asociality","stock")),
 				new ArrayList<ADLEffect>(Arrays.asList(
-						new ADLEffect("stress", 	-Constants.STRESS/4),
-						new ADLEffect("hunger", 	-Constants.HUNGER/3), 
-						new ADLEffect("boredom", 	-Constants.BOREDOM/3), 
-						new ADLEffect("sweat", 		-Constants.SWEAT/3), 
-						new ADLEffect("toileting", 	-Constants.TOILETING/3), 
-						new ADLEffect("stock", 		-Constants.OUTOFSTOCK/3), 
-						new ADLEffect("dirtiness", 	-Constants.DIRTINESS/3)))));
+						new ADLEffect("stress", 	-Parameters.STRESS/4),
+						new ADLEffect("hunger", 	-Parameters.HUNGER/3), 
+						new ADLEffect("boredom", 	-Parameters.BOREDOM/3), 
+						new ADLEffect("sweat", 		-Parameters.SWEAT/3), 
+						new ADLEffect("toileting", 	-Parameters.TOILETING/3), 
+						new ADLEffect("stock", 		-Parameters.OUTOFSTOCK/3), 
+						new ADLEffect("dirtiness", 	-Parameters.DIRTINESS/3)))));
 		adl.put(3, new ADL (3, "Breakfast", days, independent, TimeDependancy.get(3), 20,
 				new ArrayList<String>(Arrays.asList("hunger")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.05)))));
@@ -71,14 +71,14 @@ public class ADLDB {
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.04)))));
 		adl.put(7, new ADL (7, "Sleeping", days, independent, TimeDependancy.get(10), 20,
 				new ArrayList<String>(Arrays.asList("tirediness")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("tirediness", -(Constants.TIREDINESS + 0.0015)),
-						new ADLEffect("stress", 	-Constants.STRESS), 
-						new ADLEffect("hunger", 	-Constants.HUNGER), 
-						new ADLEffect("boredom", 	-Constants.BOREDOM), 
-						new ADLEffect("sweat", 		-Constants.SWEAT), 
-						new ADLEffect("toileting", 	-Constants.TOILETING), 
-						new ADLEffect("stock", 		-Constants.OUTOFSTOCK), 
-						new ADLEffect("dirtiness", 	-Constants.DIRTINESS)))));
+				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("tirediness", -(Parameters.TIREDINESS + 0.0015)),
+						new ADLEffect("stress", 	-Parameters.STRESS), 
+						new ADLEffect("hunger", 	-Parameters.HUNGER), 
+						new ADLEffect("boredom", 	-Parameters.BOREDOM), 
+						new ADLEffect("sweat", 		-Parameters.SWEAT), 
+						new ADLEffect("toileting", 	-Parameters.TOILETING), 
+						new ADLEffect("stock", 		-Parameters.OUTOFSTOCK), 
+						new ADLEffect("dirtiness", 	-Parameters.DIRTINESS)))));
 		adl.put(8, new ADL (8, "WatchingTV", days, independent, TimeDependancy.get(11), 50,
 				new ArrayList<String>(Arrays.asList("boredom","stress")),
 				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("boredom", -0.05), new ADLEffect("stress", -0.02)))));		

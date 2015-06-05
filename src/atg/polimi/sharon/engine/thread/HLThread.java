@@ -13,7 +13,7 @@ import atg.polimi.sharon.engine.Needs;
 import atg.polimi.sharon.configs.ADLDB;
 import atg.polimi.sharon.configs.ADLMatcherDB;
 import atg.polimi.sharon.configs.LLADLDB;
-import atg.polimi.sharon.utils.Constants;
+import atg.polimi.sharon.configs.Parameters;
 import atg.polimi.sharon.utils.CumulateHistogram;
 import atg.polimi.sharon.utils.Distributions;
 import atg.polimi.sharon.utils.Time;
@@ -51,7 +51,7 @@ public class HLThread implements Runnable {
 		hLADL		= 	ADLDB.addADL();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
-		badl 		= 	hLADL.get(Constants.SLEEP_ID); //Initial ADL: Sleeping		
+		badl 		= 	hLADL.get(Parameters.SLEEP_ID); //Initial ADL: Sleeping		
 	}
 
 	@Override
@@ -278,26 +278,26 @@ public class HLThread implements Runnable {
 	 * Updates user's and house needs
 	 */
 	private static void updateNeeds(int times) {
-
+		Parameters.update(tick);
 		for (int i=0; i<times; i++) {
 			if (Needs.getInstance().getHunger() 	< 1.0) 
-				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 			+ Constants.HUNGER);
+				Needs.getInstance().setHunger(Needs.getInstance().getHunger() 			+ Parameters.HUNGER);
 			if (Needs.getInstance().getStress() 	< 1.0) 
-				Needs.getInstance().setStress(Needs.getInstance().getStress() 			+ Constants.STRESS);
+				Needs.getInstance().setStress(Needs.getInstance().getStress() 			+ Parameters.STRESS);
 			if (Needs.getInstance().getSweat() 		< 1.0) 
-				Needs.getInstance().setSweat(Needs.getInstance().getSweat()				+ Constants.SWEAT);
+				Needs.getInstance().setSweat(Needs.getInstance().getSweat()				+ Parameters.SWEAT);
 			if (Needs.getInstance().getToileting() 	< 1.0) 
-				Needs.getInstance().setToileting(Needs.getInstance().getToileting()		+ Constants.TOILETING);
+				Needs.getInstance().setToileting(Needs.getInstance().getToileting()		+ Parameters.TOILETING);
 			if (Needs.getInstance().getTirediness() < 1.0) 
-				Needs.getInstance().setTirediness(Needs.getInstance().getTirediness()	+ Constants.TIREDINESS);
+				Needs.getInstance().setTirediness(Needs.getInstance().getTirediness()	+ Parameters.TIREDINESS);
 			if (Needs.getInstance().getBoredom() 	< 1.0) 
-				Needs.getInstance().setBoredom(Needs.getInstance().getBoredom()			+ Constants.BOREDOM);
+				Needs.getInstance().setBoredom(Needs.getInstance().getBoredom()			+ Parameters.BOREDOM);
 			if (Needs.getInstance().getAsociality() < 1.0) 
-				Needs.getInstance().setAsociality(Needs.getInstance().getAsociality()	+ Constants.ASOCIALITY);
+				Needs.getInstance().setAsociality(Needs.getInstance().getAsociality()	+ Parameters.ASOCIALITY);
 			if (Needs.getInstance().getDirtiness() 	< 1.0) 
-				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()		+ Constants.DIRTINESS);
+				Needs.getInstance().setDirtiness(Needs.getInstance().getDirtiness()		+ Parameters.DIRTINESS);
 			if (Needs.getInstance().getOutOfStock() < 1.0) 
-				Needs.getInstance().setOutOfStock(Needs.getInstance().getOutOfStock()	+ Constants.OUTOFSTOCK);
+				Needs.getInstance().setOutOfStock(Needs.getInstance().getOutOfStock()	+ Parameters.OUTOFSTOCK);
 			updateADLNeeds(badl);
 		}		
 	}

@@ -1,7 +1,7 @@
 package atg.polimi.sharon.configs;
 
 import atg.polimi.sharon.data.Sensor;
-import atg.polimi.sharon.utils.Constants;
+import atg.polimi.sharon.configs.Parameters;
 
 /**
  * This class describes the structure of the used map (dimension, walls, sensors)
@@ -9,27 +9,27 @@ import atg.polimi.sharon.utils.Constants;
  */
 public class HomeMap {
 
-	private int map [][] = new int [Constants.mapSizeW][Constants.mapSizeH];
+	private int map [][] = new int [Parameters.mapSizeW][Parameters.mapSizeH];
 	Sensor[] s;
 
 	private static HomeMap instance;
 	@SuppressWarnings("unused")
 	private HomeMap(){		
-		for (int i=0; i<Constants.mapSizeW; i++) {
-			for (int j=0; j<Constants.mapSizeH; j++) {
+		for (int i=0; i<Parameters.mapSizeW; i++) {
+			for (int j=0; j<Parameters.mapSizeH; j++) {
 				map [i][j] = 0;
 			}
 		}
 
-		if (Constants.mapID == 1) {
+		if (Parameters.mapID == 1) {
 			//External borders
-			for (int i=0; i<Constants.mapSizeW;i++) {
+			for (int i=0; i<Parameters.mapSizeW;i++) {
 				map[i][0]=1;
-				map[i][Constants.mapSizeH-1]=1;				
+				map[i][Parameters.mapSizeH-1]=1;				
 			}
-			for (int i=0; i<Constants.mapSizeH;i++) {
+			for (int i=0; i<Parameters.mapSizeH;i++) {
 				map[0][i]=1;
-				map[Constants.mapSizeW-1][i]=1;				
+				map[Parameters.mapSizeW-1][i]=1;				
 			}
 			for (int i=0; i<19;i++) {
 				map[20][i]=1;
@@ -52,7 +52,7 @@ public class HomeMap {
 			map[33][18]=0;
 			map[34][18]=0;
 
-			s = new Sensor [Constants.SENSORSNUMBER];
+			s = new Sensor [Parameters.SENSORSNUMBER];
 
 			//(Name, Sensor type(2+), X, Y)
 			s[0] = new Sensor ("BedroomBed",2,3,10);
@@ -86,14 +86,14 @@ public class HomeMap {
 				map[s[i].getX()][s[i].getY()]=2;
 			}			
 
-		} else if (Constants.mapID == 2) {
-			for (int i=0; i<Constants.mapSizeW;i++) {
+		} else if (Parameters.mapID == 2) {
+			for (int i=0; i<Parameters.mapSizeW;i++) {
 				map[i][0]=1;
-				map[i][Constants.mapSizeH-1]=1;				
+				map[i][Parameters.mapSizeH-1]=1;				
 			}
-			for (int i=0; i<Constants.mapSizeH;i++) {
+			for (int i=0; i<Parameters.mapSizeH;i++) {
 				map[0][i]=1;
-				map[Constants.mapSizeW-1][i]=1;				
+				map[Parameters.mapSizeW-1][i]=1;				
 			}
 			for (int i=10; i<31; i++) {
 				map[20][i]=1;
@@ -142,8 +142,8 @@ public class HomeMap {
 		int[][] x = transpose(map);
 		//int[][] x = map;
 
-		for (int i=0; i<Constants.mapSizeH; i++) {			
-			for (int j=0; j<Constants.mapSizeW; j++) {
+		for (int i=0; i<Parameters.mapSizeH; i++) {			
+			for (int j=0; j<Parameters.mapSizeW; j++) {
 				System.out.print(x[j][i]);
 			}
 			System.out.println(); 
@@ -154,9 +154,9 @@ public class HomeMap {
 	static int[][] transpose(int[][] mat) {
 		int [][] x = new int[60][30];
 
-		for (int i=0; i<Constants.mapSizeW; i++) {			
-			for (int j=0; j<Constants.mapSizeH; j++) {
-				x[i][Constants.mapSizeH-1-j]=mat[i][j];
+		for (int i=0; i<Parameters.mapSizeW; i++) {			
+			for (int j=0; j<Parameters.mapSizeH; j++) {
+				x[i][Parameters.mapSizeH-1-j]=mat[i][j];
 			}
 		}
 

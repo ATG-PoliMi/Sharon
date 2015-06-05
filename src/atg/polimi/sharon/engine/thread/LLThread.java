@@ -13,7 +13,7 @@ import atg.polimi.sharon.configs.LLADLDB;
 import atg.polimi.sharon.data.Sensor;
 import atg.polimi.sharon.engine.ADLMatcher;
 import atg.polimi.sharon.engine.LowLevelADL;
-import atg.polimi.sharon.utils.Constants;
+import atg.polimi.sharon.configs.Parameters;
 import atg.polimi.sharon.utils.CumulateHistogram;
 import atg.polimi.sharon.data.Coordinate;
 import atg.polimi.sharon.engine.ADL;
@@ -215,7 +215,7 @@ public class LLThread implements Runnable{
 		activeSensors += ", ";
 		activeSensors += (int)actor.getY();
 		activeSensors += ", ";
-		for (int i=0; i < Constants.SENSORSNUMBER; i++) {
+		for (int i=0; i < Parameters.SENSORSNUMBER; i++) {
 			if (((sensorsArray[i].getX() == actor.getX())&&
 					(sensorsArray[i].getY() == actor.getY()))) {
 				activeSensors += "1, ";
