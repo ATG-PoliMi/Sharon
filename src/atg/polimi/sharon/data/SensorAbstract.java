@@ -1,6 +1,7 @@
 package atg.polimi.sharon.data;
 
 public abstract class SensorAbstract {
+	@SuppressWarnings("unused")
 	private int value,x,y;
 	private String name;
 	

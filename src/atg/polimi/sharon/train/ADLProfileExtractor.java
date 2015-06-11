@@ -95,6 +95,7 @@ public class ADLProfileExtractor {
 		System.out.println("END!");
 	}
 
+	@SuppressWarnings("unused")
 	private static void readFile (String nameFile) {
 		rowNumber=0;
 		try {

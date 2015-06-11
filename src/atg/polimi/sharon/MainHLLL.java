@@ -3,6 +3,9 @@ package atg.polimi.sharon;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import atg.polimi.sharon.configs.ADLDB;
+import atg.polimi.sharon.configs.Parameters;
+import atg.polimi.sharon.engine.Needs;
 import atg.polimi.sharon.engine.thread.ADLQueue;
 import atg.polimi.sharon.engine.thread.HLThread;
 import atg.polimi.sharon.engine.thread.LLThread;
@@ -12,6 +15,8 @@ public class MainHLLL {
 	//*****SIMULATION PARAMETERS:*****
 	private static int def_simulatedDays 	= 10; 	//Days to simulate
 	//***** END PARAMETERS *****
+	
+	Parameters param = Parameters.getInstance();
 
 	// Extra parameters - not to touch
 	private static int mode 			= 0;	//0: only High Level, 1: High Level + Low Level (Experimental!)
@@ -28,6 +33,13 @@ public class MainHLLL {
 	public static void main(String[] args) {
 
 		int simulatedDays;
+		try{
+			Needs.LoadNeeds();
+			ADLDB.getInstance();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		
 		//HIGH LEVEL SIMULATION
 		if (args.length > 0){
 			try {

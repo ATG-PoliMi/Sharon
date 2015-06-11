@@ -1,168 +1,250 @@
 package atg.polimi.sharon.configs;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-
 import atg.polimi.sharon.engine.ADLEffect;
-import atg.polimi.sharon.configs.Parameters;
 import atg.polimi.sharon.engine.ADL;
+import atg.polimi.sharon.engine.Needs;
 
 public class ADLDB {
-
-	private static ArrayList <Float[]> TimeDependancy = new ArrayList<Float[]>();
-
-	public static Map<Integer, ADL> addADL() {
-		
-		Map<Integer, ADL> adl = new HashMap<>();
-		
-		//Days Array
-		double days [] 			= {0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8};
-		double weekdays [] 		= {0.8, 0.8, 0.8, 0.8, 0.8, 0.1, 0.1};
-		double holydays [] 		= {0.1, 0.1, 0.1, 0.1, 0.1, 0.8, 0.8};
-		double walkdays [] 		= {0.5, 0.5, 0.5, 0.5, 0.5, 0.8, 0.8};
-		double marketDays [] 	= {0.0, 0.8, 0.0, 0.8, 0.0, 0.5, 0.5};
-		double sitcomDays1 [] 	= {0.8, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0};
-		double sitcomDays2 [] 	= {0.0, 0.8, 0.0, 0.0, 0.0, 0.8, 0.0};
-		double shoppingDays [] 	= {0.8, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0};
-		double evenDays [] 		= {0.8, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0};
-		double oddDays [] 		= {0.8, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0};
-
-		//Weather Array
-		double sunny []			= {1.0, 0.7, 0.0};
-		double rainy []			= {0.0, 0.0, 1.0};		
-		double independent []	= {1.0, 1.0, 1.0};
-		
-		TimeDependancy = loadTimeDependancy("data/InputTD.txt");
-		updateTimeDependancy (14, 0.15f);
-		
-		//ID, NAME, DAYS, WEATHER, TIMEDESCRIPTIONARRAY, MINTIME,  
-		//NEEDS, EFFECTS
-		//Extra: Garden, CleanUp, Having Guests, Shaving, ChangingClothes		
-		adl.put(1, new ADL (1, "Other", days, independent, TimeDependancy.get(0), 10,
-				new ArrayList<String>(Arrays.asList("stress")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("stress", -0.05)))));
-		adl.put(2, new ADL (2, "Going Out", days, independent, TimeDependancy.get(1), 45,
-				new ArrayList<String>(Arrays.asList("asociality","stock")),
-				new ArrayList<ADLEffect>(Arrays.asList(
-						new ADLEffect("stress", 	-Parameters.STRESS/4),
-						new ADLEffect("hunger", 	-Parameters.HUNGER/3), 
-						new ADLEffect("boredom", 	-Parameters.BOREDOM/3), 
-						new ADLEffect("sweat", 		-Parameters.SWEAT/3), 
-						new ADLEffect("toileting", 	-Parameters.TOILETING/3), 
-						new ADLEffect("stock", 		-Parameters.OUTOFSTOCK/3), 
-						new ADLEffect("dirtiness", 	-Parameters.DIRTINESS/3)))));
-		adl.put(3, new ADL (3, "Breakfast", days, independent, TimeDependancy.get(3), 20,
-				new ArrayList<String>(Arrays.asList("hunger")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.05)))));
-		adl.put(4, new ADL (4, "Lunch", days, independent, TimeDependancy.get(5), 30,
-				new ArrayList<String>(Arrays.asList("hunger")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.03)))));
-		adl.put(5, new ADL (5, "Dinner", days, independent, TimeDependancy.get(7), 30,
-				new ArrayList<String>(Arrays.asList("hunger")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.03)))));
-		adl.put(6, new ADL (6, "Snack", days, independent, TimeDependancy.get(9), 5,
-				new ArrayList<String>(Arrays.asList("hunger")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("hunger", -0.04)))));
-		adl.put(7, new ADL (7, "Sleeping", days, independent, TimeDependancy.get(10), 20,
-				new ArrayList<String>(Arrays.asList("tirediness")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("tirediness", -(Parameters.TIREDINESS + 0.0015)),
-						new ADLEffect("stress", 	-Parameters.STRESS), 
-						new ADLEffect("hunger", 	-Parameters.HUNGER), 
-						new ADLEffect("boredom", 	-Parameters.BOREDOM), 
-						new ADLEffect("sweat", 		-Parameters.SWEAT), 
-						new ADLEffect("toileting", 	-Parameters.TOILETING), 
-						new ADLEffect("stock", 		-Parameters.OUTOFSTOCK), 
-						new ADLEffect("dirtiness", 	-Parameters.DIRTINESS)))));
-		adl.put(8, new ADL (8, "WatchingTV", days, independent, TimeDependancy.get(11), 50,
-				new ArrayList<String>(Arrays.asList("boredom","stress")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("boredom", -0.05), new ADLEffect("stress", -0.02)))));		
-		/*adl.put(9, new ADL (9, "Studying", days, independent, TimeDependancy.get(7), 45,
-				new ArrayList<String>(Arrays.asList("boredom","stress")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("boredom", -0.05), new ADLEffect("stress", -0.02)))));	*/			
-		adl.put(9,new ADL (9, "Shower", days, independent, TimeDependancy.get(13), 20,
-				new ArrayList<String>(Arrays.asList("sweat")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("sweat", -0.05)))));
-		adl.put(10, new ADL (10, "Toileting", days, independent, TimeDependancy.get(14), 9,
-				new ArrayList<String>(Arrays.asList("toileting")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("toileting", -0.1)))));
-		adl.put(11, new ADL (11, "Napping", days, independent, TimeDependancy.get(15), 10,
-				new ArrayList<String>(Arrays.asList("tirediness")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("tirediness", -0.01),new ADLEffect("stress", -0.01)))));
-		adl.put(12, new ADL (12, "Internet", days, independent, TimeDependancy.get(16), 20,
-				new ArrayList<String>(Arrays.asList("boredom")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("boredom", -0.02)))));
-		adl.put(13, new ADL (13, "Reading", days, independent, TimeDependancy.get(17), 20,
-				new ArrayList<String>(Arrays.asList("boredom", "stress")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("boredom", -0.02), new ADLEffect("stress", -0.001)))));
-		adl.put(14, new ADL (14, "Laundry", days, independent, TimeDependancy.get(18), 30,
-				new ArrayList<String>(Arrays.asList("dirtiness")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("dirtiness", -0.02)))));		
-		adl.put(15, new ADL (15, "Phone", days, independent, TimeDependancy.get(21), 5,
-				new ArrayList<String>(Arrays.asList("asociality")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("asociality", -0.03)))));
-		adl.put(16, new ADL (16, "Music", days, independent, TimeDependancy.get(22), 15,
-				new ArrayList<String>(Arrays.asList("boredom")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("boredom", -0.01)))));
-		adl.put(17, new ADL (17, "Cleaning", days, independent, TimeDependancy.get(23), 30,
-				new ArrayList<String>(Arrays.asList("dirtiness")),
-				new ArrayList<ADLEffect>(Arrays.asList(new ADLEffect("dirtiness", -0.02)))));
-		return adl;
-	}
-
-	private static void updateTimeDependancy(int index, float d) {
-		Float[] updateNeed = TimeDependancy.get(index);
-		for (int i=0; i<updateNeed.length; i++) {
-			updateNeed [i] += d;
-		}
-		TimeDependancy.set(index, updateNeed);		
-	}
-
-	private static ArrayList<Float[]> loadTimeDependancy(String fileName) {
-				
-		ArrayList<Float[]> timeDependancyAL = new ArrayList<Float[]>();		
-	    BufferedReader reader = null;
-	    Float[] td = new Float[1440];
-	    String[] splited;
-	    
-	    try {
-	        reader = new BufferedReader(new FileReader(fileName));
-	        String line = null;
-	        try {
-				while ((line = reader.readLine()) != null) {
-					splited = line.split("\\s+");
-					
-					for (int i=0; i<splited.length; i++) {
-						td[i] = Float.parseFloat(splited[i]);
-						//System.out.print(td[i]+" ");
-					}
-					timeDependancyAL.add(td.clone());					
-					//System.out.println("");
-				    
-				}
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    } catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+	
+	private static ADLDB instance = null;
+	
+	private Map<Integer, ADL> adlmap;
+	
+	private ArrayList<ADLDrift> actdrift;
+	
+	private ADLDB(){
+		super();
+		try {
+			adlmap = (CreateMap(loadAct()));
+			actdrift = (ADLDrift.loadActDrift());
+		} catch (NotDirectoryException e) {
 			e.printStackTrace();
-		} finally {
-	        try {
-				reader.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		}
+	}
+	
+	private Map<Integer, ADL> CreateMap(ArrayList<ADL> ADLList){
+		Map<Integer, ADL> Map = new HashMap<>();
+		Iterator<ADL> ItrADL = ADLList.iterator();
+		int i = 0;
+		while(ItrADL.hasNext()){
+			i++;
+			Map.put(i,ItrADL.next());
+		}
+		return Map;
+	}
+
+	private static ArrayList<ADL> loadAct()throws NotDirectoryException{
+			
+		ArrayList<ADL>result = new ArrayList<ADL>();
+		File folder = new File("config");
+		if(folder.exists() == false){
+			throw new NotDirectoryException(null);
+		}
+		
+		int IdADL = 0;
+		String NameADL = null;
+		ArrayList<String> needs = new ArrayList<String> ();
+		ArrayList<ADLEffect> effects = new ArrayList<ADLEffect> ();
+		int timeMin = 0;
+		double [] week = new double[7];
+		double [] weather = new double[3];
+		Float[] timeDependency = new Float[1440];
+		
+		BufferedReader reader = null;
+		
+		ArrayList<String> distribuction = new ArrayList<String>();
+		FilenameFilter ActFilter = new FilenameFilter(){
+			@Override
+			public boolean accept(File dir, String name) {
+				if(name.lastIndexOf('.')>0){
+					if(name.contains("_")){
+						if(name != "act_template.conf"){
+							int lastIndexDot = name.lastIndexOf('.');
+							int lastIndexUnSl = name.lastIndexOf('_');
+							String nameoffile = name.subSequence(0, lastIndexUnSl).toString();
+							String extention = name.substring(lastIndexDot);
+							if(nameoffile.equals("act") && extention.equals(".conf")){
+								return true;
+							}
+						}
+					}
+				}
+				return false;
 			}
-	    }
-		return timeDependancyAL;
+		};
+		ArrayList<File> fileList = new ArrayList<File>(Arrays.asList(folder.listFiles(ActFilter)));
+		if(fileList.isEmpty()){
+			throw new NullPointerException();
+		}
+		Iterator<File> itrFile = fileList.iterator();
+		while(itrFile.hasNext()){
+			File CurrentFile = itrFile.next();
+			try{
+				reader = new BufferedReader(new FileReader(CurrentFile));
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+					distribuction.add(line);	
+				}
+			}catch(NullPointerException e){
+				e.printStackTrace();
+			}catch (Exception e) {e.printStackTrace();} finally {
+				try {reader.close();} catch (IOException e) {e.printStackTrace();}
+			}
+			
+			Iterator<String> itrDist = distribuction.iterator();
+			ArrayList<Double> Weights = new ArrayList<Double> ();
+			
+			String ADLString;
+			String[] StringSplitted;
+			
+			StringSplitted = itrDist.next().split("\t");
+			IdADL = Integer.parseInt(StringSplitted[0]);
+			NameADL = StringSplitted[1];
+			
+			ADLString = itrDist.next();
+			if(!ADLString.contains("Effects")){
+//				throw new
+			}
+			
+			StringSplitted = itrDist.next().split("\t");
+			Iterator<String> ItrNeeds = Arrays.asList(StringSplitted).iterator();
+			while(ItrNeeds.hasNext()){
+					needs.add(ItrNeeds.next());
+			}
+			
+			ADLString = itrDist.next();
+			if(!ADLString.contains("Weights")){
+//				throw new
+			}
+			
+			StringSplitted = itrDist.next().split(",");
+			Iterator<String> ItrWeights = Arrays.asList(StringSplitted).iterator();
+			while(ItrWeights.hasNext()){
+				Weights.add(Double.parseDouble(ItrWeights.next()));
+			}
+			for(int j = 0; j< Weights.size(); j++){
+				effects.add(new ADLEffect(Needs.getInstance().searchNamewIn(j), Weights.get(j)));
+			}
+			
+			ADLString = itrDist.next();
+			if(!ADLString.contains("Weekdays")){
+//				throw new
+			}
+			
+			StringSplitted = itrDist.next().split(",");
+			for(int j = 0; j < 7; j++){
+				week[j]= Double.parseDouble(StringSplitted[j]);
+			}
+			
+			ADLString = itrDist.next();
+			if(!ADLString.contains("Weather")){
+//				throw new
+			}
+			
+			StringSplitted = itrDist.next().split(",");
+			for(int j = 0; j < 3; j++){
+				weather[j]= Double.parseDouble(StringSplitted[j]);
+			}
+			
+			ADLString = itrDist.next();
+			if(!ADLString.contains("Theta")){
+//				throw new
+			}
+			
+			StringSplitted = itrDist.next().split(",");
+			if(StringSplitted.length == 1){
+				timeDependency = CreateTd(Float.parseFloat(StringSplitted[0]));
+			} else if(StringSplitted.length == 1440){
+				for(int j = 0; j < 1440; j++){
+					timeDependency[j] = Float.parseFloat(StringSplitted[j]);
+				}
+			} else{
+//				throw new
+			}
+			
+			ADLString = itrDist.next();
+			if(!ADLString.contains("MinDuration")){
+//				throw new
+			}
+			
+			ADLString = itrDist.next();
+			timeMin = Integer.parseInt(ADLString);
+			
+			result.add(new ADL(IdADL, NameADL, week, weather, timeDependency, timeMin, needs, effects));
+			}
+		return result;
+	}
+	
+	public void update(long time){
+		Iterator<ADLDrift> itrDrifts = actdrift.iterator();
+		while(itrDrifts.hasNext()){
+			ADLDrift currentDrift = itrDrifts.next();
+			if(time == currentDrift.updateTime){
+				ADLDrift.applyDrift(currentDrift, adlmap.get(currentDrift.idADL));
+			}
+		}
+	}
+	
+	private static Float[] CreateTd(float value){
+		Float[] td = new Float[1440];
+		for(int i = 0; i < 1440; i++){
+			td[i] = value;
+		}
+		return td;
+	}
+
+	public static ADLDB getInstance() {
+		if(instance == null){
+			instance = new ADLDB();
+		}
+		return instance;
+	}
+
+	public static void setInstance(ADLDB instance) {
+		ADLDB.instance = instance;
+	}
+
+	public Map<Integer, ADL> getAdlmap() {
+		return adlmap;
+	}
+
+	public void setAdlmap(Map<Integer, ADL> adlmap) {
+		this.adlmap = adlmap;
+	}
+	
+	public int searchId(String ADLName){
+		if(adlmap.containsValue(ADLName)){
+			Integer[] keys = adlmap.keySet().toArray(new Integer[adlmap.keySet().size()]);
+			Iterator<ADL> map = adlmap.values().iterator();
+			int i = -1;
+			ADL cADL;
+			do{
+				cADL = map.next();
+				i++;
+			}while(cADL.getName() != ADLName);
+			return keys[i];
+		}else{
+			return (Integer)null;
+		}
+	}
+	
+	public ADL defaultADL(){
+		if(adlmap.containsValue("Sleep")){
+			return adlmap.get(searchId("Sleep"));
+		} else{
+			Integer[] keys = adlmap.keySet().toArray(new Integer[adlmap.keySet().size()]);
+			return adlmap.get(keys[0]);
+		}
 	}
 }
