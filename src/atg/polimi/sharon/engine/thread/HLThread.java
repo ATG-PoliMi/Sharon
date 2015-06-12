@@ -267,7 +267,7 @@ public class HLThread implements Runnable {
 		Iterator<ADLEffect> x = hLADL.get(finishingADL.getId()).getEffects().iterator();
 		while (x.hasNext()) {
 			ADLEffect effect = x.next();
-			int index = Needs.getInstance().searchId(effect.getName());
+			int index = Needs.getInstance().searchIndex(effect.getName());
 			Double newStatus = Needs.getInstance().getStatus(index) + effect.getEffect();
 			if(newStatus < 0){
 				Needs.getInstance().setStatus(index, (double) 0);

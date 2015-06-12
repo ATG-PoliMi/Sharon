@@ -4,6 +4,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import atg.polimi.sharon.configs.ADLDB;
+import atg.polimi.sharon.configs.NeedsDrift;
 import atg.polimi.sharon.configs.Parameters;
 import atg.polimi.sharon.engine.Needs;
 import atg.polimi.sharon.engine.thread.ADLQueue;
@@ -34,7 +35,8 @@ public class MainHLLL {
 
 		int simulatedDays;
 		try{
-			Needs.LoadNeeds();
+			Needs.getInstance();
+			Parameters.getInstance().setDrifts(NeedsDrift.loadNeedDrift());
 			ADLDB.getInstance();
 		} catch(Exception e){
 			e.printStackTrace();

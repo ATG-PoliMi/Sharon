@@ -36,10 +36,9 @@ public class ADLDB {
 	private Map<Integer, ADL> CreateMap(ArrayList<ADL> ADLList){
 		Map<Integer, ADL> Map = new HashMap<>();
 		Iterator<ADL> ItrADL = ADLList.iterator();
-		int i = 0;
 		while(ItrADL.hasNext()){
-			i++;
-			Map.put(i,ItrADL.next());
+			ADL cADL = ItrADL.next();
+			Map.put(cADL.getId(), cADL);
 		}
 		return Map;
 	}

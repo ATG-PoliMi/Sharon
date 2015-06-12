@@ -18,8 +18,8 @@ public class Needs {
 	private Integer[] id;
 	private String[] name;
 	private Double[] status;
-	
-	private Needs(Integer[] Id, String[] Name){
+		
+	private Needs(ArrayList<Integer> Id, ArrayList<String> Name, ArrayList<Double> init){
 		/*
 		this.hunger			=	0.2;
 		this.stress			=	1.0;
@@ -32,29 +32,27 @@ public class Needs {
 		this.asociality		= 	0.0;
 		*/
 		super();
-		this.setId(new Integer[Id.length]);
-		this.name = new String[Id.length];
-		this.status= new Double[Id.length];
-		for(int i = 0; i < getId().length; i++){
-			this.getId()[i] = Id[i];
-			this.name[i] = Name[i];
-			if(name[i].contains("tirediness")){
-				this.status[i] = 1.0;
+		this.id = new Integer[Id.size()];
+		this.name = new String[Id.size()];
+		this.status= new Double[Id.size()];
+		
+		Id.toArray(this.id);
+		Name.toArray(this.name);
+		
+		Iterator<Double> itrInit = init.iterator();
+		int i = 0;
+		while(itrInit.hasNext()){
+			Double cInit = itrInit.next();
+			if(cInit == null){
+				if(name[i].contains("tiredness")){
+					this.status[i] = 1.0;
+				} else{
+					this.status[i] = 0.0;
+				}
 			} else{
-				this.status[i] = 0.0;
+				this.status[i] = cInit;
 			}
-		}
-	}	
-	
-	private Needs(Integer[] Id, String[] Name, Double[] init){
-		super();
-		this.id = new Integer[Id.length];
-		this.name = new String[Id.length];
-		this.status= new Double[Id.length];
-		for(int i = 0; i < getId().length; i++){
-			this.getId()[i] = Id[i];
-			this.name[i] = Name[i];
-			this.status[i] = init[i];
+			i++;
 		}
 	}
 
@@ -63,35 +61,29 @@ public class Needs {
 	}
 	
 	public static synchronized Needs getInstance() {
-		return instance;
-	}
-
-	public static synchronized Needs getInstance(Integer[] id, String[] name) {
-
 		if(instance==null) {
-			instance = new Needs(id, name);
-		}
-		return instance;
-	}
-	
-	public static synchronized Needs getInstance(Integer[] id, String[] name, Double[] init) {
-
-		if(instance==null) {
+			ArrayList<Integer> id = new ArrayList<Integer>(); 
+			ArrayList<String> name = new ArrayList<String>();
+			ArrayList<Double> init = new ArrayList<Double>();
+			ArrayList<Double> constant = new ArrayList<Double>();
+			try {
+				LoadValues(id, name, init, constant);
+			} catch (NotDirectoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			instance = new Needs(id, name, init);
+			Parameters.getInstance().setNeedsParameters(constant.toArray(new Double[constant.size()]));
 		}
 		return instance;
 	}
-	
-	public static void LoadNeeds() throws NotDirectoryException{
+
+	public static void LoadValues(ArrayList<Integer> id, ArrayList<String> name, ArrayList<Double> init, ArrayList<Double> constant) throws NotDirectoryException{
 		
 		File folder = new File("config");
 		if(!folder.exists()){
 			throw new NotDirectoryException(null);
 		}
-		ArrayList<Integer> IdNeeds = new ArrayList<Integer>();
-		ArrayList<String> NameNeeds = new ArrayList<String>();
-		ArrayList<Double> constants = new ArrayList<Double>();
-		ArrayList<Double> init = new ArrayList<Double>();
 		
 		BufferedReader reader 	= null;
 		
@@ -125,32 +117,23 @@ public class Needs {
 		while(itr.hasNext()){
 			need = itr.next();
 			if(Arrays.asList(need).size() == 3 || Arrays.asList(need).size() == 4){
-				IdNeeds.add(Integer.parseInt(need[0]));
-				NameNeeds.add(need[1]);
-				constants.add(Double.parseDouble(need[2]));
+				id.add(Integer.parseInt(need[0]));
+				name.add(need[1].toLowerCase());
+				constant.add(Double.parseDouble(need[2]));
 				if(Arrays.asList(need).size() == 4){
 					init.add(Double.parseDouble(need[3]));
+				} else {
+					init.add(null);
 				}
 			} else{
 	//			throw new
 			}
 		}
-		Integer[] id = IdNeeds.toArray(new Integer[IdNeeds.size()]);
-		String[] name = NameNeeds.toArray(new String[NameNeeds.size()]);
-		Double[] constant = constants.toArray(new Double[constants.size()]);
-		if(Arrays.asList(need).size() == 4){
-			Double[] initvalue = init.toArray(new Double[init.size()]);
-			Needs.getInstance(id, name, initvalue);
-		} else{
-			Needs.getInstance(id, name);
-		}
-		Parameters.getInstance(constant);
-		
 	}
 	
 	public String searchNamewIn(int index){
 		try{
-			return name[Arrays.asList(this.id).indexOf(index)];
+			return name[index];
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -178,6 +161,15 @@ public class Needs {
 	public int searchIndex(String name){
 		try{
 			return name.indexOf(name);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return (Integer) null;
+	}
+	
+	public int searchIndex(int id){
+		try{
+			return Arrays.asList(this.id).indexOf(id);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
