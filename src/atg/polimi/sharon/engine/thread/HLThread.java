@@ -246,11 +246,14 @@ public class HLThread implements Runnable {
 			Iterator<Double> ItrStatus = Arrays.asList(Needs.getInstance().getStatusWrapped()).iterator();
 			Iterator<Double> ItrParam = Arrays.asList(Parameters.getInstance().getNeedsParameters()).iterator();
 			Double[] NewNeedsStatus = new Double[Needs.getInstance().getStatusWrapped().length];
-			while(ItrStatus.hasNext()){
-				int j = 0;
+			
+			int j = 0;
+			while(ItrStatus.hasNext()){	
 				double CurrentStatus = ItrStatus.next();
 				if (CurrentStatus < 1.0) {
 					NewNeedsStatus[j] = CurrentStatus + ItrParam.next();
+				} else {
+					NewNeedsStatus[j] = 1.0;
 				}
 				j++;
 			}

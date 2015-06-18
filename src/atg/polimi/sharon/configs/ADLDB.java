@@ -68,7 +68,7 @@ public class ADLDB {
 			public boolean accept(File dir, String name) {
 				if(name.lastIndexOf('.')>0){
 					if(name.contains("_")){
-						if(name != "act_template.conf"){
+						if(!name.contains("act_template.conf")){
 							int lastIndexDot = name.lastIndexOf('.');
 							int lastIndexUnSl = name.lastIndexOf('_');
 							String nameoffile = name.subSequence(0, lastIndexUnSl).toString();
@@ -116,10 +116,13 @@ public class ADLDB {
 //				throw new
 			}
 			
-			StringSplitted = itrDist.next().split("\t");
-			Iterator<String> ItrNeeds = Arrays.asList(StringSplitted).iterator();
-			while(ItrNeeds.hasNext()){
-					needs.add(ItrNeeds.next());
+			StringSplitted = itrDist.next().split(",");
+			Iterator<String> ItrWeights = Arrays.asList(StringSplitted).iterator();
+			while(ItrWeights.hasNext()){
+				Weights.add(Double.parseDouble(ItrWeights.next()));
+			}
+			for(int j = 0; j< Weights.size(); j++){
+				effects.add(new ADLEffect(Needs.getInstance().searchNamewIn(j), Weights.get(j)));
 			}
 			
 			ADLString = itrDist.next();
@@ -128,12 +131,9 @@ public class ADLDB {
 			}
 			
 			StringSplitted = itrDist.next().split(",");
-			Iterator<String> ItrWeights = Arrays.asList(StringSplitted).iterator();
-			while(ItrWeights.hasNext()){
-				Weights.add(Double.parseDouble(ItrWeights.next()));
-			}
-			for(int j = 0; j< Weights.size(); j++){
-				effects.add(new ADLEffect(Needs.getInstance().searchNamewIn(j), Weights.get(j)));
+			Iterator<String> ItrNeeds = Arrays.asList(StringSplitted).iterator();
+			while(ItrNeeds.hasNext()){
+				needs.add(ItrNeeds.next().toLowerCase());
 			}
 			
 			ADLString = itrDist.next();

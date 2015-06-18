@@ -251,8 +251,8 @@ public class Needs {
 		String OutputStr = "NewNeeds:";
 		Iterator<String> ItrNeeds = Arrays.asList(getName()).iterator();
 		Iterator<Double> ItrStatus = Arrays.asList((getStatusWrapped())).iterator();
+		int i = 0;
 		while(ItrNeeds.hasNext()){
-			int i = 0;
 			i++;
 			String ADLLabel = new String(" " + ItrNeeds.next().substring(i, 4) + ":" + Double.parseDouble(ItrStatus.next().toString().substring(1, 4)));
 			OutputStr = OutputStr + ADLLabel;
