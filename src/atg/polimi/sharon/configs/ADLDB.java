@@ -21,7 +21,7 @@ public class ADLDB {
 		
 		Map<Integer, ADL> adl = new HashMap<>();
 		
-		//Days Array
+		//Future devel: Days Array - will rule the days depending on the significant event
 		double days [] 			= {0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8};
 		double weekdays [] 		= {0.8, 0.8, 0.8, 0.8, 0.8, 0.1, 0.1};
 		double holydays [] 		= {0.1, 0.1, 0.1, 0.1, 0.1, 0.8, 0.8};
@@ -33,7 +33,7 @@ public class ADLDB {
 		double evenDays [] 		= {0.8, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0};
 		double oddDays [] 		= {0.8, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0};
 
-		//Weather Array
+		//Future Devel: Weather Array - will introduce dependence between activities and weather
 		double sunny []			= {1.0, 0.7, 0.0};
 		double rainy []			= {0.0, 0.0, 1.0};		
 		double independent []	= {1.0, 1.0, 1.0};

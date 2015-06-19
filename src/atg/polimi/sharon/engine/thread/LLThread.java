@@ -170,8 +170,8 @@ public class LLThread implements Runnable{
 			e.printStackTrace();
 		}
 		
-		System.out.println("Empty ticks: "+emptyN);
-		System.out.println("Consumer Thread ends");
+		//System.out.println("Empty ticks: "+emptyN);
+		//System.out.println("Consumer Thread ends");
 
 	}
 
