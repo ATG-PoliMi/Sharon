@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+
 import atg.polimi.sharon.engine.ADLEffect;
 import atg.polimi.sharon.engine.ADL;
 import atg.polimi.sharon.engine.Needs;
@@ -51,18 +53,8 @@ public class ADLDB {
 			throw new NotDirectoryException(null);
 		}
 		
-		int IdADL = 0;
-		String NameADL = null;
-		ArrayList<String> needs = new ArrayList<String> ();
-		ArrayList<ADLEffect> effects = new ArrayList<ADLEffect> ();
-		int timeMin = 0;
-		double [] week = new double[7];
-		double [] weather = new double[3];
-		Float[] timeDependency = new Float[1440];
-		
 		BufferedReader reader = null;
 		
-		ArrayList<String> distribuction = new ArrayList<String>();
 		FilenameFilter ActFilter = new FilenameFilter(){
 			@Override
 			public boolean accept(File dir, String name) {
@@ -89,6 +81,7 @@ public class ADLDB {
 		Iterator<File> itrFile = fileList.iterator();
 		while(itrFile.hasNext()){
 			File CurrentFile = itrFile.next();
+			ArrayList<String> distribuction = new ArrayList<String>();
 			try{
 				reader = new BufferedReader(new FileReader(CurrentFile));
 				String line = null;
@@ -101,6 +94,14 @@ public class ADLDB {
 				try {reader.close();} catch (IOException e) {e.printStackTrace();}
 			}
 			
+			int IdADL = 0;
+			String NameADL = null;
+			ArrayList<String> needs = new ArrayList<String> ();
+			ArrayList<ADLEffect> effects = new ArrayList<ADLEffect> ();
+			int timeMin = 0;
+			double [] week = new double[7];
+			double [] weather = new double[3];
+			Float[] timeDependency = new Float[1440];
 			Iterator<String> itrDist = distribuction.iterator();
 			ArrayList<Double> Weights = new ArrayList<Double> ();
 			
@@ -109,7 +110,7 @@ public class ADLDB {
 			
 			StringSplitted = itrDist.next().split("\t");
 			IdADL = Integer.parseInt(StringSplitted[0]);
-			NameADL = StringSplitted[1];
+			NameADL = StringSplitted[1].toLowerCase();
 			
 			ADLString = itrDist.next();
 			if(!ADLString.contains("Effects")){
@@ -122,7 +123,9 @@ public class ADLDB {
 				Weights.add(Double.parseDouble(ItrWeights.next()));
 			}
 			for(int j = 0; j< Weights.size(); j++){
-				effects.add(new ADLEffect(Needs.getInstance().searchNamewIn(j), Weights.get(j)));
+				if(Weights.get(j) != 0.0){
+					effects.add(new ADLEffect(Needs.getInstance().searchNamewIn(j), Weights.get(j)));
+				}
 			}
 			
 			ADLString = itrDist.next();
@@ -239,11 +242,17 @@ public class ADLDB {
 	}
 	
 	public ADL defaultADL(){
-		if(adlmap.containsValue("Sleep")){
-			return adlmap.get(searchId("Sleep"));
-		} else{
-			Integer[] keys = adlmap.keySet().toArray(new Integer[adlmap.keySet().size()]);
-			return adlmap.get(keys[0]);
+		Set<Integer> keys = adlmap.keySet();
+		Iterator<Integer> ItrKey = keys.iterator();
+		
+		while(ItrKey.hasNext()){
+			int cKey = ItrKey.next();
+			ADL cADL = adlmap.get(cKey);
+			if(cADL.getName().contains("sleeping")){
+				return cADL;
+			}
 		}
+		
+		return adlmap.get(keys.toArray()[0]);
 	}
 }

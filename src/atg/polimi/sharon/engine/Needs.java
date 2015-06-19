@@ -159,10 +159,14 @@ public class Needs {
 	}
 	
 	public int searchIndex(String name){
-		try{
-			return name.indexOf(name);
-		} catch(Exception e){
-			e.printStackTrace();
+		Integer index = null;
+		for(int i = 0; i < this.name.length; i++){
+			if(this.name[i].contains(name)){
+				index = i;
+			}
+		}
+		if(index != null){
+			return index;
 		}
 		return (Integer) null;
 	}
@@ -253,8 +257,9 @@ public class Needs {
 		Iterator<Double> ItrStatus = Arrays.asList((getStatusWrapped())).iterator();
 		int i = 0;
 		while(ItrNeeds.hasNext()){
+			String name = ItrNeeds.next();
 			i++;
-			String ADLLabel = new String(" " + ItrNeeds.next().substring(i, 4) + ":" + Double.parseDouble(ItrStatus.next().toString().substring(1, 4)));
+			String ADLLabel = new String(" " + name.substring(0, 1).toUpperCase()+ name.substring(1, 3) + ":" + String.format("%.3f",ItrStatus.next()));
 			OutputStr = OutputStr + ADLLabel;
 			if(i != getName().length-1){
 				OutputStr = OutputStr + ",";

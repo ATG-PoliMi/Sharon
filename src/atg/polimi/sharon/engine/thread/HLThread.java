@@ -26,7 +26,6 @@ public class HLThread implements Runnable {
 	private BlockingQueue<ADLQueue> queue;
 
 	//ADL Handling
-	static Map<Integer, ADL> 			hLADL;
 	static Map<Integer, LowLevelADL>  	lLADL;
 	static Map<Integer, ADLMatcher> 	matchADL;
 
@@ -49,7 +48,7 @@ public class HLThread implements Runnable {
 		this.printLog=printLog;
 		this.mode=mode;
 
-		hLADL		= 	ADLDB.getInstance().getAdlmap();
+	//	ADLDB.getInstance().getAdlmap()		= 	ADLDB.getInstance().getAdlmap();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
 		badl 		= 	ADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping		
@@ -97,17 +96,20 @@ public class HLThread implements Runnable {
 
 	private static ADLQueue changeADL() {
 		//TODO:Starting Activity?
-		ADL cadl = hLADL.get(1);		
+		ADL cadl = ADLDB.getInstance().defaultADL();
 
 		if (usedTime > 60*badl.getMinTime()){
 
 			//Check Better ADL
-			for (ADL a : hLADL.values()) {			
+			for (ADL a : ADLDB.getInstance().getAdlmap().values()) {			
 				if ((a.getRank() >= cadl.getRank())) {
-					cadl 			= a;
+					cadl = a;
 				}			
 			}		
-
+			
+			System.out.println(cadl.getName() + " " + badl.getName() + "\n");
+			System.out.println(Needs.getInstance().toString() + "\n");
+			
 			if(cadl.getRank() > 0.01 && cadl.getName() != badl.getName()) {
 				ADLQueue X = new ADLQueue(badl.getId(), usedTime);
 				badl.setActive(0);
@@ -154,7 +156,7 @@ public class HLThread implements Runnable {
 	 */
 	private static void dayInitADL() {
 		//TODO: Con nuova f peso da rimuovere?
-		for (ADL a : hLADL.values())  {
+		for (ADL a : ADLDB.getInstance().getAdlmap().values())  {
 			a.setDoneToday(0); //In this way I avoid duplication of activities			
 		}
 	}
@@ -165,33 +167,32 @@ public class HLThread implements Runnable {
 	 */
 	private static void computeADLRank(int minute) {
 		double r, active;
+		Map<Integer, ADL> adlmap = ADLDB.getInstance().getAdlmap();
 
 		double needs[] = Needs.getInstance().getStatus();
-		for (ADL a : hLADL.values()) {
-			r = 0;			
+		for (ADL a : ADLDB.getInstance().getAdlmap().values()) {
+			r = 0;
 			active = (a.getActive() > 0) ? 1 : 0.7;
 			for (int i=0; i<needs.length; i++) {
-				r += needsEffort(a, i) * needs[i];					
+				r += needsContribution(a, i) * needs[i];
 			}
 
 			r *= (Math.random() < a.getExactTimeDescription(minute/60)) ? 1 : a.getExactTimeDescription(minute/60) * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
 					active * (0.80 + Math.random()*(1-0.80));
 			a.setRank(r);
+			adlmap.put(a.getId(), a);
 		}
 	}
 
-	private static double needsEffort(ADL a, int i) {
-		double ADLeffort = 0.0;
+	private static double needsContribution(ADL a, int i) {
+		double contribution = 0.0;
 		int needed = 0;
 		if (a.getNeeds() != null) {
-			Iterator<String> ItrADLNeeds= Arrays.asList(Needs.getInstance().getName()).iterator();
-			while(ItrADLNeeds.hasNext()){
-				needed += a.getNeeds().contains(ItrADLNeeds.next()) ? 1 : 0;
-			}
-		//TODO:What does this means?
-		ADLeffort = ((a.getNeeds().size()>0) && (needed>0)) ? ((double)1/a.getNeeds().size()) : 0.0;
+			needed = a.getNeeds().contains(Needs.getInstance().getName()[i]) ? 1 : 0;
+			//TODO:What does this means?
+			contribution = ((a.getNeeds().size()>0) && (needed>0)) ? ((double)1/a.getNeeds().size()) : 0.0;
 		}
-		return ADLeffort;
+		return contribution;
 	}
 
 
@@ -204,7 +205,7 @@ public class HLThread implements Runnable {
 			System.out.println();
 
 			double cBest=0;
-			for (ADL a : hLADL.values())  {
+			for (ADL a : ADLDB.getInstance().getAdlmap().values())  {
 
 				//				if (a.getRank()>0)
 				//					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
@@ -214,7 +215,7 @@ public class HLThread implements Runnable {
 				}
 			}
 			System.out.println();
-			System.out.print ("ADL SELECTED: "+ badl.getName() +" with rank ");
+			System.out.print ("ADL SELECTED: "+ badl.getName().substring(0, 1).toUpperCase()+badl.getName().substring(1)  +" with rank ");
 			System.out.printf ("%.3f", badl.getRank());
 			System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
 
@@ -267,15 +268,15 @@ public class HLThread implements Runnable {
 	 * @param ADLindex: Index of the ADL just executed
 	 */
 	private static void applyADLEffect(ADL finishingADL) {
-		Iterator<ADLEffect> x = hLADL.get(finishingADL.getId()).getEffects().iterator();
+		Iterator<ADLEffect> x = finishingADL.getEffects().iterator();
 		while (x.hasNext()) {
 			ADLEffect effect = x.next();
 			int index = Needs.getInstance().searchIndex(effect.getName());
 			Double newStatus = Needs.getInstance().getStatus(index) + effect.getEffect();
 			if(newStatus < 0){
-				Needs.getInstance().setStatus(index, (double) 0);
+				Needs.getInstance().setStatus(index, 0.0);
 			} else if(newStatus > 1){
-				Needs.getInstance().setStatus(index, (double) 1);
+				Needs.getInstance().setStatus(index, 1.0);
 			} else {
 				Needs.getInstance().setStatus(index, newStatus);
 			}
