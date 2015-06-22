@@ -77,7 +77,15 @@ public class Needs {
 		}
 		return instance;
 	}
-
+	
+	/**
+	 * Loads the values of the instances of the class "Needs" in the specified ArrayList. It wouldn't load the template file.
+	 * @param id		The id of the needs.
+	 * @param name		The name of needs.
+	 * @param init		The init value of the needs. If the file doesn't contains its, the method will put null.
+	 * @param constant	The growing constant of the needs.
+	 * @throws NotDirectoryException	If the folder "Config" doesn't exists
+	 */
 	public static void LoadValues(ArrayList<Integer> id, ArrayList<String> name, ArrayList<Double> init, ArrayList<Double> constant) throws NotDirectoryException{
 		
 		File folder = new File("config");
@@ -131,6 +139,11 @@ public class Needs {
 		}
 	}
 	
+	/**
+	 * Searches a name of a need having its index.
+	 * @param index	The index of name in the array.
+	 * @return	The name contained in the specified index.
+	 */
 	public String searchNamewIn(int index){
 		try{
 			return name[index];
@@ -140,6 +153,11 @@ public class Needs {
 		return null;
 	}
 	
+	/**
+	 * Searches a name of a need having its id.
+	 * @param id	The id of a need.
+	 * @return		The name of the need that has the specified id.
+	 */
 	public String searchNamewId(int id){
 		try{
 			return name[Arrays.asList(this.id).indexOf(id)];
@@ -149,6 +167,11 @@ public class Needs {
 		return null;
 	}
 	
+	/**
+	 * Searches the id of a need having its name
+	 * @param name	The string that represents the name of a need
+	 * @return		The id of the need with the specified need
+	 */
 	public int searchId(String name){
 		try{
 			return id[Arrays.asList(getName()).indexOf(name)];
@@ -158,6 +181,12 @@ public class Needs {
 		return (Integer) null;
 	}
 	
+	/**
+	 * @Overload
+	 * Searches the index of a need having its name
+	 * @param name	The string that represents the name of a need
+	 * @return		The index of the need with the specified need. If the name isn't matched with no needs in the vector null would be returned
+	 */
 	public int searchIndex(String name){
 		Integer index = null;
 		for(int i = 0; i < this.name.length; i++){
@@ -171,6 +200,12 @@ public class Needs {
 		return (Integer) null;
 	}
 	
+	/**
+	 * @Overload
+	 * Searches the index of a need having its id
+	 * @param name	The string that represents the name of a need
+	 * @return		The index of the need with the specified need. If the name isn't matched with no needs in the vector null would be returned
+	 */
 	public int searchIndex(int id){
 		try{
 			return Arrays.asList(this.id).indexOf(id);
@@ -180,7 +215,6 @@ public class Needs {
 		return (Integer) null;
 	}
 	
-
 	public Integer[] getId() {
 		return id;
 	}
@@ -250,7 +284,12 @@ public class Needs {
 		this.status = status;
 	}
 	
-	@Override
+	/**
+	 * @Override
+	 * @return the string that represents the status of the class. 
+	 * It's formatted to have a label made of 3 letter for every need and the value with 3 decimal value.
+	 * 
+	 */
 	public String toString(){
 		String OutputStr = "NewNeeds:";
 		Iterator<String> ItrNeeds = Arrays.asList(getName()).iterator();

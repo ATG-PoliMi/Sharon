@@ -34,7 +34,11 @@ public class ADLDB {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Creates an HashMap of an ArrayList of ADL
+	 * @param ADLList	The ADL to map
+	 * @return	The map created
+	 */
 	private Map<Integer, ADL> CreateMap(ArrayList<ADL> ADLList){
 		Map<Integer, ADL> Map = new HashMap<>();
 		Iterator<ADL> ItrADL = ADLList.iterator();
@@ -44,7 +48,12 @@ public class ADLDB {
 		}
 		return Map;
 	}
-
+	
+	/**
+	 * Loads the acts of the simulator from the configuration files. The template files would be ignored
+	 * @return	An ArrayList of the ADL loaded
+	 * @throws NotDirectoryException	If folder "config" doesn't exist
+	 */
 	private static ArrayList<ADL> loadAct()throws NotDirectoryException{
 			
 		ArrayList<ADL>result = new ArrayList<ADL>();
@@ -188,6 +197,10 @@ public class ADLDB {
 		return result;
 	}
 	
+	/**
+	 * Checks and apply the drifts of the ADL.
+	 * @param time	The time of the simulation
+	 */
 	public void update(long time){
 		Iterator<ADLDrift> itrDrifts = actdrift.iterator();
 		while(itrDrifts.hasNext()){
@@ -198,6 +211,11 @@ public class ADLDB {
 		}
 	}
 	
+	/**
+	 * Create an array that represent the time description of an ADL made of a single value.
+	 * @param value	The value that would be use to create the array.
+	 * @return	An array of 1440 float that represents a time description
+	 */
 	private static Float[] CreateTd(float value){
 		Float[] td = new Float[1440];
 		for(int i = 0; i < 1440; i++){
@@ -225,6 +243,11 @@ public class ADLDB {
 		this.adlmap = adlmap;
 	}
 	
+	/**
+	 * Searches the id of an ADL.
+	 * @param ADLName	The string that represent the name of the ADL
+	 * @return	The id of the ADL with the specified name. If any ADL is matched null would be returned
+	 */
 	public int searchId(String ADLName){
 		if(adlmap.containsValue(ADLName)){
 			Integer[] keys = adlmap.keySet().toArray(new Integer[adlmap.keySet().size()]);
@@ -241,6 +264,10 @@ public class ADLDB {
 		}
 	}
 	
+	/**
+	 * Select the default ADL for start the simulation
+	 * @return	The ADL that represent the act "sleeping". If it wouldn't be found, the first ADL would be returned.
+	 */
 	public ADL defaultADL(){
 		Set<Integer> keys = adlmap.keySet();
 		Iterator<Integer> ItrKey = keys.iterator();

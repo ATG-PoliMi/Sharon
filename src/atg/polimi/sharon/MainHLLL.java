@@ -14,7 +14,7 @@ import atg.polimi.sharon.engine.thread.LLThread;
 public class MainHLLL {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int def_simulatedDays 	= 10; 	//Days to simulate
+	private static int def_simulatedDays 	= 3; 	//Days to simulate
 	//***** END PARAMETERS *****
 	
 	Parameters param = Parameters.getInstance();
