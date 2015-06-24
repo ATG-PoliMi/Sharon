@@ -11,14 +11,46 @@ import java.util.Arrays;
 import java.util.Iterator;
 import atg.polimi.sharon.configs.Parameters;
 
+/**
+ * This class contains all the needs of the simulation in 3 parallel arrays, so a value placed in the same index refers to the same need.
+ * <p>
+ * The first @see #id contains the ids of the needs and it's accessible with the methods @see {@link #getId()} and @see {@link #setId(Integer[])}
+ * <p>
+ * The second @see #name contains the names of the needs and it's accessible with the methods @see {@link #getName()}, @see {@link #setName(String[])}, 
+ * @see {@link #setName(int, String)} and @see {@link #setName(String, String)}.
+ * <p>
+ * The third @see #status contains the actual status of the needs and it's accessible with the methods @see {@link #getStatus()}, 
+ * @see {@link #getStatus(int)}, @see {@link #setStatus(Double[])}, @see {@link #setStatus(int, Double)}, @see {@link #setStatus(String, Double)}.
+ * <p>
+ * This class has also methods to search values in those 3 arrays, such as @see {@link #searchId(String)}, @see {@link #searchIndex(int)}, 
+ * @see {@link #searchIndex(String)}, @see {@link #searchNamewId(int)} and  @see {@link #searchNamewIn(int)}, that are called in several other classes.
+ * <p>
+ * It's a singleton class, so its instance is contained in its member @see {@link #instance}, 
+ * accessible only with the methods @see {@link #getInstance()} and @see {@link #setInstance(Needs)}.
+ * <p>
+ * It contains a method @see {@link #LoadValues(ArrayList, ArrayList, ArrayList, ArrayList)}, that allows it to load the needs from the config file.
+ * <p>
+ * It also contains an override method @see {@link #toString()} that returns a string with all the labels and the currents status of needs properly formatted.
+ * <p>
+ * @author alessandro
+ */
 
 public class Needs {
+	
 	private static Needs instance = null;
 	
 	private Integer[] id;
 	private String[] name;
 	private Double[] status;
-		
+	
+	/**
+	 * This constructor instances the members of the class, it is called in the methods @see {@link #getInstance()} that provides the values to build up the class. 
+	 * If in the configuration files there aren't any init values, the methods provides
+	 * to initialize all the status values of the arrays to "0.0" except for the one of the "Sleeping" that is setted to "1.0".
+	 * @param Id	Integer that represents the ids of the needs
+	 * @param Name	String that represents the name of the needs
+	 * @param init	Double that represents the init value of the status of a need. If a value in this array equals null the methods provide an arbitrary initialization.
+	 */
 	private Needs(ArrayList<Integer> Id, ArrayList<String> Name, ArrayList<Double> init){
 		/*
 		this.hunger			=	0.2;
@@ -55,11 +87,21 @@ public class Needs {
 			i++;
 		}
 	}
-
+	
+	/**
+	 * Change the value of @see {@link #instance}
+	 * @param instance	The new value of instance
+	 */
 	public static void setInstance(Needs instance) {
 		Needs.instance = instance;
 	}
 	
+	/**
+	 * Return the value of @see {@link #instance}, but if its value equals to null, first it would load the values of need from the config files 
+	 * using the method @see {@link #LoadValues(ArrayList, ArrayList, ArrayList, ArrayList)} and then call the constructor
+	 * @see {@link #Needs(ArrayList, ArrayList, ArrayList)} and it would also set the needs growth rate with the methods @see {@link Parameters#setNeedsParameters(Double[])}.
+	 * @return	The value of the Needs' instance
+	 */
 	public static synchronized Needs getInstance() {
 		if(instance==null) {
 			ArrayList<Integer> id = new ArrayList<Integer>(); 
@@ -215,22 +257,43 @@ public class Needs {
 		return (Integer) null;
 	}
 	
+	/**
+	 * Returns @see {@link #id};
+	 * @return	The array of the ids of the needs
+	 */
 	public Integer[] getId() {
 		return id;
 	}
-
+	
+	/**
+	 * Sets a new array as @see {@link #id}
+	 * @param id	New array
+	 */
 	public void setId(Integer[] id) {
 		this.id = id;
 	}
 	
+	/**
+	 * Returns @see {@link #name}
+	 * @return	The array of the names of the needs
+	 */
 	public String[] getName() {
 		return name;
 	}
 
+	/**
+	 * Sets a new array as @see {@link #name}
+	 * @param name	New array
+	 */
 	public void setName(String[] name) {
 		this.name = name;
 	}
 	
+	/**
+	 * Sets a value placed at the index in @see {@link #name} with a new value.
+	 * @param index		The index of the value
+	 * @param name		The new value
+	 */
 	public void setName(int index, String name){
 		try{
 			this.name[index] = name;
@@ -239,6 +302,11 @@ public class Needs {
 		}
 	}
 	
+	/**
+	 * Sets a value placed in @see {@link #name} that have the specified name with a new value.
+	 * @param oldName	The old name of the value.
+	 * @param newName	The new name of the value
+	 */
 	public void setName(String oldName, String newName){
 		try{
 			this.name[searchIndex(oldName)] = newName;
@@ -246,7 +314,11 @@ public class Needs {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Returns @see {@link #status} converted into primitive type
+	 * @return	The array of the status
+	 */
 	//TODO: Define if Status[] is a primitive or a Wrapped Class instance
 	public double[] getStatus() {
 		double [] temp = new double[status.length];
@@ -256,22 +328,40 @@ public class Needs {
 		return temp;
 	}
 	
+	/**
+	 * Returns @see {@link #status}
+	 * @return	The array of the status
+	 */
 	public Double[] getStatusWrapped() {
 		return status;
 	}
 	
+	/**
+	 * Returns the value of the element of @see {@link #status} placed at the specified index
+	 * @param index	Index of the desired value
+	 * @return		The value placed at the position of index
+	 */
 	public Double getStatus(int index) {
 		return status[index];
 	}
 
-	public void setStatus(String oldName, Double newStatus) {
+	/**
+	 * Sets the status of the need specified with its own name to a new value
+	 * @param Name	Name of the need
+	 * @param newStatus	New status of the need
+	 */
+	public void setStatus(String Name, Double newStatus) {
 		try{
-			status[searchIndex(oldName)] = newStatus;
+			status[searchIndex(Name)] = newStatus;
 		} catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Sets the value of @see {@link #status} placed at index to a new value
+	 * @param index	 	The index of the desired value
+	 * @param newStatus	The new value
+	 */
 	public void setStatus(int index, Double newStatus) {
 		try{
 			status[index] = newStatus;
@@ -280,6 +370,10 @@ public class Needs {
 		}
 	}
 	
+	/**
+	 * Sets a new array to @see {@link #status}
+	 * @param status	New array
+	 */
 	public void setStatus(Double[] status) {
 		this.status = status;
 	}
@@ -288,7 +382,6 @@ public class Needs {
 	 * @Override
 	 * @return the string that represents the status of the class. 
 	 * It's formatted to have a label made of 3 letter for every need and the value with 3 decimal value.
-	 * 
 	 */
 	public String toString(){
 		String OutputStr = "NewNeeds:";

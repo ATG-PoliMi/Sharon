@@ -12,11 +12,34 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import atg.polimi.sharon.engine.ADLEffect;
 import atg.polimi.sharon.engine.ADL;
 import atg.polimi.sharon.engine.Needs;
 
+/**
+ * This class contains:
+ * <ul>
+ * <li>The maps of all the ADL that the simulator can use.
+ * <li>The list of all the drifts that have to appear to the ADL
+ * </ul>
+ * <p>
+ * The first is stored in member @see {@link #adlmap} as a Map<Integer, ADL> and is accessible only with methods @see {@link ADLDB#getAdlmap()} 
+ * and @see {@link ADLDB#setAdlmap(Map)()}.
+ * <p>
+ * The second is stored in member @see {@link #actdrift} as an ArrayList of instances of @see ADLDrift, is accessible with method
+ * @see {@link ADLDB#setAdlmap(Map)()}.
+ * <p>
+ * Both of them are loaded from confing files in the builder @see {@link #ADLDB()}.
+ * <p>
+ * It's a singleton class, its instance is contained in its member @see {@link #instance}, 
+ * accessible only with methods @see {@link #getInstance()} and @see {@link #setInstance(ADLDB)}.
+ * <p>
+ * It also contains the methods @see {@link #defaultADL()}, that is used in 
+ * @see {@link HLThread#HLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode)}to choose the starting ADL of simulator, 
+ * and the methods @see {@link #CreateMap(ArrayList)} and @see {@link #CreateTd(float)} that are used to create correctly @see {@link #adlmap}.
+ * <p>
+ * @author alessandro 
+ */
 public class ADLDB {
 	
 	private static ADLDB instance = null;
@@ -25,6 +48,14 @@ public class ADLDB {
 	
 	private ArrayList<ADLDrift> actdrift;
 	
+	/**
+	 * This builder is called from the method @see {@link #getInstance()}.
+	 * <p>
+	 * It uses to instance the member @see {@link #adlmap} the method @see {@link #CreateMap(ArrayList)} with the ArrayList of ADL 
+	 * that the method @see {@link #loadAct()} has loaded from the config files.
+	 * <p>
+	 * It also instances the member @see {@link #actdrift} with the method @see {@link ADLDrift#loadActDrift()} that loads the drifts from config files.
+	 */
 	private ADLDB(){
 		super();
 		try {
@@ -37,7 +68,7 @@ public class ADLDB {
 	/**
 	 * Creates an HashMap of an ArrayList of ADL
 	 * @param ADLList	The ADL to map
-	 * @return	The map created
+	 * @return	the map created
 	 */
 	private Map<Integer, ADL> CreateMap(ArrayList<ADL> ADLList){
 		Map<Integer, ADL> Map = new HashMap<>();
@@ -223,22 +254,37 @@ public class ADLDB {
 		}
 		return td;
 	}
-
+	
+	/**
+	 * Return the value of @see {@link #instance}, but if its value equals to null, it would first call the constructor @see {@link #ADLDB()}.
+	 * @return	The value of the Parameters' instance
+	 */
 	public static ADLDB getInstance() {
 		if(instance == null){
 			instance = new ADLDB();
 		}
 		return instance;
 	}
-
+	/**
+	 * Sets the @see {@link #instance} to a new value
+	 * @param instance	The new value of instance
+	 */
 	public static void setInstance(ADLDB instance) {
 		ADLDB.instance = instance;
 	}
-
+	
+	/**
+	 * Returns @see {@link #adlmap}
+	 * @return the value of adlmap
+	 */
 	public Map<Integer, ADL> getAdlmap() {
 		return adlmap;
 	}
-
+	
+	/**
+	 * Sets @see {@link #adlmap} to a new value
+	 * @param adlmap	the new value of adlmap
+	 */
 	public void setAdlmap(Map<Integer, ADL> adlmap) {
 		this.adlmap = adlmap;
 	}
