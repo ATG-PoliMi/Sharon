@@ -12,7 +12,7 @@ import java.util.Iterator;
 import atg.polimi.sharon.configs.Parameters;
 
 /**
- * This class contains all the needs of the simulation in 3 parallel arrays, so a value placed in the same index refers to the same need.
+ * This class contains all the needs of the simulation in 3 parallel arrays, so a value placed at the same index in different arrays refers to the same need.
  * <p>
  * The first @see #id contains the ids of the needs and it's accessible with the methods @see {@link #getId()} and @see {@link #setId(Integer[])}
  * <p>
@@ -45,7 +45,7 @@ public class Needs {
 	
 	/**
 	 * This constructor instances the members of the class, it is called in the methods @see {@link #getInstance()} that provides the values to build up the class. 
-	 * If in the configuration files there aren't any init values, the methods provides
+	 * If in the configuration files there aren't any init values, the method supplies 
 	 * to initialize all the status values of the arrays to "0.0" except for the one of the "Sleeping" that is setted to "1.0".
 	 * @param Id	Integer that represents the ids of the needs
 	 * @param Name	String that represents the name of the needs
@@ -97,9 +97,9 @@ public class Needs {
 	}
 	
 	/**
-	 * Return the value of @see {@link #instance}, but if its value equals to null, first it would load the values of need from the config files 
+	 * Return the value of @see {@link #instance}, but if its value equals to null, first it will load the values of need from the config files 
 	 * using the method @see {@link #LoadValues(ArrayList, ArrayList, ArrayList, ArrayList)} and then call the constructor
-	 * @see {@link #Needs(ArrayList, ArrayList, ArrayList)} and it would also set the needs growth rate with the methods @see {@link Parameters#setNeedsParameters(Double[])}.
+	 * @see {@link #Needs(ArrayList, ArrayList, ArrayList)} and it will also set the needs growth rate with the methods @see {@link Parameters#setNeedsParameters(Double[])}.
 	 * @return	The value of the Needs' instance
 	 */
 	public static synchronized Needs getInstance() {
@@ -121,12 +121,12 @@ public class Needs {
 	}
 	
 	/**
-	 * Loads the values of the instances of the class "Needs" in the specified ArrayList. It wouldn't load the template file.
+	 * Loads the values of the instances of the class "Needs" in the ArrayList specified. It doesn't load the template file.
 	 * @param id		The id of the needs.
-	 * @param name		The name of needs.
+	 * @param name		The name of the needs.
 	 * @param init		The init value of the needs. If the file doesn't contains its, the method will put null.
 	 * @param constant	The growing constant of the needs.
-	 * @throws NotDirectoryException	If the folder "Config" doesn't exists
+	 * @throws NotDirectoryException	If the folder "Config" doesn't exist
 	 */
 	public static void LoadValues(ArrayList<Integer> id, ArrayList<String> name, ArrayList<Double> init, ArrayList<Double> constant) throws NotDirectoryException{
 		
@@ -182,9 +182,9 @@ public class Needs {
 	}
 	
 	/**
-	 * Searches a name of a need having its index.
+	 * Searches the name of a need having its index. If the index is out of bound it will return null
 	 * @param index	The index of name in the array.
-	 * @return	The name contained in the specified index.
+	 * @return	The name contained in the specified index or null
 	 */
 	public String searchNamewIn(int index){
 		try{
@@ -196,9 +196,9 @@ public class Needs {
 	}
 	
 	/**
-	 * Searches a name of a need having its id.
+	 * Searches the name of a need having its id. If the id isn't contained in the array, it will return null
 	 * @param id	The id of a need.
-	 * @return		The name of the need that has the specified id.
+	 * @return		The name of the need that has the specified id or null.
 	 */
 	public String searchNamewId(int id){
 		try{
@@ -210,7 +210,7 @@ public class Needs {
 	}
 	
 	/**
-	 * Searches the id of a need having its name
+	 * Searches the id of a need having its name. If the name isn't contained in the array, it will return null
 	 * @param name	The string that represents the name of a need
 	 * @return		The id of the need with the specified need
 	 */
@@ -225,7 +225,7 @@ public class Needs {
 	
 	/**
 	 * @Overload
-	 * Searches the index of a need having its name
+	 * Searches the index of a need having its name. If the name isn't contained in the array, it will return null
 	 * @param name	The string that represents the name of a need
 	 * @return		The index of the need with the specified need. If the name isn't matched with no needs in the vector null would be returned
 	 */
@@ -244,7 +244,7 @@ public class Needs {
 	
 	/**
 	 * @Overload
-	 * Searches the index of a need having its id
+	 * Searches the index of a need having its id. If the id isn't contained, it will return null
 	 * @param name	The string that represents the name of a need
 	 * @return		The index of the need with the specified need. If the name isn't matched with no needs in the vector null would be returned
 	 */
@@ -381,7 +381,7 @@ public class Needs {
 	/**
 	 * @Override
 	 * @return the string that represents the status of the class. 
-	 * It's formatted to have a label made of 3 letter for every need and the value with 3 decimal value.
+	 * It's formatted to have a label made of 3 letter for every need and the status with 3 decimal digits.
 	 */
 	public String toString(){
 		String OutputStr = "NewNeeds:";
