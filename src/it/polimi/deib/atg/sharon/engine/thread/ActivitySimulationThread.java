@@ -41,14 +41,16 @@ public class ActivitySimulationThread implements Runnable {
 	private int printLog;
 
 	private int mode;
+    private String outputFilePrefix;
 
-	public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode){
+    public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode, String outputFilePrefix){
 		this.queue=q;
 		this.simulatedDays=simulatedDays;
 		this.printLog=printLog;
 		this.mode=mode;
+        this.outputFilePrefix = outputFilePrefix;
 
-	//	ADLDB.getInstance().getAdlmap()		= 	ADLDB.getInstance().getAdlmap();
+        //	ADLDB.getInstance().getAdlmap()		= 	ADLDB.getInstance().getAdlmap();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
 		onGoingAdl = 	ADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
@@ -68,8 +70,8 @@ public class ActivitySimulationThread implements Runnable {
 				computeADLRank((int) timeInstant % 86400);
 				ADLQueue ADLQ = changeADL();
 
-				//printOnConsole(3); Hour histogram
-				printOnConsole(4);
+				//outputData(3); Hour histogram
+				outputData(4);
 
 				if (ADLQ != null) { 
 					try {
@@ -118,7 +120,7 @@ public class ActivitySimulationThread implements Runnable {
 				onGoingAdl = bestAdl;
 				onGoingAdl.setActive(1);
 				usedTime=0;
-				printOnConsole(1); //TODO: Log row
+				outputData(1); //TODO: Log row
 				return X;
 			}
 		}
@@ -197,7 +199,12 @@ public class ActivitySimulationThread implements Runnable {
 	}
 
 
-	private static void printOnConsole(int whatToPrint) {
+    public static final int PRINT_HUMAN_READABLE_OUTPUT = 1;
+    public static final int PRINT_NEEDS = 2;
+
+
+
+    private static void outputData(int whatToPrint) {
 		Time t = new Time(timeInstant % 86400);
 		switch (whatToPrint) {
 		//Metodo toString formattato (3 char per nome )

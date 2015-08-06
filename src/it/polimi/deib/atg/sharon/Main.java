@@ -54,7 +54,7 @@ public class Main {
 		}else{
 			simulatedDays = def_simulatedDays;
 		}
-		producer = new ActivitySimulationThread(queue, simulatedDays, printLog, mode);
+		producer = new ActivitySimulationThread(queue, simulatedDays, printLog, mode, activityOutputPrefix);
 		new Thread(producer).start();
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
 
