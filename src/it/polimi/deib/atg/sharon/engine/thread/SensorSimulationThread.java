@@ -39,7 +39,7 @@ public class SensorSimulationThread implements Runnable{
 	static int idling 		= 	0;	
 
 	//Utils
-	static long tick = 0;
+	static long timeInstant = 0;
 	static long usedTime = 0;
 
 	//TARGETS
@@ -54,13 +54,13 @@ public class SensorSimulationThread implements Runnable{
 	private int simulatedDays;
 	private int action;
 	private int dijkstra;
-	private String sensorsOutput;
+	private String simulationOutputPrefix;
 
 	public SensorSimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int dijkstra, String sOutput){
 		this.queue=q;
 		this.simulatedDays = simulatedDays;
 		this.dijkstra = dijkstra;
-		this.sensorsOutput = sOutput;
+		this.simulationOutputPrefix = sOutput;
 
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
@@ -73,9 +73,9 @@ public class SensorSimulationThread implements Runnable{
 		PrintWriter out;
 		try {
 			Thread.sleep(1000);
-			out = new PrintWriter(new FileWriter(sensorsOutput+"0.txt"));
+			out = new PrintWriter(new FileWriter(simulationOutputPrefix + "0.txt"));
 			
-			for (tick=0; tick < (86400*simulatedDays)-5000; tick++) {
+			for (timeInstant =0; timeInstant < (86400*simulatedDays)-5000; timeInstant++) {
 
 				idling++;
 				switch (agentStatus) {
@@ -86,7 +86,7 @@ public class SensorSimulationThread implements Runnable{
 							//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
 							//Fake ADLS for demo: start demo:		//queue.put(new ADLQueue(8, 300));queue.put(new ADLQueue(6, 300));queue.put(new ADLQueue(3, 666));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));				//end demo
 							System.out.println("***** A: EMPTY queue *****");
-							tick--;
+							timeInstant--;
 							emptyN++;
 
 						} else {
@@ -159,9 +159,9 @@ public class SensorSimulationThread implements Runnable{
 					break;
 				}
 				
-				if ((tick%86400==0)&&(tick>0)) {
+				if ((timeInstant %86400==0)&&(timeInstant >0)) {
 					out.close();
-					out = new PrintWriter(new FileWriter(sensorsOutput+(int)tick/86400+".txt"));
+					out = new PrintWriter(new FileWriter(simulationOutputPrefix +(int) timeInstant /86400+".txt"));
 				}
 				out.println(printActiveSensors(action));	//TODO: Log row
 			}
@@ -205,7 +205,7 @@ public class SensorSimulationThread implements Runnable{
 
 		Sensor[] sensorsArray = HomeMap.getInstance().getS();
 
-		activeSensors += tick;
+		activeSensors += timeInstant;
 		activeSensors += ", ";
 		activeSensors += HomeMap.getInstance().getHouseArea(actor.getX(), actor.getY());
 		activeSensors += ", ";
