@@ -46,3 +46,12 @@ It is an imported package used to simulate path within the house. It has perform
 
 http://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
 http://www.algolist.com/code/java/Dijkstra's_algorithm
+
+
+
+
+
+### RELEASE NOTES ###
+
+* Training is not yet available
+
