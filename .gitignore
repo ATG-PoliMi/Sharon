@@ -108,6 +108,5 @@ demo_wip.db
 # -- very specific!! -- #
 /data/t
 /data/ARAS
-/data/SensorOutput/*.txt
 
 /doc
