@@ -13,7 +13,6 @@ public class ADL {
 	private double active;
 	
 	private double rank;
-	private int doneToday;
 	private ArrayList<String> needs = new ArrayList <String>();
 	private ArrayList<ADLEffect> effects = new ArrayList <ADLEffect>();
 	
@@ -85,12 +84,6 @@ public class ADL {
 	}
 	public void setRank(double rank) {
 		this.rank = rank;
-	}
-	public int getDoneToday() {
-		return doneToday;
-	}
-	public void setDoneToday(int doneToday) {
-		this.doneToday = doneToday;
 	}
 	public ArrayList<String> getNeeds() {
 		return needs;

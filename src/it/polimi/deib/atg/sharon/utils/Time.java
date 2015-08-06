@@ -10,10 +10,15 @@ public class Time {
 
 	public int getMinute() {
 		return minute;
-	}	
+	}
 
-	public Time (double tick) {	
-		hour = (int) tick / 3600;	    
-	    minute = ((int) tick - hour * 3600) / 60;
+	@Override
+	public String toString() {
+		return this.getHour() + ":" + this.getMinute();
+	}
+
+	public Time (double timeInstant) {
+		hour = (int) timeInstant / 3600;
+	    minute = ((int) timeInstant - hour * 3600) / 60;
 	}
 }

@@ -1,5 +1,8 @@
 package it.polimi.deib.atg.sharon.engine.thread;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,6 +45,7 @@ public class ActivitySimulationThread implements Runnable {
 
 	private int mode;
     private String outputFilePrefix;
+    private PrintWriter outFile;
 
     public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode, String outputFilePrefix){
 		this.queue=q;
@@ -49,6 +53,8 @@ public class ActivitySimulationThread implements Runnable {
 		this.printLog=printLog;
 		this.mode=mode;
         this.outputFilePrefix = outputFilePrefix;
+
+        this.outFile = null;
 
         //	ADLDB.getInstance().getAdlmap()		= 	ADLDB.getInstance().getAdlmap();
 		lLADL 		= 	LLADLDB.addLLADL();
@@ -62,8 +68,12 @@ public class ActivitySimulationThread implements Runnable {
 
 			usedTime++;
 			if (timeInstant % 86400 == 0){
-				newDay();
-			}
+                try {
+                    newDay();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 			
 			if (timeInstant % 60 == 0) {
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
@@ -71,14 +81,16 @@ public class ActivitySimulationThread implements Runnable {
 				ADLQueue ADLQ = changeADL();
 
 				//outputData(3); Hour histogram
-				outputData(4);
+				this.updateHistogramM();
 
 				if (ADLQ != null) { 
 					try {
 						if (mode !=0)
 							queue.put(ADLQ);
-						System.out.println("TIME: "+ timeInstant);
 						System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
+                        ADL adl = ADLDB.getInstance().getADLById(ADLQ.getADLId());
+                        outFile.println(timeInstant+","+ADLQ.getADLId()+","+ adl.getName()+","+new Time(timeInstant % 86400) );
+
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -97,7 +109,7 @@ public class ActivitySimulationThread implements Runnable {
 	}
 
 
-	private static ADLQueue changeADL() {
+	private  ADLQueue changeADL() {
 		//TODO:Starting Activity?
 		ADL bestAdl = ADLDB.getInstance().defaultADL();
 
@@ -120,50 +132,24 @@ public class ActivitySimulationThread implements Runnable {
 				onGoingAdl = bestAdl;
 				onGoingAdl.setActive(1);
 				usedTime=0;
-				outputData(1); //TODO: Log row
+                this.printVerboseOnConsole();
 				return X;
 			}
 		}
 		return null;
 	}
 
-	private static void newDay() {
+	private void newDay() throws IOException {
+        if (outFile != null)
+            outFile.close();
 
-		dayInitADL();
+        outFile = new PrintWriter(new FileWriter(outputFilePrefix +(int) timeInstant /86400+".txt"));
+        outFile.println("simulation_seconds,activity_id,activity_name,time_of_the_day");
 		Day.getInstance().nextDay();
 
-		//eraseNeeds();
-//		System.out.println("***NEW DAY***! ("+Day.getInstance().getWeekDay()+")");
-//		System.out.print("Today is ");
-//		switch (Day.getInstance().getWeekDay()%7) {
-//		case 0: System.out.print("Monday"); break;
-//		case 1: System.out.print("Tuesday"); break;
-//		case 2: System.out.print("Wednsday"); break;
-//		case 3: System.out.print("Thursday"); break;
-//		case 4: System.out.print("Friday"); break;
-//		case 5: System.out.print("Saturday"); break;
-//		case 6: System.out.print("Sunday"); break;
-//		default: System.out.print("Error");
-//		}
-//		System.out.print(" and the weather is ");
-//		switch (Day.getInstance().getWeather()) {
-//		case 1: System.out.print("Rainy\n"); break;
-//		case 2: System.out.print("Cloudy\n"); break;
-//		case 3: System.out.print("Sunny\n"); break;
-//		default: System.out.print("Error\n");
-//		}
 
 	}
 
-	/**
-	 * Operations applied to all the ADL each day
-	 */
-	private static void dayInitADL() {
-		//TODO: Con nuova f peso da rimuovere?
-		for (ADL a : ADLDB.getInstance().getAdlmap().values())  {
-			a.setDoneToday(0); //In this way I avoid duplication of activities			
-		}
-	}
 
 	/**
 	 * Computation of the ADL rank
@@ -199,51 +185,34 @@ public class ActivitySimulationThread implements Runnable {
 	}
 
 
-    public static final int PRINT_HUMAN_READABLE_OUTPUT = 1;
-    public static final int PRINT_NEEDS = 2;
+    private  void printVerboseOnConsole() {
+        Time t = new Time(timeInstant % 86400);
+
+        System.out.printf (Needs.getInstance().toString());
+        System.out.println();
+
+        double cBest=0;
+        for (ADL a : ADLDB.getInstance().getAdlmap().values())  {
+
+            //				if (a.getRank()>0)
+            //					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
+            if (a.getRank()>cBest){
+                System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
+                cBest = a.getRank();
+            }
+        }
+        System.out.println();
+        System.out.print ("ADL SELECTED: "+ onGoingAdl.getName().substring(0, 1).toUpperCase()+ onGoingAdl.getName().substring(1)  +" with rank ");
+        System.out.printf("%.3f", onGoingAdl.getRank());
+        System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
+
+        System.out.println();
+    }
 
 
-
-    private static void outputData(int whatToPrint) {
-		Time t = new Time(timeInstant % 86400);
-		switch (whatToPrint) {
-		//Metodo toString formattato (3 char per nome )
-		case 1: 
-			System.out.printf (Needs.getInstance().toString());
-			System.out.println();
-
-			double cBest=0;
-			for (ADL a : ADLDB.getInstance().getAdlmap().values())  {
-
-				//				if (a.getRank()>0)
-				//					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
-				if (a.getRank()>cBest){
-					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
-					cBest = a.getRank();
-				}
-			}
-			System.out.println();
-			System.out.print ("ADL SELECTED: "+ onGoingAdl.getName().substring(0, 1).toUpperCase()+ onGoingAdl.getName().substring(1)  +" with rank ");
-			System.out.printf("%.3f", onGoingAdl.getRank());
-			System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
-
-			System.out.println();				
-			break;
-
-		case 2:
-			System.out.print (t.getHour() +":"+t.getMinute()+" ");
-			System.out.printf (Needs.getInstance().toString());	
-			System.out.println();
-			break;
-
-		case 3:
-			hist.updateHistogramH(timeInstant, onGoingAdl.getId());
-			break;
-		case 4:
-			hist.updateHistogramM(timeInstant, onGoingAdl.getId());
-			break;
-		}
-	}
+    private void updateHistogramM() {
+        hist.updateHistogramM(timeInstant, onGoingAdl.getId());
+    }
 
 	/**
 	 * Updates user's and house needs
@@ -273,7 +242,7 @@ public class ActivitySimulationThread implements Runnable {
 
 	/**
 	 * Actions to perform when the ADL has been completed
-	 * @param ADLindex: Index of the ADL just executed
+	 * @param finishingADL: Index of the ADL just executed
 	 */
 	private static void applyADLEffect(ADL finishingADL) {
 		Iterator<ADLEffect> x = finishingADL.getEffects().iterator();

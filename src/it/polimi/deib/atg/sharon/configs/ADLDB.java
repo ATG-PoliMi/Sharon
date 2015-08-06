@@ -309,7 +309,12 @@ public class ADLDB {
 			return (Integer)null;
 		}
 	}
-	
+
+
+	public ADL getADLById(int id) {
+		return adlmap.get(new Integer(id));
+	}
+
 	/**
 	 * Select the default ADL for start the simulation
 	 * @return	The ADL that represent the act "sleeping". If it wouldn't be found, the first ADL would be returned.
