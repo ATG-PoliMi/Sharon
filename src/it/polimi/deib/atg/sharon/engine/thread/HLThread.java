@@ -34,9 +34,9 @@ public class HLThread implements Runnable {
 
 	//Utils
 	static long 	usedTime 		= 0;
-	static long 	tick 			= 0;
+	static long timeInstant = 0;
 	static CumulateHistogram hist 	= new CumulateHistogram();
-	static ADL badl;
+	static ADL onGoingAdl;
 	private int simulatedDays;
 	private int printLog;
 
@@ -51,31 +51,32 @@ public class HLThread implements Runnable {
 	//	ADLDB.getInstance().getAdlmap()		= 	ADLDB.getInstance().getAdlmap();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
-		badl 		= 	ADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
+		onGoingAdl = 	ADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
 	}
 
 	@Override
 	public void run() {		
-		for (tick=0; tick < 86400*simulatedDays; tick++){
+		for (timeInstant =0; timeInstant < 86400*simulatedDays; timeInstant++){
 
 			usedTime++;
-			if (tick % 86400 == 0){
+			if (timeInstant % 86400 == 0){
 				newDay();
 			}
 			
-			if (tick % 60 == 0) {
+			if (timeInstant % 60 == 0) {
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
-				computeADLRank((int) tick % 86400);
+				computeADLRank((int) timeInstant % 86400);
 				ADLQueue ADLQ = changeADL();
 
-				//Logs(3); Hour histogram
-				Logs(4);			
+				//printOnConsole(3); Hour histogram
+				printOnConsole(4);
 
 				if (ADLQ != null) { 
 					try {
 						if (mode !=0)
 							queue.put(ADLQ);
-						System.out.println("TIME: "+tick+ ", ID: "+ADLQ.getADLId()+", T:"+ADLQ.getTime());
+						System.out.println("TIME: "+ timeInstant);
+						System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -96,27 +97,28 @@ public class HLThread implements Runnable {
 
 	private static ADLQueue changeADL() {
 		//TODO:Starting Activity?
-		ADL cadl = ADLDB.getInstance().defaultADL();
+		ADL bestAdl = ADLDB.getInstance().defaultADL();
 
-		if (usedTime > 60*badl.getMinTime()){
+		if (usedTime > 60* onGoingAdl.getMinTime()){
 
 			//Check Better ADL
 			for (ADL a : ADLDB.getInstance().getAdlmap().values()) {			
-				if ((a.getRank() >= cadl.getRank())) {
-					cadl = a;
+				if ((a.getRank() >= bestAdl.getRank())) {
+					bestAdl = a;
 				}			
 			}		
+
+//			TODO print this info with the logging system
+//			System.out.println(bestAdl.getName() + " " + onGoingAdl.getName() + "\n");
+//			System.out.println(Needs.getInstance().toString() + "\n");
 			
-			System.out.println(cadl.getName() + " " + badl.getName() + "\n");
-			System.out.println(Needs.getInstance().toString() + "\n");
-			
-			if(cadl.getRank() > 0.01 && cadl.getName() != badl.getName()) {
-				ADLQueue X = new ADLQueue(badl.getId(), usedTime);
-				badl.setActive(0);
-				badl = cadl;
-				badl.setActive(1);				
+			if(bestAdl.getRank() > 0.01 && bestAdl.getName() != onGoingAdl.getName()) {
+				ADLQueue X = new ADLQueue(onGoingAdl.getId(), usedTime);
+				onGoingAdl.setActive(0);
+				onGoingAdl = bestAdl;
+				onGoingAdl.setActive(1);
 				usedTime=0;
-				Logs(1); //TODO: Log row
+				printOnConsole(1); //TODO: Log row
 				return X;
 			}
 		}
@@ -196,9 +198,9 @@ public class HLThread implements Runnable {
 	}
 
 
-	private static void Logs(int logType) {
-		Time t = new Time(tick % 86400);
-		switch (logType) {
+	private static void printOnConsole(int whatToPrint) {
+		Time t = new Time(timeInstant % 86400);
+		switch (whatToPrint) {
 		//Metodo toString formattato (3 char per nome )
 		case 1: 
 			System.out.printf (Needs.getInstance().toString());
@@ -215,8 +217,8 @@ public class HLThread implements Runnable {
 				}
 			}
 			System.out.println();
-			System.out.print ("ADL SELECTED: "+ badl.getName().substring(0, 1).toUpperCase()+badl.getName().substring(1)  +" with rank ");
-			System.out.printf ("%.3f", badl.getRank());
+			System.out.print ("ADL SELECTED: "+ onGoingAdl.getName().substring(0, 1).toUpperCase()+ onGoingAdl.getName().substring(1)  +" with rank ");
+			System.out.printf("%.3f", onGoingAdl.getRank());
 			System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
 
 			System.out.println();				
@@ -229,10 +231,10 @@ public class HLThread implements Runnable {
 			break;
 
 		case 3:
-			hist.updateHistogramH(tick, badl.getId());
+			hist.updateHistogramH(timeInstant, onGoingAdl.getId());
 			break;
 		case 4:
-			hist.updateHistogramM(tick, badl.getId());
+			hist.updateHistogramM(timeInstant, onGoingAdl.getId());
 			break;
 		}
 	}
@@ -241,8 +243,8 @@ public class HLThread implements Runnable {
 	 * Updates user's and house needs
 	 */
 	private static void updateNeeds(int times) {
-		Parameters.getInstance().update(tick);
-		ADLDB.getInstance().update(tick);
+		Parameters.getInstance().update(timeInstant);
+		ADLDB.getInstance().update(timeInstant);
 		for (int i=0; i<times; i++) {
 			Iterator<Double> ItrStatus = Arrays.asList(Needs.getInstance().getStatusWrapped()).iterator();
 			Iterator<Double> ItrParam = Arrays.asList(Parameters.getInstance().getNeedsParameters()).iterator();
@@ -259,7 +261,7 @@ public class HLThread implements Runnable {
 				j++;
 			}
 			Needs.getInstance().setStatus(NewNeedsStatus);
-			applyADLEffect(badl);
+			applyADLEffect(onGoingAdl);
 		}		
 	}
 

@@ -196,7 +196,7 @@ public class LLThread implements Runnable{
 
 	/**
 	 * printActiveSensors computes the values for each sensor of the house and returns a String in the following format:
-	 * "tick, home area, ADL id, UserX, UserY, sensors 0-k"
+	 * "timeInstant, home area, ADL id, UserX, UserY, sensors 0-k"
 	 * @return
 	 */
 	public String printActiveSensors (int action) {
