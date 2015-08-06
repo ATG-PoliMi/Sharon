@@ -111,7 +111,6 @@ public class Needs {
 			try {
 				LoadValues(id, name, init, constant);
 			} catch (NotDirectoryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			instance = new Needs(id, name, init);

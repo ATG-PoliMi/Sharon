@@ -191,7 +191,6 @@ public class ActivitySimulationThread implements Runnable {
 		int needed = 0;
 		if (a.getNeeds() != null) {
 			needed = a.getNeeds().contains(Needs.getInstance().getName()[i]) ? 1 : 0;
-			//TODO:What does this means?
 			contribution = ((a.getNeeds().size()>0) && (needed>0)) ? ((double)1/a.getNeeds().size()) : 0.0;
 		}
 		return contribution;

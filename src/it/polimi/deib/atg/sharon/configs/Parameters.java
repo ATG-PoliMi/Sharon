@@ -79,7 +79,6 @@ public class Parameters {
 		try {
 			Drifts = NeedsDrift.loadNeedDrift();
 		} catch (NotDirectoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		*/
