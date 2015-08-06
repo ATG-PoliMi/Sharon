@@ -20,7 +20,7 @@ import it.polimi.deib.atg.sharon.utils.Distributions;
 import it.polimi.deib.atg.sharon.utils.Time;
 
 
-public class HLThread implements Runnable {
+public class ActivitySimulationThread implements Runnable {
 
 	//ADL QUEUE
 	private BlockingQueue<ADLQueue> queue;
@@ -42,7 +42,7 @@ public class HLThread implements Runnable {
 
 	private int mode;
 
-	public HLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode){
+	public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode){
 		this.queue=q;
 		this.simulatedDays=simulatedDays;
 		this.printLog=printLog;

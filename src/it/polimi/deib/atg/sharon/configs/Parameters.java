@@ -18,7 +18,7 @@ import it.polimi.deib.atg.sharon.engine.Needs;
  * in the same order of @see Needs, accessible only with methods @see {@link #getNeedsParameters()}, 
  * @see {@link #setNeedsParameters(Double[])}, 
  * @see {@link #GetNeedsParameter(int)} and @see {@link #setNeedParameter(int, double)}. This array is used in the class 
- * @see HLTread in the method @see HLThread#updateNeeds to update the status of the needs in the simulation accorting 
+ * @see HLTread in the method @see ActivitySimulationThread#updateNeeds to update the status of the needs in the simulation accorting
  * to the constant growth of the need during the time.
  * <p>
  * It contains an ArrayList of @see NeedsDrift, approachable only with methods @see {@link #getDrifts()} and 

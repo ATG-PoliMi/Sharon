@@ -19,7 +19,7 @@ import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
 
-public class LLThread implements Runnable{
+public class SensorSimulationThread implements Runnable{
 
 
 	private Coordinate actor = new Coordinate (10,10);
@@ -56,7 +56,7 @@ public class LLThread implements Runnable{
 	private int dijkstra;
 	private String sensorsOutput;
 
-	public LLThread(BlockingQueue<ADLQueue> q, int simulatedDays, int dijkstra, String sOutput){
+	public SensorSimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int dijkstra, String sOutput){
 		this.queue=q;
 		this.simulatedDays = simulatedDays;
 		this.dijkstra = dijkstra;

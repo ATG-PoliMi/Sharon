@@ -8,8 +8,8 @@ import it.polimi.deib.atg.sharon.configs.NeedsDrift;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.engine.Needs;
 import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
-import it.polimi.deib.atg.sharon.engine.thread.HLThread;
-import it.polimi.deib.atg.sharon.engine.thread.LLThread;
+import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
+import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
 
 public class Main {
 
@@ -27,8 +27,8 @@ public class Main {
 	//
 
 	//Thread
-	private static HLThread producer;
-	private static LLThread consumer;
+	private static ActivitySimulationThread producer;
+	private static SensorSimulationThread consumer;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
 
 	public static void main(String[] args) {
@@ -53,13 +53,13 @@ public class Main {
 		}else{
 			simulatedDays = def_simulatedDays;
 		}
-		producer = new HLThread(queue, simulatedDays, printLog, mode); 	
+		producer = new ActivitySimulationThread(queue, simulatedDays, printLog, mode);
 		new Thread(producer).start();
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
 
 		//LOW LEVEL SIMULATION
 		if (mode == 1) {
-			consumer = new LLThread(queue, simulatedDays, dijkstra, sOutput);
+			consumer = new SensorSimulationThread(queue, simulatedDays, dijkstra, sOutput);
 			new Thread(consumer).start();
 			System.out.println("Consumer Starts");	
 		}			
