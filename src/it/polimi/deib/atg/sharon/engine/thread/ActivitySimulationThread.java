@@ -142,8 +142,8 @@ public class ActivitySimulationThread implements Runnable {
 			}		
 
 //			TODO print this info with the logging system
-//			System.out.println(bestAdl.getName() + " " + onGoingAdl.getName() + "\n");
-//			System.out.println(Needs.getInstance().toString() + "\n");
+			System.out.println(bestAdl.getName() + " " + onGoingAdl.getName() + "\n");
+			System.out.println(Needs.getInstance().toString() + "\n");
 			
 			if(bestAdl.getRank() > 0.01 && !bestAdl.getName().equals(onGoingAdl.getName())) {
 				ADLQueue X = new ADLQueue(onGoingAdl.getId(), elapsed_time);

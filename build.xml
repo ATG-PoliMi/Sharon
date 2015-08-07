@@ -24,7 +24,7 @@
 
     <target name="clean">
         <delete dir="${dir.build}"/>
-        <delete dir="${dir.docs}"/>
+        <delete dir="${dir.docs"/>
         <delete file="Sharon_${version}.jar"/>
     </target>
 
