@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
 import it.polimi.deib.atg.sharon.Main;
@@ -107,7 +108,6 @@ public class ActivitySimulationThread implements Runnable {
 
 
 	private  ADLQueue changeADL() {
-		//TODO:Starting Activity?
 		ADL bestAdl = ADLDB.getInstance().defaultADL();
 
 		if (elapsed_time > 60* onGoingAdl.getMinTime()){
@@ -123,7 +123,7 @@ public class ActivitySimulationThread implements Runnable {
 //			System.out.println(bestAdl.getName() + " " + onGoingAdl.getName() + "\n");
 //			System.out.println(Needs.getInstance().toString() + "\n");
 			
-			if(bestAdl.getRank() > 0.01 && bestAdl.getName() != onGoingAdl.getName()) {
+			if(bestAdl.getRank() > 0.01 && !bestAdl.getName().equals(onGoingAdl.getName())) {
 				ADLQueue X = new ADLQueue(onGoingAdl.getId(), elapsed_time);
 				onGoingAdl.setActive(false);
 				onGoingAdl = bestAdl;
@@ -191,11 +191,9 @@ public class ActivitySimulationThread implements Runnable {
 
         double cBest=0;
         for (ADL a : ADLDB.getInstance().getAdlmap().values())  {
-
-            //				if (a.getRank()>0)
-            //					System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
-            if (a.getRank()>cBest){
+            if (a.getRank()>0)
                 System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
+            if (a.getRank()>cBest){
                 cBest = a.getRank();
             }
         }
