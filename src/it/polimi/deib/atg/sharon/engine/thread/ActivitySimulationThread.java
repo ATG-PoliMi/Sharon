@@ -42,15 +42,13 @@ public class ActivitySimulationThread implements Runnable {
 	static CumulateHistogram hist 	= new CumulateHistogram();
 	static ADL onGoingAdl;
 	private int simulatedDays;
-	private int printLog;
 
     private String outputFilePrefix;
     private PrintWriter outFile;
 
-    public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, String outputFilePrefix){
+    public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, String outputFilePrefix){
 		this.queue=q;
 		this.simulatedDays=simulatedDays;
-		this.printLog=printLog;
         this.outputFilePrefix = outputFilePrefix;
 
         this.outFile = null;
@@ -98,7 +96,7 @@ public class ActivitySimulationThread implements Runnable {
 			}
 		}
 		System.out.println("Producer Thread ends");
-		if (printLog == 1) {
+		if (Main.PRINT_LOG) {
 			hist.refineHistogram(simulatedDays);	//normalized for days number
 			//hist.normalizationTo1Histogram(); 	//normalized to 1
 
