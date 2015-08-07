@@ -30,8 +30,8 @@ public class Main {
 	//
 
 	//Thread
-	private static ActivitySimulationThread producer;
-	private static SensorSimulationThread consumer;
+	private static ActivitySimulationThread activitySimulationThread;
+	private static SensorSimulationThread sensorSimulationThread;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
 
 	public static void main(String[] args) {
@@ -57,14 +57,14 @@ public class Main {
 		}else{
 			simulatedDays = def_simulatedDays;
 		}
-		producer = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
-		new Thread(producer).start();
+		activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
+		new Thread(activitySimulationThread).start();
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
 
 		//LOW LEVEL SIMULATION
 		if (ENABLE_SENSORS_ACTIVITY) {
-			consumer = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-			new Thread(consumer).start();
+			sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+			new Thread(sensorSimulationThread).start();
 			System.out.println("Consumer Starts");	
 		}			
 	}

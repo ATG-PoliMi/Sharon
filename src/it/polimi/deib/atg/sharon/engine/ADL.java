@@ -1,5 +1,7 @@
 package it.polimi.deib.atg.sharon.engine;
 
+import com.sun.org.apache.xpath.internal.functions.FuncFalse;
+
 import java.util.ArrayList;
 
 public class ADL {
@@ -10,7 +12,7 @@ public class ADL {
 	private double[] weather; //[0]: sun probability,[1]: cloud probability, [2]: rain probability
 	private Float[] timeDescription;
 	private int minTime;
-	private double active;
+	private boolean active;
 	
 	private double rank;
 	private ArrayList<String> needs = new ArrayList <String>();
@@ -25,7 +27,7 @@ public class ADL {
 		this.weather = weather;
 		this.timeDescription = timeDescription;
 		this.minTime = minTime;
-		this.active = 0;
+		this.active = false;
 		
 		this.needs = needs;
 		this.effects = effects;
@@ -97,10 +99,10 @@ public class ADL {
 	public void setEffects(ArrayList<ADLEffect> effects) {
 		this.effects = effects;
 	}
-	public double getActive() {
+	public boolean getActive() {
 		return active;
 	}
-	public void setActive(double active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}	
 }

@@ -37,7 +37,7 @@ public class ActivitySimulationThread implements Runnable {
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
 
 	//Utils
-	static long 	usedTime 		= 0;
+	static long elapsed_time = 0;
 	static long timeInstant = 0;
 	static CumulateHistogram hist 	= new CumulateHistogram();
 	static ADL onGoingAdl;
@@ -63,21 +63,20 @@ public class ActivitySimulationThread implements Runnable {
 	public void run() {		
 		for (timeInstant =0; timeInstant < 86400*simulatedDays; timeInstant++){
 
-			usedTime++;
-			if (timeInstant % 86400 == 0){
-                try {
-                    newDay();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-			
+			elapsed_time++;
+
 			if (timeInstant % 60 == 0) {
+                if (timeInstant % 86400 == 0){
+                    try {
+                        newDay();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 				updateNeeds(1); //After each minute Needs are updated considering also the active ADL contribution				
 				computeADLRank((int) timeInstant % 86400);
 				ADLQueue ADLQ = changeADL();
 
-				//outputData(3); Hour histogram
 				this.updateHistogramM();
 
 				if (ADLQ != null) { 
@@ -87,7 +86,7 @@ public class ActivitySimulationThread implements Runnable {
 
 						System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
                         ADL adl = ADLDB.getInstance().getADLById(ADLQ.getADLId());
-                        outFile.println(timeInstant+","+ADLQ.getADLId()+","+ adl.getName()+","+new Time(timeInstant % 86400) );
+                        outFile.println(timeInstant+","+onGoingAdl.getId()+","+ onGoingAdl.getName()+","+new Time(timeInstant % 86400) );
 
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -111,7 +110,7 @@ public class ActivitySimulationThread implements Runnable {
 		//TODO:Starting Activity?
 		ADL bestAdl = ADLDB.getInstance().defaultADL();
 
-		if (usedTime > 60* onGoingAdl.getMinTime()){
+		if (elapsed_time > 60* onGoingAdl.getMinTime()){
 
 			//Check Better ADL
 			for (ADL a : ADLDB.getInstance().getAdlmap().values()) {			
@@ -125,11 +124,11 @@ public class ActivitySimulationThread implements Runnable {
 //			System.out.println(Needs.getInstance().toString() + "\n");
 			
 			if(bestAdl.getRank() > 0.01 && bestAdl.getName() != onGoingAdl.getName()) {
-				ADLQueue X = new ADLQueue(onGoingAdl.getId(), usedTime);
-				onGoingAdl.setActive(0);
+				ADLQueue X = new ADLQueue(onGoingAdl.getId(), elapsed_time);
+				onGoingAdl.setActive(false);
 				onGoingAdl = bestAdl;
-				onGoingAdl.setActive(1);
-				usedTime=0;
+				onGoingAdl.setActive(true);
+				elapsed_time = 0;
                 this.printVerboseOnConsole();
 				return X;
 			}
@@ -143,6 +142,7 @@ public class ActivitySimulationThread implements Runnable {
 
         outFile = new PrintWriter(new FileWriter(outputFilePrefix +(int) timeInstant /86400+".txt"));
         outFile.println("simulation_seconds,activity_id,activity_name,time_of_the_day");
+        outFile.println(timeInstant+","+onGoingAdl.getId()+","+ onGoingAdl.getName()+","+new Time(timeInstant % 86400) );
 		Day.getInstance().nextDay();
 
 
@@ -160,13 +160,13 @@ public class ActivitySimulationThread implements Runnable {
 		double needs[] = Needs.getInstance().getStatus();
 		for (ADL a : ADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
-			active = (a.getActive() > 0) ? 1 : 0.7;
+			active = a.getActive() ? 1 : 0.8;
 			for (int i=0; i<needs.length; i++) {
 				r += needsContribution(a, i) * needs[i];
 			}
 
-			r *= (Math.random() < a.getExactTimeDescription(minute/60)) ? 1 : a.getExactTimeDescription(minute/60) * a.getExactDay(Day.getInstance().getWeekDay()%7) * 
-					active * (0.80 + Math.random()*(1-0.80));
+            r *= (Math.random() < a.getExactTimeDescription(minute / 60)) ? 1 : (a.getExactTimeDescription(minute / 60) * a.getExactDay(Day.getInstance().getWeekDay() % 7) *
+                    active);
 			a.setRank(r);
 			adlmap.put(a.getId(), a);
 		}
