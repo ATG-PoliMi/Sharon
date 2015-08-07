@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 
+import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.ADLMatcherDB;
 import it.polimi.deib.atg.sharon.configs.HomeMap;
 import it.polimi.deib.atg.sharon.configs.LLADLDB;
@@ -53,13 +54,11 @@ public class SensorSimulationThread implements Runnable{
 	private BlockingQueue<ADLQueue> queue;
 	private int simulatedDays;
 	private int action;
-	private int dijkstra;
 	private String simulationOutputPrefix;
 
-	public SensorSimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int dijkstra, String sOutput){
+	public SensorSimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, String sOutput){
 		this.queue=q;
 		this.simulatedDays = simulatedDays;
-		this.dijkstra = dijkstra;
 		this.simulationOutputPrefix = sOutput;
 
 		lLADL 		= 	LLADLDB.addLLADL();
@@ -112,7 +111,7 @@ public class SensorSimulationThread implements Runnable{
 				case 2:	//Walking+Acting
 					if (!tTime.isEmpty()) {	//tTime contains timings for each station
 						if (idling < tTime.get(0)) {
-							if (dijkstra == 0 ) {
+							if (Main.ENABLE_DIJKSTRA) {
 
 								Sensor[] s= HomeMap.getInstance().getS();
 								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getX(),

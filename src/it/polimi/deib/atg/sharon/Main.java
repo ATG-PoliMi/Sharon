@@ -20,10 +20,10 @@ public class Main {
 	Parameters param = Parameters.getInstance();
 
 	// Extra parameters - not to touch
-	private static int mode 			= 0;	//0: only High Level, 1: High Level + Low Level (Experimental!)
-	private static int printLog 		= 0;	//0: no log print, 1: print (histograms...)
-	private static int dijkstra 		= 0;	//0: no dijkstra, 1: dijkstra (slower)
-	public static final boolean USE_DRIFTS		= false;		// activates drifts
+	public static final boolean ENABLE_SENSORS_ACTIVITY = false;	//0: only High Level, 1: High Level + Low Level (Experimental!)
+	public static final boolean PRINT_LOG 				= false;	//0: no log print, 1: print (histograms...)
+	public static final boolean ENABLE_DIJKSTRA 		= false;	//0: no ENABLE_DIJKSTRA, 1: ENABLE_DIJKSTRA (slower)
+	public static final boolean USE_DRIFTS				= false;		// activates drifts
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.
@@ -57,13 +57,13 @@ public class Main {
 		}else{
 			simulatedDays = def_simulatedDays;
 		}
-		producer = new ActivitySimulationThread(queue, simulatedDays, printLog, mode, activityOutputPrefix);
+		producer = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
 		new Thread(producer).start();
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
 
 		//LOW LEVEL SIMULATION
-		if (mode == 1) {
-			consumer = new SensorSimulationThread(queue, simulatedDays, dijkstra, sensorOutputPrefix);
+		if (ENABLE_SENSORS_ACTIVITY) {
+			consumer = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
 			new Thread(consumer).start();
 			System.out.println("Consumer Starts");	
 		}			

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
 import it.polimi.deib.atg.sharon.data.Day;
 import it.polimi.deib.atg.sharon.engine.ADL;
@@ -41,17 +42,13 @@ public class ActivitySimulationThread implements Runnable {
 	static CumulateHistogram hist 	= new CumulateHistogram();
 	static ADL onGoingAdl;
 	private int simulatedDays;
-	private int printLog;
 
-	private int mode;
     private String outputFilePrefix;
     private PrintWriter outFile;
 
-    public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, int printLog, int mode, String outputFilePrefix){
+    public ActivitySimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, String outputFilePrefix){
 		this.queue=q;
 		this.simulatedDays=simulatedDays;
-		this.printLog=printLog;
-		this.mode=mode;
         this.outputFilePrefix = outputFilePrefix;
 
         this.outFile = null;
@@ -85,8 +82,9 @@ public class ActivitySimulationThread implements Runnable {
 
 				if (ADLQ != null) { 
 					try {
-						if (mode !=0)
+						if (Main.ENABLE_SENSORS_ACTIVITY)
 							queue.put(ADLQ);
+
 						System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
                         ADL adl = ADLDB.getInstance().getADLById(ADLQ.getADLId());
                         outFile.println(timeInstant+","+ADLQ.getADLId()+","+ adl.getName()+","+new Time(timeInstant % 86400) );
@@ -98,7 +96,7 @@ public class ActivitySimulationThread implements Runnable {
 			}
 		}
 		System.out.println("Producer Thread ends");
-		if (printLog == 1) {
+		if (Main.PRINT_LOG) {
 			hist.refineHistogram(simulatedDays);	//normalized for days number
 			//hist.normalizationTo1Histogram(); 	//normalized to 1
 
