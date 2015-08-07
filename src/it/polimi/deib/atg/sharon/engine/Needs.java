@@ -244,7 +244,7 @@ public class Needs {
 	/**
 	 * @Overload
 	 * Searches the index of a need having its id. If the id isn't contained, it will return null
-	 * @param name	The string that represents the name of a need
+	 * @param id	The id of the need in the configs
 	 * @return		The index of the need with the specified need. If the name isn't matched with no needs in the vector null would be returned
 	 */
 	public int searchIndex(int id){
