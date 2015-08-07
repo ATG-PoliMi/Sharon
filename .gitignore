@@ -93,8 +93,6 @@ _sass_cache_*.css
 /bin
 /out
 
-# -- distribution --#
-dist*
 
 # -- app specific -- #
 test.db
