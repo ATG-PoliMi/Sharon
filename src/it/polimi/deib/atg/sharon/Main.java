@@ -22,8 +22,8 @@ public class Main {
 	// Extra parameters - not to touch
 	public static final boolean ENABLE_SENSORS_ACTIVITY = false;	//0: only High Level, 1: High Level + Low Level (Experimental!)
 	public static final boolean PRINT_LOG 				= false;	//0: no log print, 1: print (histograms...)
-	private static int ENABLE_DIJKSTRA 			= 0;	//0: no ENABLE_DIJKSTRA, 1: ENABLE_DIJKSTRA (slower)
-	public static final boolean USE_DRIFTS		= false;		// activates drifts
+	public static final boolean ENABLE_DIJKSTRA 		= false;	//0: no ENABLE_DIJKSTRA, 1: ENABLE_DIJKSTRA (slower)
+	public static final boolean USE_DRIFTS				= false;		// activates drifts
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.
@@ -63,7 +63,7 @@ public class Main {
 
 		//LOW LEVEL SIMULATION
 		if (ENABLE_SENSORS_ACTIVITY) {
-			consumer = new SensorSimulationThread(queue, simulatedDays, ENABLE_DIJKSTRA, sensorOutputPrefix);
+			consumer = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
 			new Thread(consumer).start();
 			System.out.println("Consumer Starts");	
 		}			
