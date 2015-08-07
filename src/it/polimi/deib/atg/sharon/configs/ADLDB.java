@@ -148,7 +148,7 @@ public class ADLDB {
 			String ADLString;
 			String[] StringSplitted;
 			
-			StringSplitted = itrDist.next().split("\t");
+			StringSplitted = itrDist.next().split(",");
 			IdADL = Integer.parseInt(StringSplitted[0]);
 			NameADL = StringSplitted[1].toLowerCase();
 			

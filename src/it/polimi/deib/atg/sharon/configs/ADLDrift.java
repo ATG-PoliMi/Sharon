@@ -133,11 +133,11 @@ public class ADLDrift {
 			String ADLString;
 			String[] StringSplitted;
 			
-			StringSplitted = itrDist.next().split("\t");
+			StringSplitted = itrDist.next().split(",");
 			IdADL = Integer.parseInt(StringSplitted[0]);
 			NameADL = StringSplitted[1];
 			
-			StringSplitted = itrDist.next().split("\t");
+			StringSplitted = itrDist.next().split(",");
 			Mode = ModeOfDrift.valueOf(StringSplitted[0]);
 			UpdateTime = Long.parseLong(StringSplitted[1]);
 			
