@@ -93,8 +93,6 @@ _sass_cache_*.css
 /bin
 /out
 
-# -- distribution --#
-dist*
 
 # -- app specific -- #
 test.db
@@ -108,4 +106,10 @@ demo_wip.db
 # -- very specific!! -- #
 /data/t
 /data/ARAS
-/data/SensorOutput/*.txt
+
+/doc
+
+# ant stuff
+build/
+/Sharon_*.jar
+
