@@ -182,8 +182,8 @@ public class ActivitySimulationThread implements Runnable {
 		double needs[] = Needs.getInstance().getStatus();
 		for (ADL a : ADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
-			active = a.getActive() ? 1 : 0.8;
-			for (int i=0; i<needs.length; i++) {
+			active = a.getActive() ? 0.8 : 1;
+			for (int i = 0; i<needs.length; i++) {
 				r += needsContribution(a, i) * needs[i];
 			}
 
