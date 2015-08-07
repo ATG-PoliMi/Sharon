@@ -23,6 +23,8 @@ public class Main {
 	private static int mode 			= 0;	//0: only High Level, 1: High Level + Low Level (Experimental!)
 	private static int printLog 		= 0;	//0: no log print, 1: print (histograms...)
 	private static int dijkstra 		= 0;	//0: no dijkstra, 1: dijkstra (slower)
+	public static final boolean USE_DRIFTS		= false;		// activates drifts
+
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.
 	//
@@ -37,7 +39,8 @@ public class Main {
 		int simulatedDays;
 		try{
 			Needs.getInstance();
-			Parameters.getInstance().setDrifts(NeedsDrift.loadNeedDrift());
+			if (USE_DRIFTS)
+				Parameters.getInstance().setDrifts(NeedsDrift.loadNeedDrift());
 			ADLDB.getInstance();
 		} catch(Exception e){
 			e.printStackTrace();

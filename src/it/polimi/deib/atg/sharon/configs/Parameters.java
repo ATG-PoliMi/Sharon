@@ -2,6 +2,8 @@ package it.polimi.deib.atg.sharon.configs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.engine.Needs;
 
 /**
@@ -89,23 +91,27 @@ public class Parameters {
 	 * @param time	The current time of the simulation
 	 */
 	public void update(long time){
-		Iterator<NeedsDrift> ItrDrifts = Drifts.iterator();
-	//	boolean[] done = new boolean[Drifts.size()];
-	//	int i = 0;
-		while(ItrDrifts.hasNext()){
-			NeedsDrift CurrentDrift = ItrDrifts.next();
-			if(time == CurrentDrift.getTime()){
-				setNeedParameter(Needs.getInstance().searchIndex(CurrentDrift.getId()), CurrentDrift.getNewValue());
-			//	done[i] = true;
+
+		if (Main.USE_DRIFTS) {
+			Iterator<NeedsDrift> ItrDrifts = Drifts.iterator();
+			//	boolean[] done = new boolean[Drifts.size()];
+			//	int i = 0;
+			while (ItrDrifts.hasNext()) {
+				NeedsDrift CurrentDrift = ItrDrifts.next();
+				if (time == CurrentDrift.getTime()) {
+					setNeedParameter(Needs.getInstance().searchIndex(CurrentDrift.getId()), CurrentDrift.getNewValue());
+					//	done[i] = true;
+				}
+				//i++;
 			}
-			//i++;
-		}
 	/*	for(i = 0; i < done.length; i++){
 			if(done[i]){
 				Drifts.remove(i);
 			}
 		}*/
+		}
 	}
+
 	
 	/**
 	 * Change the value of @see {@link #instance}
