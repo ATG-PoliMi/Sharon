@@ -2,6 +2,19 @@
 ## Introduction ##
 SHARON is a simulator of Human Activities, Routines and Needs. SHARON is coded in Java, originally with a special distro of Eclipse: Eclipse Repast Simphony. After some changes it can be executed by any Java compiler.
 
+## Run ##
+SHARON uses Apache ANT for the build process (http://ant.apache.org/).
+You can run the project by simply run ant on the project folder.
+Oter ANT task are:
+
+* **clean**: clean JAR target and build folder
+* **complie**: compile sources into build folder
+* **jar**: create Sharon_<VERISON>.jar package
+* **run**: run the compiled software
+
+
+
+
 ## Code Packages ##
 ### SHARON: It contains 4 executable classes, these represent the entry point for the application: ###
 * **ADLProfileExtractor**: It is used to extract the time profiles from the ARAS data. Parameters available in the top of the class

@@ -108,3 +108,8 @@ demo_wip.db
 /data/ARAS
 
 /doc
+
+# ant stuff
+build/
+/Sharon_*.jar
+
