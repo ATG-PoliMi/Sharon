@@ -1,70 +1,63 @@
 # SHARON code Manual 
 ## Introduction ##
-SHARON is a simulator of Human Activities, Routines and Needs. SHARON is coded in Java, originally with a special distro of Eclipse: Eclipse Repast Simphony. After some changes it can be executed by any Java compiler.
+SHARON is a simulator of Human Activities, Routines and Needs.
 
-## Run ##
+### Run ###
 SHARON uses Apache ANT for the build process (http://ant.apache.org/).
 You can run the project by simply run ant on the project folder.
-Oter ANT task are:
+Other ANT task are:
 
 * **clean**: clean JAR target and build folder
-* **complie**: compile sources into build folder
-* **jar**: create Sharon_<VERISON>.jar package
+* **doc**: generate javadoc for the project
+* **compile**: compile sources into build folder
+* **jar**: create `Sharon_<VERSION>.jar` package
 * **run**: run the compiled software
 
+To run the program simply launch ant without task name. 
 
 
-
-## Code Packages ##
-### SHARON: It contains 4 executable classes, these represent the entry point for the application: ###
-* **ADLProfileExtractor**: It is used to extract the time profiles from the ARAS data. Parameters available in the top of the class
-* **ADLTemporalDescriptionsGenerator**: This class is used to simulate a Time Profile with a minute granularity of 1440.
-* **MainHLLL**: This is the main class of the simulator. Parameters are available in the top of the class.
-* **MapPrintTest**: it prints, in the Java console, the map structure described as: 0: floor, 1: wall, 2: sensor.
-
-### SHARON.DATA: Related to the handling of spatial and temporal data Coordinate: It describes a point on the map. Used both for the actor and  for the target sensors###
-* **Day**: This class is used to return the current week day and the weather condition (weather is currently unused)
-* **Sensor**: It defines a single sensor. (name or ID, value (0/1), X, Y (coordinates on the map))
-* **SensorAbstract**: Abstract class of sensor
-* **Station**: (or sensor positioned) contains the time for which the actor needs to stay there
-* **Targets**: Contains timings for each LowLevel ADL
-
-### SHARON.ENGINE: Related to the handling of ADLs and Needs ###
-* **ADL**: It contains all the parameters used to define an ADL (some of them are currently unused)
-* **ADLEffect**: It contains the ADLs effects
-* **ADLMatcher**: it is the contact point between the HL and the LL ADL description (it selects which LowLevel profile, for each HighLevel profile must be used)
-* **LowLevelADL**: It contains the stations (sensors) definition used during the simulation
-* **Needs**: It contains the initial values of each need but also the Getter/Setter (Singleton has been implemented)
-
-###SHARON.ENGINE.THREAD: Related to the handling of the two parallel  threads###
-* **ADLQueue**: It contains the queue of ADLs produced at high level
-* **HLThread**: (or Producer Thread) contains the procedures used to produce an activities schedule (these activities are stored in ADLQueue)
-* **LLThread**: (Or Consumer Thread) contains the procedures used to simulate at Low Level the scheduling. Results are stored in data/SensorOutput
-
-###SHARON.XML: Data which should be imported via an XML file but for implementation necessities are hard-coded.###
-* **ADLDB**: contains the definition of the High Level ADLs
-* **ADLMatcherDB**: matches the HL ADL with the LL ADL (for each HLADL -> 1 or more LLADL)
-* **HomeMap**: it contains the map definition for each wall and for each sensor
-* **LLADLDB**: contains the definition of the Low Level ADLs
-
-###UTILS: Support classes###
-* **Constants**: it contains all the constants used in SHARON
-* **Cumulate Histogram**: it prints on a file histograms
-* **Distributions**: it contains the definition of the validation metrics used in SHARON (Bhattacharyya distance, Kullback-Leibler divergence, Earth Mover Distance)
-* **Time**: Class used to convert ticks (virtual seconds) into minutes/hours
-
-###UTILS.DIJKSTRA:##
-It is an imported package used to simulate path within the house. It has performance problems and can be disabled from MainHLLL.java. References:
+    $ ant
 
 
-http://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
-http://www.algolist.com/code/java/Dijkstra's_algorithm
+Results will be produced in `data/ActivityOutput` directory.
 
 
+## Sharon configuration ##
 
 
+### Needs Configuration ### 	
+	
+    config/needs.conf
 
-### RELEASE NOTES ###
+Comma separated file where every line represents a need. 
+Every line format is: `<ID>, <Name>, <Growth Rate>, <Optional initial status>`
 
-* Training is not yet available
+### ADL Configuration ###
 
+    config/act_*.conf
+    
+The template of the file is the following:    
+    
+    <#id>,<name>
+    Effects
+    <E1>, ..., <En>
+    Weights
+    <w1>, ..., <wn>
+    Weekdays
+    <d1>, ..., <dn> 
+    Weather
+    <h1>, <h2>, <h3>
+    Theta
+    <T1>, ...,<Tn>
+    MinDuration
+    <min_dur>
+
+Odd lines contain values to be used, and even lines contain human readable titles for documentation.    
+
+* `<#id>,<name>` identify the activity
+* `<E1>, ..., <En>` represent the effects of the ADL on the corresponding need (as specified in needs.conf). Must be between 0 and 1.
+* `<w1>, ..., <wn>` is the list of the needs' names that trigger the activity
+* `[Experimental] <d1>, ..., <dn>` are the probability to perform the activity in each of the 7 weekdays
+* `[Experimental] <h1>, <h2>, <h3>` represent the rank dependence on three atmospheric weather conditions
+* `<T1>, ...,<Tn>` can be the list of 1440 values of probability (one for each minute of the day), or a single constant value, repeated for the whole day.
+* `<min_dur>` is the minimum duration of the ADL, expressed in minutes.  

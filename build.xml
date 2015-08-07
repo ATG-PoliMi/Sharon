@@ -15,7 +15,7 @@
     <!-- directories -->
     <property name="dir.src" location="src"/>
     <property name="dir.build" location="build"/>
-    <property name="dir.docs" location="doc/javadocs"/>
+    <property name="dir.docs" location="doc"/>
 
     <description>
         SHARON is a simulator of Human Activities, Routines and Needs.
@@ -24,7 +24,19 @@
 
     <target name="clean">
         <delete dir="${dir.build}"/>
+        <delete dir="${dir.docs}"/>
         <delete file="Sharon_${version}.jar"/>
+    </target>
+
+    <target name="doc" description="generate javadoc for project">
+        <mkdir dir="${dir.docs}"/>
+        <javadoc access="public" destdir="${dir.docs}" author="true" version="true" use="true"
+                 packagenames="it.marionegri.ping.*"  windowtitle="Sharon Documentation" >
+            <fileset dir="${dir.src}" defaultexcludes="yes">
+                <include name="**/*.java"/>
+            </fileset>
+        </javadoc>
+
     </target>
 
     <target name="compile">
