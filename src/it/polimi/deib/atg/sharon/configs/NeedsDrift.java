@@ -61,18 +61,18 @@ public class NeedsDrift {
 	public static synchronized ArrayList<NeedsDrift> loadNeedDrift() throws NotDirectoryException{
 
 		File folder = new File("config");
-		if(folder.exists() == false){
+		if(!folder.exists()){
 			throw new NotDirectoryException(null);
 		}
 		ArrayList<NeedsDrift> DriftInstances = new ArrayList<NeedsDrift>();
-		
+
 		ArrayList<Integer> IdNeed = new ArrayList<Integer>();
 		ArrayList<ModeOfDrift> Mode = new ArrayList<ModeOfDrift>();
 		ArrayList<Long> Time = new ArrayList<Long>();
 		ArrayList<Double> NewValue = new ArrayList<Double>();
-		
+
 		BufferedReader reader 	= null;
-		
+
 		ArrayList<String> distribution = new ArrayList <String>();
 
 		FilenameFilter NeedDriftFilter = new FilenameFilter(){
@@ -96,10 +96,10 @@ public class NeedsDrift {
 		}catch (Exception e) {e.printStackTrace();} finally {
 			try {reader.close();} catch (IOException e) {e.printStackTrace();}
 		}
-		
+
 		Iterator<String> itr = distribution.iterator();
 		while(itr.hasNext()){
-			String[] need = itr.next().split("\t");
+			String[] need = itr.next().split(",");
 			if(Arrays.asList(need).size() == 4){
 				IdNeed.add(Integer.parseInt(need[0]));
 				Mode.add(ModeOfDrift.valueOf(need[1]));
@@ -113,14 +113,14 @@ public class NeedsDrift {
 		ModeOfDrift[] mode = Mode.toArray(new ModeOfDrift[Mode.size()]);
 		Long[] time = Time.toArray(new Long[Time.size()]);
 		Double[] newValue = NewValue.toArray(new Double[NewValue.size()]);
-		
+
 		for(int i = 0; i < id.length; i++){
 			int tempId = id[i];
 			long tempTime = time[i];
 			double tempValue = newValue[i];
 			DriftInstances.add(new NeedsDrift(tempId, mode[i], tempTime, tempValue));
 		}
-		
+
 		return DriftInstances;
 	}
 	/**

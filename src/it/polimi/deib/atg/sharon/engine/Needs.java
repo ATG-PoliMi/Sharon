@@ -136,7 +136,7 @@ public class Needs {
 		
 		BufferedReader reader 	= null;
 		
-		ArrayList<String[]> distribuction = new ArrayList <String[]>();
+		ArrayList<String[]> distribution = new ArrayList <String[]>();
 		
 		String[] need = null;
 
@@ -154,7 +154,7 @@ public class Needs {
 			reader = new BufferedReader(new FileReader(fileList.get(0)));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				distribuction.add(line.split("\t"));	
+				distribution.add(line.split(","));
 			}
 		}catch(NullPointerException e){
 			e.printStackTrace();
@@ -162,7 +162,7 @@ public class Needs {
 			try {reader.close();} catch (IOException e) {e.printStackTrace();}
 		}
 		
-		Iterator<String[]> itr = distribuction.iterator();
+		Iterator<String[]> itr = distribution.iterator();
 		while(itr.hasNext()){
 			need = itr.next();
 			if(Arrays.asList(need).size() == 3 || Arrays.asList(need).size() == 4){
