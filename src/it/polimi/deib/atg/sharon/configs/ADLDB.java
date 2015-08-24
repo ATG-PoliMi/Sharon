@@ -38,6 +38,7 @@ import java.util.Set;
 import it.polimi.deib.atg.sharon.engine.ADLEffect;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.engine.Needs;
+import it.polimi.deib.atg.sharon.utils.Time;
 
 /**
  * This class contains:
@@ -277,8 +278,78 @@ public class ADLDB {
 		}
 		return td;
 	}
-	
-	/**
+
+    /**
+     * Create an array that represent the time description of an ADL made of a sequence of flags:</br>
+     * <b>R HH:MM F HH:MM</b>: sharp rising and falling;</br>
+     * <b>RS HH:MM RE HH:MM</b>: linear rising (RS rising start, RE rising end);</br>
+     * <b>FS HH:MM FE HH:MM</b>: linear falling (FS falling start, FE falling end).</br>
+     *
+     * Asymmetric edges are accepted.
+     *
+     * @param Edge  The formatted string describing falling or rising edges.
+     * @param td    The time description if already present
+     * @return	An array of 1440 float that represents a time description
+     */
+    private static Float[] CreateTd(String Edge, Float[] td) throws Exception {
+        String[] tokens=Edge.split(" ");
+        int tkn=0;
+        while(tkn<tokens.length){
+            Integer begin = 0;
+            Integer end = 1439;
+            if(tokens[tkn].equals("RS")){
+                begin = new Time(tokens[tkn + 1]).getMinuteS();
+                if(tokens[tkn+2].equals("RE")){
+                    end = new Time(tokens[tkn + 3]).getMinuteS();
+                }else {
+                    throw new Exception("Wrong Timeprofile parameters");
+                }
+                if(tkn==0) {
+                    if (td == null) {
+                        td = new Float[1440];
+                    }
+                    for (int i = 0; i < begin; i++) {
+                        td[i] = 0F;
+                    }
+                }
+                float delta = 1F/((float)(end - begin));
+                for (int i = begin; i < end; i++){
+                    td[i] = td[i-1] + delta;
+                }
+            }
+            if(tokens[tkn].equals("R") || tokens[tkn].equals("RF") ){
+                begin = new Time(tokens[tkn + 1]).getMinuteS();
+                if(tokens[tkn+2].equals("F") || tokens[tkn+2].equals("FS")) {
+                    end = new Time(tokens[tkn + 3]).getMinuteS();
+                }else{
+                    throw new Exception("Wrong Timeprofile parameters");
+                }
+                for (int i = begin; i < end; i++){
+                    td[i] = 1F;
+                }
+            }
+            if(tokens[tkn].equals("FS")){
+                if(tkn==0) {
+                    throw new Exception("Wrong Timeprofile parameters");
+                }
+                begin = new Time(tokens[tkn + 1]).getMinuteS();
+                if(tokens[tkn+2].equals("FE")){
+                    end = new Time(tokens[tkn + 3]).getMinuteS();
+                }else {
+                    throw new Exception("Wrong Timeprofile parameters");
+                }
+                float delta = 1F/((float)(end - begin));
+                for (int i = begin; i < end; i++){
+                    td[i] = td[i-1] - delta;
+                }
+            }
+            tkn+=2;
+        }
+        return td;
+    }
+
+
+    /**
 	 * Return the value of @see {@link #instance}, but if its value equals to null, it would first call the constructor @see {@link #ADLDB()}.
 	 * @return	The value of the Parameters' instance
 	 */

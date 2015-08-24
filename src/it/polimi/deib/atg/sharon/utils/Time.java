@@ -34,6 +34,10 @@ public class Time {
 		return minute;
 	}
 
+    public int getMinuteS() {
+        return (minute+(hour*60));
+    }
+
 	@Override
 	public String toString() {
 		return this.getHour() + ":" + this.getMinute();
@@ -43,4 +47,10 @@ public class Time {
 		hour = (int) timeInstant / 3600;
 	    minute = ((int) timeInstant - hour * 3600) / 60;
 	}
+
+    public Time (String timeString){
+        String[] tkns = timeString.split(":");
+        hour = Integer.parseInt(tkns[0]);
+        minute = Integer.parseInt(tkns[1]);
+    }
 }
