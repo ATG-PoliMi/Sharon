@@ -186,7 +186,7 @@ public class ActivitySimulationThread implements Runnable {
 				r += needsContribution(a, i) * needs[i];
 			}
 
-            r *= (Math.random() < a.getTimeDescription(minute / 60)) ? 1 : (a.getTimeDescription(minute / 60) * a.getDayWeight(Day.getInstance().getWeekDay() % 7) *
+            r *= ((Math.random() < a.getTimeDescription(minute / 60)) ? 1 : (a.getTimeDescription(minute / 60))) * (a.getDayWeight(Day.getInstance().getWeekDay() % 7) *
                     active);
 			a.setRank(r);
 			adlmap.put(a.getId(), a);
