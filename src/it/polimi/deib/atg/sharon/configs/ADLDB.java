@@ -313,7 +313,11 @@ public class ADLDB {
                 }
                 float delta = 1F/((float)(end - begin));
                 for (int i = begin; i < end; i++){
-                    td[i] = td[i-1] + delta;
+                    if(i>0){
+                        td[i] = td[i-1] + delta;
+                    }else{
+                        td[i] = delta;
+                    }
                 }
             }
             if((Edges[tkn].equals("R") || Edges[tkn].equals("RE")) && tkn<(Edges.length-3)){
