@@ -37,7 +37,7 @@ public class ADLProfileExtractor {
 	static int 	person 		= 20;		//Options: 20: person 1, 21: person 2
 	static int 	format 		= 3;		//Print layout, options: 1: vertical, 2: horizontal, 3: horizontal skipped
 	static int 	print 		= 2;		//Array to print, options: 1: ADLSmoothing, 2: ADLNotSmoothed, 3:ADLNormalizedTo1
-	static float days		= 7.0f;	//30: full dataset, 23: test, 7: validation
+	static float days		= 7.0f;	    //30: full dataset, 23: test, 7: validation
 
 	static String oFile		= "data/InputTD_light.txt";	
 	//InputTD.txt 			: system input; 
