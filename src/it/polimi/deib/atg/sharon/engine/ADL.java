@@ -70,7 +70,7 @@ public class ADL {
 	public double[] getDays() {
 		return days;
 	}
-	public double getExactDay(int i) {
+	public double getDayWeight(int i) {
 		if ((i>=0)&&(i<7))
 			return days[i];
 		else
@@ -88,7 +88,7 @@ public class ADL {
 	public Float[] getTimeDescription() {
 		return timeDescription;
 	}
-	public double getExactTimeDescription(int i) {
+	public double getTimeDescription(int i) {
 		if ((i>=0)&&(i<1440))
 			return timeDescription[i];
 		else

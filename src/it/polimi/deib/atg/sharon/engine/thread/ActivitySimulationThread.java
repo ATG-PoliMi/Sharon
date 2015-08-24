@@ -28,7 +28,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
 import it.polimi.deib.atg.sharon.Main;
@@ -182,12 +181,12 @@ public class ActivitySimulationThread implements Runnable {
 		double needs[] = Needs.getInstance().getStatus();
 		for (ADL a : ADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
-			active = a.getActive() ? 0.8 : 1;
+			active = a.getActive() ? 1 : 0.8;
 			for (int i = 0; i<needs.length; i++) {
 				r += needsContribution(a, i) * needs[i];
 			}
 
-            r *= (Math.random() < a.getExactTimeDescription(minute / 60)) ? 1 : (a.getExactTimeDescription(minute / 60) * a.getExactDay(Day.getInstance().getWeekDay() % 7) *
+            r *= (Math.random() < a.getTimeDescription(minute / 60)) ? 1 : (a.getTimeDescription(minute / 60) * a.getDayWeight(Day.getInstance().getWeekDay() % 7) *
                     active);
 			a.setRank(r);
 			adlmap.put(a.getId(), a);
