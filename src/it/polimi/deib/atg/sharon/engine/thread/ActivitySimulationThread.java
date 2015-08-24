@@ -245,9 +245,8 @@ public class ActivitySimulationThread implements Runnable {
 			int j = 0;
 			while(ItrStatus.hasNext()){	
 				double CurrentStatus = ItrStatus.next();
-				if (CurrentStatus < 1.0) {
-					NewNeedsStatus[j] = CurrentStatus + ItrParam.next();
-				} else {
+                NewNeedsStatus[j] = CurrentStatus + ItrParam.next();
+				if (NewNeedsStatus[j] > 1.0){
 					NewNeedsStatus[j] = 1.0;
 				}
 				j++;
