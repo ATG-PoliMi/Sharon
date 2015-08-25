@@ -75,7 +75,6 @@ public class ActivitySimulationThread implements Runnable {
 
         this.outFile = null;
 
-        //	ADLDB.getInstance().getAdlmap()		= 	ADLDB.getInstance().getAdlmap();
 		lLADL 		= 	LLADLDB.addLLADL();
 		matchADL 	= 	ADLMatcherDB.addADLMatch();
 		onGoingAdl = 	ADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
