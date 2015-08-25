@@ -30,11 +30,10 @@ import java.util.concurrent.BlockingQueue;
 
 
 import it.polimi.deib.atg.sharon.Main;
-import it.polimi.deib.atg.sharon.configs.HomeMap;
+import it.polimi.deib.atg.sharon.configs.HouseMap;
+import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.data.Sensor;
 import it.polimi.deib.atg.sharon.engine.ADLMatch;
-import it.polimi.deib.atg.sharon.engine.LowLevelADL;
-import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
 import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.engine.ADL;
@@ -51,9 +50,10 @@ public class SensorSimulationThread implements Runnable{
 	private String delims = ",";
 
 	//ADL Handling
-	static Map<Integer, ADL> hLADL;
-	static Map<Integer, LowLevelADL>  lLADL;
-	static Map<Integer, ADLMatch> matchADL;
+	Map<Integer, ADL> hLADL;
+	LowLevelADLDB lLADL;
+	Map<Integer, ADLMatch> matchADL;
+    HouseMap houseMap;
 
 	//User actions
 	static int agentStatus	=	1; //1: extracting; 2: acting;
@@ -81,8 +81,10 @@ public class SensorSimulationThread implements Runnable{
 		this.simulatedDays = simulatedDays;
 		this.simulationOutputPrefix = sOutput;
 
-		lLADL 		= 	LowLevelADLDB.getInstance();
-		matchADL 	= 	ADLMatcher.getInstance();
+        houseMap = HouseMap.getInstance();
+		lLADL = LowLevelADLDB.getInstance();
+		matchADL = ADLMatcher.getInstance();
+
 	}
 
 	@Override
@@ -133,7 +135,7 @@ public class SensorSimulationThread implements Runnable{
 						if (idling < tTime.get(0)) {
 							if (Main.ENABLE_DIJKSTRA) {
 
-								Sensor[] s= HomeMap.getInstance().getS();
+								Sensor[] s= HouseMap.getS();
 								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getX(),
 										s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getY());
 								if (Target.getX()>actor.getX()) 
@@ -197,10 +199,10 @@ public class SensorSimulationThread implements Runnable{
 
 	public void newTarget(int indexSensor) {
 		DE = new DijkstraEngine();
-		worldMapMatrix = HomeMap.getInstance().getWorldMap();
+		worldMapMatrix = HouseMap.getMap();
 		DE.buildAdjacencyMatrix(worldMapMatrix);
 
-		Sensor [] s= HomeMap.getInstance().getS();
+		Sensor [] s= HouseMap.getS();
 
 		Target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
 
@@ -222,28 +224,29 @@ public class SensorSimulationThread implements Runnable{
 
 		String activeSensors = "";
 
-		Sensor[] sensorsArray = HomeMap.getInstance().getS();
+		Sensor[] sensorsArray = HouseMap.getInstance().getS();
 
 		activeSensors += timeInstant;
 		activeSensors += ", ";
-		activeSensors += HomeMap.getInstance().getHouseArea(actor.getX(), actor.getY());
-		activeSensors += ", ";
-		activeSensors += action;
-		activeSensors += ", ";
-		activeSensors += (int)actor.getX();
-		activeSensors += ", ";
-		activeSensors += (int)actor.getY();
-		activeSensors += ", ";
-		for (int i=0; i < Parameters.SENSORSNUMBER; i++) {
-			if (((sensorsArray[i].getX() == actor.getX())&&
-					(sensorsArray[i].getY() == actor.getY()))) {
-				activeSensors += "1, ";
+        //TODO Change this so we can have ranges or leave sensors active
+        for (Sensor aSensorsArray : sensorsArray) {
+            if (((aSensorsArray.getX() == actor.getX()) &&
+                    (aSensorsArray.getY() == actor.getY()))) {
+                activeSensors += "1, ";
 
-			} else {
-				activeSensors += "0, ";				
-			}
-		}
-		activeSensors = activeSensors.substring(0, activeSensors.length()-2);
+            } else {
+                activeSensors += "0, ";
+            }
+        }
+        // This will remove the last comma and unneeded space
+        activeSensors = activeSensors.substring(0, activeSensors.length()-2);
+
+        //TODO Change this so it is possible to choose whether to have position and ground truth
+        activeSensors += action;
+        activeSensors += ", ";
+        activeSensors += (int)actor.getX();
+        activeSensors += ", ";
+        activeSensors += (int)actor.getY();
 
 		return activeSensors;
 	}

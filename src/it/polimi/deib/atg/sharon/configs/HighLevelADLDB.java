@@ -23,11 +23,7 @@
 
 package it.polimi.deib.atg.sharon.configs;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +69,9 @@ public class HighLevelADLDB {
 	private Map<Integer, ADL> adlmap;
 	
 	private ArrayList<HighLevelADLDrift> actdrift;
+
+    private static final String CONFIG_PATH="config";
+    private static final String ADL_PRE="act";
 	
 	/**
 	 * This builder is called from the method @see {@link #getInstance()}.
@@ -114,8 +113,8 @@ public class HighLevelADLDB {
 	private static ArrayList<ADL> loadAct()throws NotDirectoryException{
 			
 		ArrayList<ADL>result = new ArrayList<ADL>();
-		File folder = new File("config");
-		if(folder.exists() == false){
+		File folder = new File(CONFIG_PATH);
+		if(!folder.exists()){
 			throw new NotDirectoryException(null);
 		}
 		
@@ -126,12 +125,12 @@ public class HighLevelADLDB {
 			public boolean accept(File dir, String name) {
 				if(name.lastIndexOf('.')>0){
 					if(name.contains("_")){
-						if(!name.contains("act_template.conf")){
+						if(!name.equals("act_template.conf")){
 							int lastIndexDot = name.lastIndexOf('.');
 							int lastIndexUnSl = name.lastIndexOf('_');
-							String nameoffile = name.subSequence(0, lastIndexUnSl).toString();
-							String extention = name.substring(lastIndexDot);
-							if(nameoffile.equals("act") && extention.equals(".conf")){
+							String filename = name.subSequence(0, lastIndexUnSl).toString();
+							String extension = name.substring(lastIndexDot);
+							if(filename.equals(ADL_PRE) && extension.equals(".conf")){
 								return true;
 							}
 						}
@@ -144,118 +143,122 @@ public class HighLevelADLDB {
 		if(fileList.isEmpty()){
 			throw new NullPointerException();
 		}
-		Iterator<File> itrFile = fileList.iterator();
-		while(itrFile.hasNext()){
-			File CurrentFile = itrFile.next();
-			ArrayList<String> distribuction = new ArrayList<String>();
-			try{
-				reader = new BufferedReader(new FileReader(CurrentFile));
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-					distribuction.add(line);	
-				}
-			}catch(NullPointerException e){
-				e.printStackTrace();
-			}catch (Exception e) {e.printStackTrace();} finally {
-				try {reader.close();} catch (IOException e) {e.printStackTrace();}
-			}
-			
-			int IdADL = 0;
-			String NameADL = null;
-			ArrayList<String> needs = new ArrayList<String> ();
-			ArrayList<ADLEffect> effects = new ArrayList<ADLEffect> ();
-			int timeMin = 0;
-			double [] week = new double[7];
-			double [] weather = new double[3];
-			Float[] timeDependency = new Float[1440];
-			Iterator<String> itrDist = distribuction.iterator();
-			ArrayList<Double> Weights = new ArrayList<Double> ();
-			
-			String ADLString;
-			String[] StringSplitted;
-			
-			StringSplitted = itrDist.next().split(",");
-			IdADL = Integer.parseInt(StringSplitted[0]);
-			NameADL = StringSplitted[1].toLowerCase();
-			
-			ADLString = itrDist.next();
-			if(!ADLString.contains("Effects")){
-//				throw new
-			}
-			
-			StringSplitted = itrDist.next().split(",");
-			Iterator<String> ItrWeights = Arrays.asList(StringSplitted).iterator();
-			while(ItrWeights.hasNext()){
-				Weights.add(Double.parseDouble(ItrWeights.next()));
-			}
-			for(int j = 0; j< Weights.size(); j++){
-				if(Weights.get(j) != 0.0){
-					effects.add(new ADLEffect(Needs.getInstance().searchNamewIn(j), Weights.get(j)));
-				}
-			}
-			
-			ADLString = itrDist.next();
-			if(!ADLString.contains("Weights")){
-//				throw new
-			}
-			
-			StringSplitted = itrDist.next().split(",");
-			Iterator<String> ItrNeeds = Arrays.asList(StringSplitted).iterator();
-			while(ItrNeeds.hasNext()){
-				needs.add(ItrNeeds.next().toLowerCase());
-			}
-			
-			ADLString = itrDist.next();
-			if(!ADLString.contains("Weekdays")){
-//				throw new
-			}
-			
-			StringSplitted = itrDist.next().split(",");
-			for(int j = 0; j < 7; j++){
-				week[j]= Double.parseDouble(StringSplitted[j]);
-			}
-			
-			ADLString = itrDist.next();
-			if(!ADLString.contains("Weather")){
-//				throw new
-			}
-			
-			StringSplitted = itrDist.next().split(",");
-			for(int j = 0; j < 3; j++){
-				weather[j]= Double.parseDouble(StringSplitted[j]);
-			}
-			
-			ADLString = itrDist.next();
-			if(!ADLString.contains("Theta")){
-//				throw new
-			}
-			
-			StringSplitted = itrDist.next().split(",");
-			if(StringSplitted.length == 1){
-				timeDependency = CreateTd(Float.parseFloat(StringSplitted[0]));
-			} else if(StringSplitted.length == 1440){
-				for(int j = 0; j < 1440; j++){
-					timeDependency[j] = Float.parseFloat(StringSplitted[j]);
-				}
-			} else {
+        for (File CurrentFile : fileList) {
+            ArrayList<String> configLines = new ArrayList<String>();
+            try {
+                reader = new BufferedReader(new FileReader(CurrentFile));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    configLines.add(line);
+                }
+            } catch (NullPointerException | IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (reader != null){
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            int IdADL = 0;
+            String NameADL = null;
+            ArrayList<String> needs = new ArrayList<String>();
+            ArrayList<ADLEffect> effects = new ArrayList<ADLEffect>();
+            int timeMin = 0;
+            double[] week = new double[7];
+            double[] weather = new double[3];
+            Float[] timeDependency = new Float[1440];
+            ArrayList<Double> Weights = new ArrayList<Double>();
+
+            Iterator<String> itrLines = configLines.iterator();
+            String singleLine;
+            String[] StringSplitted;
+
+            StringSplitted = itrLines.next().split(",");
+            IdADL = Integer.parseInt(StringSplitted[0]);
+            NameADL = StringSplitted[1].toLowerCase();
+
+            singleLine = itrLines.next();
+            if (!singleLine.contains("Effects")) {
+//	TODO			throw new
+            }
+
+            StringSplitted = itrLines.next().split(",");
+            Iterator<String> ItrWeights = Arrays.asList(StringSplitted).iterator();
+            while (ItrWeights.hasNext()) {
+                Weights.add(Double.parseDouble(ItrWeights.next()));
+            }
+            for (int j = 0; j < Weights.size(); j++) {
+                if (Weights.get(j) != 0.0) {
+                    effects.add(new ADLEffect(Needs.getInstance().searchNamewIn(j), Weights.get(j)));
+                }
+            }
+
+            singleLine = itrLines.next();
+            if (!singleLine.contains("Weights")) {
+//	TODO			throw new
+            }
+
+            StringSplitted = itrLines.next().split(",");
+            Iterator<String> ItrNeeds = Arrays.asList(StringSplitted).iterator();
+            while (ItrNeeds.hasNext()) {
+                needs.add(ItrNeeds.next().toLowerCase());
+            }
+
+            singleLine = itrLines.next();
+            if (!singleLine.contains("Weekdays")) {
+//	TODO			throw new
+            }
+
+            StringSplitted = itrLines.next().split(",");
+            for (int j = 0; j < 7; j++) {
+                week[j] = Double.parseDouble(StringSplitted[j]);
+            }
+
+            singleLine = itrLines.next();
+            if (!singleLine.contains("Weather")) {
+//	TODO			throw new
+            }
+
+            StringSplitted = itrLines.next().split(",");
+            for (int j = 0; j < 3; j++) {
+                weather[j] = Double.parseDouble(StringSplitted[j]);
+            }
+
+            singleLine = itrLines.next();
+            if (!singleLine.contains("Theta")) {
+//	TODO			throw new
+            }
+
+            StringSplitted = itrLines.next().split(",");
+            if (StringSplitted.length == 1) {
+                timeDependency = CreateTd(Float.parseFloat(StringSplitted[0]));
+            } else if (StringSplitted.length == 1440) {
+                for (int j = 0; j < 1440; j++) {
+                    timeDependency[j] = Float.parseFloat(StringSplitted[j]);
+                }
+            } else {
                 try {
                     timeDependency = CreateTd(StringSplitted);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-//				throw new
-			}
-			
-			ADLString = itrDist.next();
-			if(!ADLString.contains("MinDuration")){
-//				throw new
-			}
-			
-			ADLString = itrDist.next();
-			timeMin = Integer.parseInt(ADLString);
-			
-			result.add(new ADL(IdADL, NameADL, week, weather, timeDependency, timeMin, needs, effects));
-			}
+//	TODO			throw new
+            }
+
+            singleLine = itrLines.next();
+            if (!singleLine.contains("MinDuration")) {
+//	TODO			throw new
+            }
+
+            singleLine = itrLines.next();
+            timeMin = Integer.parseInt(singleLine);
+
+            result.add(new ADL(IdADL, NameADL, week, weather, timeDependency, timeMin, needs, effects));
+        }
 		return result;
 	}
 	

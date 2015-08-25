@@ -32,6 +32,7 @@ import java.util.concurrent.BlockingQueue;
 
 import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
+import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
 import it.polimi.deib.atg.sharon.data.Day;
 import it.polimi.deib.atg.sharon.engine.ADL;
@@ -50,7 +51,7 @@ public class ActivitySimulationThread implements Runnable {
 	private BlockingQueue<ADLQueue> queue;
 
 	//ADL Handling
-	static Map<Integer, LowLevelADL>  	lLADL;
+	static LowLevelADLDB lLADL;
 	static Map<Integer, ADLMatch> 	matchADL;
 
 	//User actions
