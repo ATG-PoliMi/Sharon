@@ -33,7 +33,6 @@ import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.data.Sensor;
-import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
 import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.engine.ADL;
@@ -115,8 +114,8 @@ public class SensorSimulationThread implements Runnable{
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
 							if (CADL != null) {
-								llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0);
-								tTime.clear();				
+								llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // TODO missing random choice between patterns: implement it in Match?
+								tTime.clear();
 
 								for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
 									tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
@@ -133,20 +132,19 @@ public class SensorSimulationThread implements Runnable{
 				case 2:	//Walking+Acting
 					if (!tTime.isEmpty()) {	//tTime contains timings for each station
 						if (idling < tTime.get(0)) {
-							if (Main.ENABLE_DIJKSTRA) {
-
-								Sensor[] s= HouseMap.getS();
-								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getX(),
-										s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()].getY());
+							if (Main.DISABLE_DIJKSTRA) {
+								Sensor[] s = HouseMap.getS();
+								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getX(),
+										s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getY());
 								if (Target.getX()>actor.getX()) 
 									actor.setX(actor.getX()+1);
 								if (Target.getX()<actor.getX()) 
 									actor.setX(actor.getX()-1);
 
-								if (Target.getY()>actor.getY()) 
+								if (Target.getY()>actor.getY())
+									actor.setY(actor.getY()+1);
+								if (Target.getY()<actor.getY())
 									actor.setY(actor.getY()-1);
-								if (Target.getY()>actor.getY()) 
-									actor.setY(actor.getY()+1);							
 
 							} else {
 								if (path.isEmpty()) {	//New station case
@@ -238,15 +236,13 @@ public class SensorSimulationThread implements Runnable{
                 activeSensors += "0, ";
             }
         }
-        // This will remove the last comma and unneeded space
-        activeSensors = activeSensors.substring(0, activeSensors.length()-2);
 
         //TODO Change this so it is possible to choose whether to have position and ground truth
         activeSensors += action;
         activeSensors += ", ";
-        activeSensors += (int)actor.getX();
+        activeSensors += (int)actor.getX() * HouseMap.scale;
         activeSensors += ", ";
-        activeSensors += (int)actor.getY();
+        activeSensors += (int)actor.getY() * HouseMap.scale;
 
 		return activeSensors;
 	}

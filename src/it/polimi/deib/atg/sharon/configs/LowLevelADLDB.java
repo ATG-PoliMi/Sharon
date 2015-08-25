@@ -106,8 +106,8 @@ public class LowLevelADLDB {
                 patternIdList.get(act_ID).add(patternId);
 
                 ArrayList<Station> stations = new ArrayList<Station>();
-                for(int m = 4; m < chunks.length; m+=2 ){
-                    stations.add(new Station(Integer.parseInt(chunks[m]),Integer.parseInt(chunks[m+1])));
+                for(int m = 4; m < chunks.length; m=m+2 ){
+                    stations.add(new Station(Integer.parseInt(chunks[m]),Float.parseFloat(chunks[m+1])));
                 }
                 patternMap.put(patternId, new LowLevelADL(act_ID,chunks[3],stations));
             }

@@ -36,12 +36,12 @@ import java.util.ListIterator;
 public class HouseMap {
 
     // TODO migrate these to a single ref in the main file?
-    private static final String CONFIG_PATH="config";
+    private static final String CONFIG_PATH="config/env";
     private static final String MAP_FILENAME="map.conf";
     private static final String SENSORS_FILENAME="sensors.conf";
 
 	private int map [][];
-    private int scale = 1;
+    public static int scale = 1;
 	private Sensor[] s;
 
 	private static HouseMap instance;
@@ -63,7 +63,7 @@ public class HouseMap {
         try {
             line = reader.readLine();
             while(line != null){
-                String[] chunks = line.split("(?!^)");
+                String[] chunks = line.split(" ");
                 if(cols == 0){
                     cols = chunks.length;
                 }
@@ -71,6 +71,7 @@ public class HouseMap {
                     Integer elem = Integer.parseInt(chunks[k]);
                     if (elem > 1) {
                         scale = elem;
+                        rows--;
                         break;
                     }
                     asList.add(elem);
@@ -109,8 +110,9 @@ public class HouseMap {
             line = reader.readLine();
             while(line != null) {
                 String[] chunks = line.split(",");
-                sAsList.add(new Sensor(chunks[0], 2, Integer.parseInt(chunks[1])
-                        , Integer.parseInt(chunks[2])));
+                sAsList.add(new Sensor(chunks[0], 2, Integer.parseInt(chunks[1])/scale
+                        , Integer.parseInt(chunks[2])/scale));
+                line = reader.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
