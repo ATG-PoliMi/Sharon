@@ -51,18 +51,18 @@ import it.polimi.deib.atg.sharon.engine.Needs;
  * <p>
  * This class has 2 methods important methods:
  * <p>
- * The first is @see {@link #loadActDrift()}, that is called in the builder of the class @see ADLDB. The reason of this fact is 
- * that the class @see ADLDB is the one who has the member which is the ArrayList of all the drifts that has to appear in the ADL.
- * This methods is also the one how instance this class calling the builder @see #ADLDrift(int, String, ModeOfDrift, long, ArrayList, ArrayList).
+ * The first is @see {@link #loadActDrift()}, that is called in the builder of the class @see HighLevelADLDB. The reason of this fact is
+ * that the class @see HighLevelADLDB is the one who has the member which is the ArrayList of all the drifts that has to appear in the ADL.
+ * This methods is also the one how instance this class calling the builder @see #HighLevelADLDrift(int, String, ModeOfDrift, long, ArrayList, ArrayList).
  * <p>
- * The second is @see {@link #applyDrift(ADLDrift, ADL)}, that is called in the method @see {@link ADLDB#update(long)}, and it manages to change
- * the parameters of the ADL agreeing with the selected drift. (This method doesn't check the time of the drift, that is a task of the method @see {@link ADLDB#update(long)})
+ * The second is @see {@link #applyDrift(HighLevelADLDrift, ADL)}, that is called in the method @see {@link HighLevelADLDB#update(long)}, and it manages to change
+ * the parameters of the ADL agreeing with the selected drift. (This method doesn't check the time of the drift, that is a task of the method @see {@link HighLevelADLDB#update(long)})
  * <p>
- * It also contains a method @see {@link #CreateTd(float)}, that is used in {@link #applyDrift(ADLDrift, ADL)}.
+ * It also contains a method @see {@link #CreateTd(float)}, that is used in {@link #applyDrift(HighLevelADLDrift, ADL)}.
  * <p>
  * @author alessandro
  */
-public class ADLDrift {
+public class HighLevelADLDrift {
 	
 	public enum ModeOfDrift { STEP };
 	
@@ -75,7 +75,7 @@ public class ADLDrift {
 	
 	/**
 	 * This builder is called in the method @see {@link #loadActDrift()}, the last two members are ArrayList of string because the parser doesn't at the start
-	 * the way it has to parse the config files so they are stored as String to been next parse while the drift appears by the method @see {@link #applyDrift(ADLDrift, ADL)}.
+	 * the way it has to parse the config files so they are stored as String to been next parse while the drift appears by the method @see {@link #applyDrift(HighLevelADLDrift, ADL)}.
 	 * @param idADL			The id of the ADL that has to change, represent as an integer.
 	 * @param nameADL		The name of the ADL that has to change, represent as a string.
 	 * @param mode			The mode in which the drift has to appears, represent as a enumerative type. (Only the mode "STEP" is implemented).
@@ -83,7 +83,7 @@ public class ADLDrift {
 	 * @param Parameters	The name of the parameters of the ADL that has to change, represent as an ArrayList of string.
 	 * @param Constants		The new values of the parameters of the ADL that has to change, represent as an ArrayList of string.
 	 */
-	public ADLDrift(int idADL, String nameADL, ModeOfDrift mode, long updateTime, ArrayList<String> Parameters,ArrayList<String> Constants){
+	public HighLevelADLDrift(int idADL, String nameADL, ModeOfDrift mode, long updateTime, ArrayList<String> Parameters, ArrayList<String> Constants){
 		super();
 		this.idADL = idADL;
 		this.nameADL= nameADL;
@@ -95,12 +95,12 @@ public class ADLDrift {
 	
 	/**
 	 * Loads the ADLDrifts from configuration files. Template files would be ignored
-	 * @return	An ArrayList of instances of ADLDrift that contains all the drifts loaded
+	 * @return	An ArrayList of instances of HighLevelADLDrift that contains all the drifts loaded
 	 * @throws NotDirectoryException	If folder "config" doesn't exist
 	 */
-	public static ArrayList<ADLDrift> loadActDrift()throws NotDirectoryException{
+	public static ArrayList<HighLevelADLDrift> loadActDrift()throws NotDirectoryException{
 		
-		ArrayList<ADLDrift>result = new ArrayList<ADLDrift>();
+		ArrayList<HighLevelADLDrift>result = new ArrayList<HighLevelADLDrift>();
 		File folder = new File("config");
 		if(folder.exists() == false){
 			throw new NotDirectoryException(null);
@@ -175,7 +175,7 @@ public class ADLDrift {
 				i++;
 			}
 			
-			result.add(new ADLDrift(IdADL, NameADL, Mode, UpdateTime, paramName, paramValue));
+			result.add(new HighLevelADLDrift(IdADL, NameADL, Mode, UpdateTime, paramName, paramValue));
 			}
 		return result;
 	}
@@ -188,7 +188,7 @@ public class ADLDrift {
 	 * @param drift			The drift to apply
 	 * @param outdateADL	The ADL to update
 	 */
-	public static void applyDrift(ADLDrift drift, ADL outdateADL){
+	public static void applyDrift(HighLevelADLDrift drift, ADL outdateADL){
 		Iterator<String> itrName = drift.Parameters.iterator();
 		Iterator<String> itrEffects = drift.Constants.iterator();
 		while(itrName.hasNext()){

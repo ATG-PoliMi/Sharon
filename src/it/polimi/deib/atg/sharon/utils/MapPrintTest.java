@@ -22,8 +22,6 @@
 
 package it.polimi.deib.atg.sharon.utils;
 
-import it.polimi.deib.atg.sharon.configs.HomeMap;
-
 /**
  * This class prints the map matrix.
  * 0: Floor
@@ -32,6 +30,6 @@ import it.polimi.deib.atg.sharon.configs.HomeMap;
  */
 public class MapPrintTest {
 	public static void main (String[] args) {
-		HomeMap.getInstance().printMap();
+		//HouseMap.getInstance().printMap();
 	}
 }

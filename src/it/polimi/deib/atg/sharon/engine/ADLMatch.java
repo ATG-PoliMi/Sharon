@@ -24,14 +24,14 @@ package it.polimi.deib.atg.sharon.engine;
 
 import java.util.ArrayList;
 
-public class ADLMatcher {
+public class ADLMatch {
 	private int HLadl;
 	private ArrayList<Integer> LLadl = new ArrayList<Integer>();
-	private ArrayList<Double> LLadlProbability = new ArrayList<Double>();
+	private ArrayList<Float> LLadlProbability = new ArrayList<Float>();
 	
 	
-	public ADLMatcher(int hLadl, ArrayList<Integer> lLadl,
-			ArrayList<Double> lLadlProbability) {
+	public ADLMatch(int hLadl, ArrayList<Integer> lLadl,
+                    ArrayList<Float> lLadlProbability) {
 		super();
 		HLadl = hLadl;
 		LLadl = lLadl;
@@ -59,12 +59,12 @@ public class ADLMatcher {
 	}
 
 
-	public ArrayList<Double> getLLadlProbability() {
+	public ArrayList<Float> getLLadlProbability() {
 		return LLadlProbability;
 	}
 
 
-	public void setLLadlProbability(ArrayList<Double> lLadlProbability) {
+	public void setLLadlProbability(ArrayList<Float> lLadlProbability) {
 		LLadlProbability = lLadlProbability;
 	}
 }
