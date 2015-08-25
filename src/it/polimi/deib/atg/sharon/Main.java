@@ -25,7 +25,7 @@ package it.polimi.deib.atg.sharon;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import it.polimi.deib.atg.sharon.configs.ADLDB;
+import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.NeedsDrift;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.engine.Needs;
@@ -63,7 +63,7 @@ public class Main {
 			Needs.getInstance();
 			if (USE_DRIFTS)
 				Parameters.getInstance().setDrifts(NeedsDrift.loadNeedDrift());
-			ADLDB.getInstance();
+			HighLevelADLDB.getInstance();
 		} catch(Exception e){
 			e.printStackTrace();
 		}

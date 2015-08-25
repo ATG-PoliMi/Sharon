@@ -30,11 +30,9 @@ import java.util.concurrent.BlockingQueue;
 
 
 import it.polimi.deib.atg.sharon.Main;
-import it.polimi.deib.atg.sharon.configs.ADLMatcherDB;
 import it.polimi.deib.atg.sharon.configs.HomeMap;
-import it.polimi.deib.atg.sharon.configs.LLADLDB;
 import it.polimi.deib.atg.sharon.data.Sensor;
-import it.polimi.deib.atg.sharon.engine.ADLMatcher;
+import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
@@ -55,7 +53,7 @@ public class SensorSimulationThread implements Runnable{
 	//ADL Handling
 	static Map<Integer, ADL> hLADL;
 	static Map<Integer, LowLevelADL>  lLADL;
-	static Map<Integer, ADLMatcher> matchADL;
+	static Map<Integer, ADLMatch> matchADL;
 
 	//User actions
 	static int agentStatus	=	1; //1: extracting; 2: acting;
@@ -83,8 +81,8 @@ public class SensorSimulationThread implements Runnable{
 		this.simulatedDays = simulatedDays;
 		this.simulationOutputPrefix = sOutput;
 
-		lLADL 		= 	LLADLDB.addLLADL();
-		matchADL 	= 	ADLMatcherDB.addADLMatch();
+		lLADL 		= 	LowLevelADLDB.getInstance();
+		matchADL 	= 	ADLMatcher.getInstance();
 	}
 
 	@Override

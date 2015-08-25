@@ -42,11 +42,11 @@ import it.polimi.deib.atg.sharon.engine.Needs;
  * in the same order of @see Needs, accessible only with methods @see {@link #getNeedsParameters()}, 
  * @see {@link #setNeedsParameters(Double[])}, 
  * @see {@link #GetNeedsParameter(int)} and @see {@link #setNeedParameter(int, double)}. This array is used in the class 
- * @see HLTread in the method @see ActivitySimulationThread#updateNeeds to update the status of the needs in the simulation accorting
+ * @see it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread in the method @see ActivitySimulationThread#updateNeeds to update the status of the needs in the simulation accorting
  * to the constant growth of the need during the time.
  * <p>
  * It contains an ArrayList of @see NeedsDrift, approachable only with methods @see {@link #getDrifts()} and 
- * @see {@link #setDrifts(ArrayList)},	 * it is instanced by @see {@link NeedDrift#loadNeedDrift } in @see Main.
+ * @see {@link #setDrifts(ArrayList)},	 * it is instanced by @see {@link NeedsDrift#loadNeedDrift } in @see Main.
  * This ArrayList is used in method @see {@link #update(long)} to apply the needs drift.
  * <p>
  * It also contains the unused methods @see {@link #MinToSec(long)}, @see {@link #MinToSec(long)}, 
@@ -85,27 +85,8 @@ public class Parameters {
 	 * to set the real value.
 	 */
 	private Parameters(){
-		/*
-		HUNGER = 0.0033;
-		STRESS = 0.003;
-		SWEAT = 0.0006;	
-		TOILETING = 0.009;//0.0056
-		TIREDINESS = 0.0010; //0.0025
-		BOREDOM = 0.006;
-		ASOCIALITY = 0.001;
-		DIRTINESS = 0.0001;
-		OUTOFSTOCK = 0.0001;
-		*/
-		super();
 		this.NeedsParameters = new Double[1];
 		NeedsParameters[0] = 0.0010;
-		/*
-		try {
-			Drifts = NeedsDrift.loadNeedDrift();
-		} catch (NotDirectoryException e) {
-			e.printStackTrace();
-		}
-		*/
 	}
 	
 	/**
@@ -116,21 +97,12 @@ public class Parameters {
 
 		if (Main.USE_DRIFTS) {
 			Iterator<NeedsDrift> ItrDrifts = Drifts.iterator();
-			//	boolean[] done = new boolean[Drifts.size()];
-			//	int i = 0;
 			while (ItrDrifts.hasNext()) {
-				NeedsDrift CurrentDrift = ItrDrifts.next();
-				if (time == CurrentDrift.getTime()) {
-					setNeedParameter(Needs.getInstance().searchIndex(CurrentDrift.getId()), CurrentDrift.getNewValue());
-					//	done[i] = true;
-				}
-				//i++;
-			}
-	/*	for(i = 0; i < done.length; i++){
-			if(done[i]){
-				Drifts.remove(i);
-			}
-		}*/
+                NeedsDrift CurrentDrift = ItrDrifts.next();
+                if (time == CurrentDrift.getTime()) {
+                    setNeedParameter(Needs.getInstance().searchIndex(CurrentDrift.getId()), CurrentDrift.getNewValue());
+                }
+            }
 		}
 	}
 
@@ -165,7 +137,7 @@ public class Parameters {
 	
 	/**
 	 * Converts hours to seconds
-	 * @param min	The number of hours to convert
+	 * @param hour	The number of hours to convert
 	 * @return		The value of the input converted in seconds
 	 */
 	private static long HourToSec(int hour){
@@ -174,7 +146,7 @@ public class Parameters {
 	
 	/**
 	 * Converts days to seconds
-	 * @param min	The number of days to convert
+	 * @param day	The number of days to convert
 	 * @return		The value of the input converted in seconds
 	 */
 	@SuppressWarnings("unused")

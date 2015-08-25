@@ -31,15 +31,13 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import it.polimi.deib.atg.sharon.Main;
+import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
 import it.polimi.deib.atg.sharon.data.Day;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.engine.ADLEffect;
-import it.polimi.deib.atg.sharon.engine.ADLMatcher;
+import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.Needs;
-import it.polimi.deib.atg.sharon.configs.ADLDB;
-import it.polimi.deib.atg.sharon.configs.ADLMatcherDB;
-import it.polimi.deib.atg.sharon.configs.LLADLDB;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
 import it.polimi.deib.atg.sharon.utils.Distributions;
@@ -53,7 +51,7 @@ public class ActivitySimulationThread implements Runnable {
 
 	//ADL Handling
 	static Map<Integer, LowLevelADL>  	lLADL;
-	static Map<Integer, ADLMatcher> 	matchADL;
+	static Map<Integer, ADLMatch> 	matchADL;
 
 	//User actions
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
@@ -62,7 +60,7 @@ public class ActivitySimulationThread implements Runnable {
 	static long elapsed_time = 0;
 	static long timeInstant = 0;
 	static CumulateHistogram hist 	= new CumulateHistogram();
-	static ADL onGoingAdl;
+	static ADL ongoingAdl;
 	private int simulatedDays;
 
     private String outputFilePrefix;
@@ -75,10 +73,10 @@ public class ActivitySimulationThread implements Runnable {
 
         this.outFile = null;
 
-        //	ADLDB.getInstance().getAdlmap()		= 	ADLDB.getInstance().getAdlmap();
-		lLADL 		= 	LLADLDB.addLLADL();
-		matchADL 	= 	ADLMatcherDB.addADLMatch();
-		onGoingAdl = 	ADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
+        //	HighLevelADLDB.getInstance().getAdlmap()		= 	HighLevelADLDB.getInstance().getAdlmap();
+		lLADL 		= 	LowLevelADLDB.getInstance();
+		matchADL 	= 	ADLMatcher.getInstance();
+		ongoingAdl = 	HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
 	}
 
 	@Override
@@ -107,8 +105,8 @@ public class ActivitySimulationThread implements Runnable {
 							queue.put(ADLQ);
 
 						System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
-                        ADL adl = ADLDB.getInstance().getADLById(ADLQ.getADLId());
-                        outFile.println(timeInstant+","+onGoingAdl.getId()+","+ onGoingAdl.getName()+","+new Time(timeInstant % 86400) );
+                        ADL adl = HighLevelADLDB.getInstance().getADLById(ADLQ.getADLId());
+                        outFile.println(timeInstant+","+ ongoingAdl.getId()+","+ ongoingAdl.getName()+","+new Time(timeInstant % 86400) );
 
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -129,26 +127,26 @@ public class ActivitySimulationThread implements Runnable {
 
 
 	private  ADLQueue changeADL() {
-		ADL bestAdl = ADLDB.getInstance().defaultADL();
+		ADL bestAdl = HighLevelADLDB.getInstance().defaultADL();
 
-		if (elapsed_time > 60* onGoingAdl.getMinTime()){
+		if (elapsed_time > 60* ongoingAdl.getMinTime()){
 
 			//Check Better ADL
-			for (ADL a : ADLDB.getInstance().getAdlmap().values()) {			
+			for (ADL a : HighLevelADLDB.getInstance().getAdlmap().values()) {
 				if ((a.getRank() >= bestAdl.getRank())) {
 					bestAdl = a;
 				}			
 			}		
 
 //			TODO print this info with the logging system
-//			System.out.println(bestAdl.getName() + " " + onGoingAdl.getName() + "\n");
+//			System.out.println(bestAdl.getName() + " " + ongoingAdl.getName() + "\n");
 //			System.out.println(Needs.getInstance().toString() + "\n");
 			
-			if(bestAdl.getRank() > 0.01 && !bestAdl.getName().equals(onGoingAdl.getName())) {
-				ADLQueue X = new ADLQueue(onGoingAdl.getId(), elapsed_time);
-				onGoingAdl.setActive(false);
-				onGoingAdl = bestAdl;
-				onGoingAdl.setActive(true);
+			if(bestAdl.getRank() > 0.01 && !bestAdl.getName().equals(ongoingAdl.getName())) {
+				ADLQueue X = new ADLQueue(ongoingAdl.getId(), elapsed_time);
+				ongoingAdl.setActive(false);
+				ongoingAdl = bestAdl;
+				ongoingAdl.setActive(true);
 				elapsed_time = 0;
                 this.printVerboseOnConsole();
 				return X;
@@ -163,7 +161,7 @@ public class ActivitySimulationThread implements Runnable {
 
         outFile = new PrintWriter(new FileWriter(outputFilePrefix +(int) timeInstant /86400+".txt"));
         outFile.println("simulation_seconds,activity_id,activity_name,time_of_the_day");
-        outFile.println(timeInstant+","+onGoingAdl.getId()+","+ onGoingAdl.getName()+","+new Time(timeInstant % 86400) );
+        outFile.println(timeInstant+","+ ongoingAdl.getId()+","+ ongoingAdl.getName()+","+new Time(timeInstant % 86400) );
 		Day.getInstance().nextDay();
 
 
@@ -176,10 +174,10 @@ public class ActivitySimulationThread implements Runnable {
 	 */
 	private static void computeADLRank(int minute) {
 		double r, active;
-		Map<Integer, ADL> adlmap = ADLDB.getInstance().getAdlmap();
+		Map<Integer, ADL> adlmap = HighLevelADLDB.getInstance().getAdlmap();
 
 		double needs[] = Needs.getInstance().getStatus();
-		for (ADL a : ADLDB.getInstance().getAdlmap().values()) {
+		for (ADL a : HighLevelADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
 			active = a.getActive() ? 1 : 0.8;
 			for (int i = 0; i<needs.length; i++) {
@@ -211,7 +209,7 @@ public class ActivitySimulationThread implements Runnable {
         System.out.println();
 
         double cBest=0;
-        for (ADL a : ADLDB.getInstance().getAdlmap().values())  {
+        for (ADL a : HighLevelADLDB.getInstance().getAdlmap().values())  {
             if (a.getRank()>0)
                 System.out.printf ("%s : %.3f ",a.getName(),a.getRank());
             if (a.getRank()>cBest){
@@ -219,8 +217,8 @@ public class ActivitySimulationThread implements Runnable {
             }
         }
         System.out.println();
-        System.out.print ("ADL SELECTED: "+ onGoingAdl.getName().substring(0, 1).toUpperCase()+ onGoingAdl.getName().substring(1)  +" with rank ");
-        System.out.printf("%.3f", onGoingAdl.getRank());
+        System.out.print ("ADL SELECTED: "+ ongoingAdl.getName().substring(0, 1).toUpperCase()+ ongoingAdl.getName().substring(1)  +" with rank ");
+        System.out.printf("%.3f", ongoingAdl.getRank());
         System.out.println(" day hour: " +t.getHour() +":"+t.getMinute());
 
         System.out.println();
@@ -228,7 +226,7 @@ public class ActivitySimulationThread implements Runnable {
 
 
     private void updateHistogramM() {
-        hist.updateHistogramM(timeInstant, onGoingAdl.getId());
+        hist.updateHistogramM(timeInstant, ongoingAdl.getId());
     }
 
 	/**
@@ -236,7 +234,7 @@ public class ActivitySimulationThread implements Runnable {
 	 */
 	private static void updateNeeds(int times) {
 		Parameters.getInstance().update(timeInstant);
-		ADLDB.getInstance().update(timeInstant);
+		HighLevelADLDB.getInstance().update(timeInstant);
 		for (int i=0; i<times; i++) {
 			Iterator<Double> ItrStatus = Arrays.asList(Needs.getInstance().getStatusWrapped()).iterator();
 			Iterator<Double> ItrParam = Arrays.asList(Parameters.getInstance().getNeedsParameters()).iterator();
@@ -252,7 +250,7 @@ public class ActivitySimulationThread implements Runnable {
 				j++;
 			}
 			Needs.getInstance().setStatus(NewNeedsStatus);
-			applyADLEffect(onGoingAdl);
+			applyADLEffect(ongoingAdl);
 		}		
 	}
 

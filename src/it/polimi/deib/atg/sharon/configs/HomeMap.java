@@ -35,7 +35,7 @@ public class HomeMap {
 	Sensor[] s;
 
 	private static HomeMap instance;
-	@SuppressWarnings("unused")
+
 	private HomeMap(){		
 		for (int i=0; i<Parameters.mapSizeW; i++) {
 			for (int j=0; j<Parameters.mapSizeH; j++) {
