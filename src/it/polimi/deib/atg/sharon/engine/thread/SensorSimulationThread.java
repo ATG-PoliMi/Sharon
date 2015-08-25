@@ -52,7 +52,7 @@ public class SensorSimulationThread implements Runnable{
 	//ADL Handling
 	Map<Integer, ADL> hLADL;
 	LowLevelADLDB lLADL;
-	Map<Integer, ADLMatch> matchADL;
+	//Map<Integer, ADLMatch> matchADL;
     HouseMap houseMap;
 
 	//User actions
@@ -83,7 +83,7 @@ public class SensorSimulationThread implements Runnable{
 
         houseMap = HouseMap.getInstance();
 		lLADL = LowLevelADLDB.getInstance();
-		matchADL = ADLMatcher.getInstance();
+		//matchADL = ADLMatcher.getInstance();
 
 	}
 
@@ -115,7 +115,7 @@ public class SensorSimulationThread implements Runnable{
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
 							if (CADL != null) {
-								llADLIndex = matchADL.get(CADL.getADLId()).getLLadl().get(0); 
+								llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0);
 								tTime.clear();				
 
 								for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
@@ -224,7 +224,7 @@ public class SensorSimulationThread implements Runnable{
 
 		String activeSensors = "";
 
-		Sensor[] sensorsArray = HouseMap.getInstance().getS();
+		Sensor[] sensorsArray = HouseMap.getS();
 
 		activeSensors += timeInstant;
 		activeSensors += ", ";

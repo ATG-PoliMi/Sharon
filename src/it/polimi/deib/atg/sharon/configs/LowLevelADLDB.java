@@ -1,5 +1,6 @@
 package it.polimi.deib.atg.sharon.configs;
 
+import it.polimi.deib.atg.sharon.data.Station;
 import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
 
@@ -29,12 +30,12 @@ public class LowLevelADLDB {
     /**
      * Internal constructor for singleton. Called by public getInstance().
      */
-    private LowLevelADLDB() throws NotDirectoryException {
+    private LowLevelADLDB() throws NotDirectoryException, FileNotFoundException {
         patternMap = new HashMap<>();
         loadConfigs(patternMap);
     }
 
-    private void loadConfigs(Map<Integer, LowLevelADL> patternMap) throws NotDirectoryException {
+    private void loadConfigs(Map<Integer, LowLevelADL> patternMap) throws NotDirectoryException, FileNotFoundException {
         File folder = new File(CONFIG_PATH);
         if(!folder.exists()){
             throw new NotDirectoryException(null);
@@ -60,8 +61,12 @@ public class LowLevelADLDB {
         };
         ArrayList<File> fileList = new ArrayList<File>(Arrays.asList(folder.listFiles(ActFilter)));
         if(fileList.isEmpty()){
-            throw new NullPointerException();
+            throw new FileNotFoundException(null);
         }
+
+        HashMap<Integer,ArrayList<Float>> probList = new HashMap<Integer,ArrayList<Float>>();
+        HashMap<Integer,ArrayList<Integer>> patternIdList = new HashMap<Integer,ArrayList<Integer>>();
+
         for (File CurrentFile : fileList) {
             ArrayList<String> configLines = new ArrayList<String>();
             try {
@@ -81,13 +86,35 @@ public class LowLevelADLDB {
                     e.printStackTrace();
                 }
             }
+            for(String pattern:configLines){
+                // act_ID, prob, pattern_ID, Patter_Name, Station_ID, perc_time, [...]
+                // [...]
+                String[] chunks = pattern.split(",");
 
-            Iterator<String> itrLines = configLines.iterator();
+                if (chunks.length < 6){
+                    // TODO throw proper exception
+                }
+                Integer act_ID = Integer.parseInt(chunks[0]);
+                if(!probList.containsKey(act_ID)){
+                    probList.put(act_ID,new ArrayList<Float>());
+                }
+                probList.get(act_ID).add(Float.parseFloat(chunks[1]));
+                Integer patternId = Integer.parseInt(chunks[2]);
+                if(!patternIdList.containsKey(act_ID)){
+                    patternIdList.put(act_ID,new ArrayList<Integer>());
+                }
+                patternIdList.get(act_ID).add(patternId);
 
-            //TODO parse config file looking for pattern
+                ArrayList<Station> stations = new ArrayList<Station>();
+                for(int m = 4; m < chunks.length; m+=2 ){
+                    stations.add(new Station(Integer.parseInt(chunks[m]),Integer.parseInt(chunks[m+1])));
+                }
+                patternMap.put(patternId, new LowLevelADL(act_ID,chunks[3],stations));
+            }
+        }
 
-
-
+        for(Integer act_Id:probList.keySet()){
+            matcher.put(act_Id,new ADLMatch(act_Id, patternIdList.get(act_Id), probList.get(act_Id)));
         }
     }
 
@@ -95,7 +122,7 @@ public class LowLevelADLDB {
         if (instance == null){
             try {
                 instance = new LowLevelADLDB();
-            } catch (NotDirectoryException e) {
+            } catch (NotDirectoryException | FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
