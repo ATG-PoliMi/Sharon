@@ -52,7 +52,7 @@ public class ActivitySimulationThread implements Runnable {
 
 	//ADL Handling
 	static LowLevelADLDB lLADL;
-	static Map<Integer, ADLMatch> 	matchADL;
+	//static Map<Integer, ADLMatch> 	matchADL;
 
 	//User actions
 	static int agentStatus=1; //0:Idling 1:Extracting a new ADL 2:Walking 3:Acting
@@ -76,7 +76,6 @@ public class ActivitySimulationThread implements Runnable {
 
         //	HighLevelADLDB.getInstance().getAdlmap()		= 	HighLevelADLDB.getInstance().getAdlmap();
 		lLADL 		= 	LowLevelADLDB.getInstance();
-		matchADL 	= 	ADLMatcher.getInstance();
 		ongoingAdl = 	HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
 	}
 
