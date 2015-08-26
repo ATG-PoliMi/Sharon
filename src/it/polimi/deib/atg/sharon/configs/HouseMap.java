@@ -110,8 +110,8 @@ public class HouseMap {
             line = reader.readLine();
             while(line != null) {
                 String[] chunks = line.split(",");
-                sAsList.add(new Sensor(chunks[0], 2, Integer.parseInt(chunks[1])/scale
-                        , Integer.parseInt(chunks[2])/scale));
+                sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1])*scale)/100
+                        , (Integer.parseInt(chunks[2])*scale)/100));
                 line = reader.readLine();
             }
         } catch (IOException e) {

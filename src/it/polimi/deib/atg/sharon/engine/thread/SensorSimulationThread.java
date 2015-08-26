@@ -240,9 +240,9 @@ public class SensorSimulationThread implements Runnable{
         //TODO Change this so it is possible to choose whether to have position and ground truth
         activeSensors += action;
         activeSensors += ", ";
-        activeSensors += (int)actor.getX() * HouseMap.scale;
+        activeSensors += (int)actor.getX() * (HouseMap.scale);
         activeSensors += ", ";
-        activeSensors += (int)actor.getY() * HouseMap.scale;
+        activeSensors += (int)actor.getY() * (HouseMap.scale);
 
 		return activeSensors;
 	}
