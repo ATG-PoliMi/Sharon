@@ -22,21 +22,20 @@
 
 package it.polimi.deib.atg.sharon.engine.thread;
 
+import it.polimi.deib.atg.sharon.Main;
+import it.polimi.deib.atg.sharon.configs.HouseMap;
+import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
+import it.polimi.deib.atg.sharon.data.Coordinate;
+import it.polimi.deib.atg.sharon.data.Sensor;
+import it.polimi.deib.atg.sharon.engine.ADL;
+import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
+import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
+
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-
-
-import it.polimi.deib.atg.sharon.Main;
-import it.polimi.deib.atg.sharon.configs.HouseMap;
-import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
-import it.polimi.deib.atg.sharon.data.Sensor;
-import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
-import it.polimi.deib.atg.sharon.data.Coordinate;
-import it.polimi.deib.atg.sharon.engine.ADL;
-import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
 
 public class SensorSimulationThread implements Runnable{
 
@@ -224,8 +223,6 @@ public class SensorSimulationThread implements Runnable{
 
 		Sensor[] sensorsArray = HouseMap.getS();
 
-		activeSensors += timeInstant;
-		activeSensors += ", ";
         //TODO Change this so we can have ranges or leave sensors active
         for (Sensor aSensorsArray : sensorsArray) {
             if (((aSensorsArray.getX() == actor.getX()) &&
@@ -238,6 +235,8 @@ public class SensorSimulationThread implements Runnable{
         }
 
         //TODO Change this so it is possible to choose whether to have position and ground truth
+        activeSensors += timeInstant;
+        activeSensors += ", ";
         activeSensors += action;
         activeSensors += ", ";
         activeSensors += (int)actor.getX() * (HouseMap.scale);
