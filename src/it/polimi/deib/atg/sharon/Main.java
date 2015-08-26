@@ -22,9 +22,6 @@
 
 package it.polimi.deib.atg.sharon;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.NeedsDrift;
 import it.polimi.deib.atg.sharon.configs.Parameters;
@@ -33,11 +30,14 @@ import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
 import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
 import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 public class Main {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int def_simulatedDays 	= 3; 	//Days to simulate
-	//***** END PARAMETERS *****
+    private static int def_simulatedDays = 11;    //Days to simulate
+    //***** END PARAMETERS *****
 	
 	Parameters param = Parameters.getInstance();
 

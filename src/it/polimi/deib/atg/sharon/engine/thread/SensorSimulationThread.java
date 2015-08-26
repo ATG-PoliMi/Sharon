@@ -179,8 +179,8 @@ public class SensorSimulationThread implements Runnable{
 				
 				if ((timeInstant %86400==0)&&(timeInstant >0)) {
 					out.close();
-					out = new PrintWriter(new FileWriter(simulationOutputPrefix +(int) timeInstant /86400+".txt"));
-				}
+                    out = new PrintWriter(new FileWriter(simulationOutputPrefix + "_" + (int) timeInstant / 86400 + ".txt"));
+                }
 				out.println(printActiveSensors(action));	//TODO: Log row
 			}
 			out.close();
@@ -235,13 +235,13 @@ public class SensorSimulationThread implements Runnable{
         }
 
         //TODO Change this so it is possible to choose whether to have position and ground truth
-        activeSensors += timeInstant;
-        activeSensors += ", ";
         activeSensors += action;
-        activeSensors += ", ";
-        activeSensors += (int)actor.getX() * (HouseMap.scale);
-        activeSensors += ", ";
-        activeSensors += (int)actor.getY() * (HouseMap.scale);
+        activeSensors += ", 0";
+//        activeSensors += timeInstant;
+//        activeSensors += ", ";
+//        activeSensors += (int)actor.getX() * (HouseMap.scale);
+//        activeSensors += ", ";
+//        activeSensors += (int)actor.getY() * (HouseMap.scale);
 
 		return activeSensors;
 	}
