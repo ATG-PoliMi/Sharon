@@ -48,7 +48,7 @@ The template of the file is the following:
     Weather
     <h1>, <h2>, <h3>
     Theta
-    <T1>, ...,<Tn>
+    <T1>, ...,<Tn> | <EDGE>,<HH:MM>,<EDGE><HH:MM>
     MinDuration
     <min_dur>
 
@@ -59,5 +59,8 @@ Odd lines contain values to be used, and even lines contain human readable title
 * `<w1>, ..., <wn>` is the list of the needs' names that trigger the activity
 * `[Experimental] <d1>, ..., <dn>` are the probability to perform the activity in each of the 7 weekdays
 * `[Experimental] <h1>, <h2>, <h3>` represent the rank dependence on three atmospheric weather conditions
-* `<T1>, ...,<Tn>` can be the list of 1440 values of probability (one for each minute of the day), or a single constant value, repeated for the whole day.
+* `<T1>, ...,<Tn>` can be the list of 1440 values of probability (one for each minute of the day), or a single constant value, repeated for the whole day. 
+Alternatively it is possible to specify `<EDGE>,<HH:MM>,<EDGE><HH:MM>` as rising and falling edges. The implementation makes
+ possible to specify step edges (`R` or `F`) or linear slope edges (`RS` - Rising Start - and `RE` - Rising End -, `FS` and `FE`).
+ It is also possible to specify mixed edges (e.g. `R,08:00,FS,11:00,FE,12:00`) and multiple peaks (e.g. `R,08:00,F,12:00,R,14:00,F,18:00`)
 * `<min_dur>` is the minimum duration of the ADL, expressed in minutes.  

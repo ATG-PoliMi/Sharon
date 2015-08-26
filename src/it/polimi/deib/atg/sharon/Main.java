@@ -20,10 +20,9 @@
  *
  */
 
-package it.polimi.deib.atg.sharon;
+// VER_1.1
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+package it.polimi.deib.atg.sharon;
 
 import it.polimi.deib.atg.sharon.configs.ADLDB;
 import it.polimi.deib.atg.sharon.configs.NeedsDrift;
@@ -32,6 +31,9 @@ import it.polimi.deib.atg.sharon.engine.Needs;
 import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
 import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
 import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class Main {
 
