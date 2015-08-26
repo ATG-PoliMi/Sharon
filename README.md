@@ -22,17 +22,18 @@ To run the program simply launch ant without task name.
 Results will be produced in `data/ActivityOutput` directory.
 
 
-## Sharon configuration ##
+## High Level Sharon Configuration ##
 
+The configuration of the higher level layer of Sharon is necessary for the simulation of ADLs schedules.
 
-### Needs Configuration ### 	
+### Needs ### 	
 	
     config/needs.conf
 
 Comma separated file where every line represents a need. 
 Every line format is: `<ID>, <Name>, <Growth Rate>, <Optional initial status>`
 
-### ADL Configuration ###
+### ADL ###
 
     config/act_*.conf
     
@@ -57,7 +58,40 @@ Odd lines contain values to be used, and even lines contain human readable title
 * `<#id>,<name>` identify the activity
 * `<E1>, ..., <En>` represent the effects of the ADL on the corresponding need (as specified in needs.conf). Must be between 0 and 1.
 * `<w1>, ..., <wn>` is the list of the needs' names that trigger the activity
-* `[Experimental] <d1>, ..., <dn>` are the probability to perform the activity in each of the 7 weekdays
+* `<d1>, ..., <dn>` are the probability to perform the activity in each of the 7 weekdays
 * `[Experimental] <h1>, <h2>, <h3>` represent the rank dependence on three atmospheric weather conditions
 * `<T1>, ...,<Tn>` can be the list of 1440 values of probability (one for each minute of the day), or a single constant value, repeated for the whole day.
 * `<min_dur>` is the minimum duration of the ADL, expressed in minutes.  
+
+## Low Level Sharon configuration ##
+
+The configuration of the lower level layer of Sharon is optional and needed for the simulation of sensors activation.
+Three main configurations must be provided: the house map, the sensors description and the patterns of sensors activations
+ representing the ADLs.
+
+### Environment ###
+
+    config/env/maps.conf
+    config/env/sensors.conf
+
+The folder must contain both `maps.conf` and `sensors.conf`. The first represents the house map through binary values
+separated by spaces: 0s represent walkable area, 1s represent walls; the final line should contain the scale of the representation in points per meter.
+
+The sensors description should be formatted as follows:
+`<Name>,<pos_x>,<pos_y>` where the coordinates should be referred to the origin of the map, in centimeters.
+
+### Execution Pattern ###
+
+    config/patterns/patt_*.conf
+
+Patterns configuration files have all the same syntax, in which every line has the following format:
+
+    <ADL_ID>, <Prob>, <Pattern_ID>, <Patter_Name>, <Station_ID_1>, <Perc_time_1>, ... , <Station_ID_n>, <Perc_time_n>
+     
+* `<ADL_ID>` holds the ID of the ADL the pattern is associated to;
+* [Experimental]`<Prob>` is the probability of choosing that specific pattern among all the patterns available for the ADL (Float [0 1]); 
+* `<Pattern_ID>` is the unique pattern ID; 
+* `<Patter_Name>` contains the human readable pattern identificator;
+* `<Station_ID_1>, <Perc_time_1>, ... , <Station_ID_n>, <Perc_time_n>` are the couples describing the positions of the agent,
+ `<Station_ID>` is the ID of the sensor to trigger and `<Perc_time>` (Float [0 1]) the time to be spent in such position with respect 
+ to the overall time devoted to the ADL.
