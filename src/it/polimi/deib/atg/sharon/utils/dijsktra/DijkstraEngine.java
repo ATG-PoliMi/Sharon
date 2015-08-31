@@ -24,11 +24,13 @@ package it.polimi.deib.atg.sharon.utils.dijsktra;
 
 import java.util.ArrayList;
 
-
 public class DijkstraEngine {
 	Graph graph;
 	public String initial;
 
+    private int[][] neig_offset = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}};
+    //,{1,0},{-1,1},{0,1},{1,1}}; // it is ok to check the whole neighborhood,
+    // but we can omit half of it and use symmetry
 
 	public String getInitial() {
 		return initial;
@@ -46,50 +48,26 @@ public class DijkstraEngine {
 	public void buildAdjacencyMatrix(int[][] map) {
 		int row = map.length;
 		int col = map[0].length;
-		//On the border of the environment I always have walls, so I can skip these coordinates.
-		for (int i = 1; i < row-1; i++) {
-			for (int j = 1; j < col-1; j++) {
-				if (map[i][j] != 1)
-
-				{
-					//					if (map[i-1][j-1] < 1)
-					//						graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i-1)+","+Integer.toString(j-1), 1);
-					if (map[i][j-1] != 1) {
-						if (adjacencyWallCheck (map, i, j-1))
-							graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i)+","+Integer.toString(j-1), 1);
-					}
-					//					if (map[i+1][j-1] < 1)
-					//						graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i+1)+","+Integer.toString(j-1), 1);
-					if (map[i-1][j] != 1) {
-						if (adjacencyWallCheck (map, i-1, j))			
-							graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i-1)+","+Integer.toString(j), 1);
-					}
-					if (map[i+1][j] != 1) {
-						if (adjacencyWallCheck (map, i+1, j))
-							graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i+1)+","+Integer.toString(j), 1);
-					}
-					//					if (map[i-1][j+1] < 1)
-					//						graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i-1)+","+Integer.toString(j+1), 1);
-					if (map[i][j+1] != 1) {
-						if (adjacencyWallCheck (map, i, j+1))
-							graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i)+","+Integer.toString(j+1), 1);
-					}
-					//					if (map[i+1][j+1] < 1)
-					//						graph.addVertex(Integer.toString(i)+","+Integer.toString(j), Integer.toString(i+1)+","+Integer.toString(j+1), 1);				
-				}
+        // On the border of the environment I always have walls, so I can skip these coordinates.
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (map[i][j] != 1) {
+                    for (int[] aNeig_offset : neig_offset) {
+                        int nx = i + aNeig_offset[0];
+                        int ny = j + aNeig_offset[1];
+                        if (nx < 0 || ny < 0 || nx >= row || ny >= col)
+                            continue;
+                        if (map[nx][ny] != 1) {
+                            graph.addVertex(Integer.toString(i) + "," + Integer.toString(j),
+                                    Integer.toString(nx) + "," + Integer.toString(ny), 1);
+                            graph.addVertex(Integer.toString(nx) + "," + Integer.toString(ny),
+                                    Integer.toString(i) + "," + Integer.toString(j), 1);
+                        }
+                    }
+                }
 			}
 		}			
 
-	}
-
-	private boolean adjacencyWallCheck (int [] [] map, int i, int j) {
-
-		if (((map[i-1][j-1] != 1)&&(map[i][j-1] != 1)&&(map[i+1][j-1] != 1)
-				&&(map[i-1][j] != 1)&&(map[i+1][j] != 1)&&(map[i-1][j+1] != 1)
-				&&(map[i][j+1] != 1)&& (map[i+1][j+1]) != 1))
-			return true;
-		else
-			return false;
 	}
 
 	public ArrayList<String> computePath(String target) {

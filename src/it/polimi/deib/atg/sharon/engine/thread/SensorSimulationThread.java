@@ -22,21 +22,20 @@
 
 package it.polimi.deib.atg.sharon.engine.thread;
 
+import it.polimi.deib.atg.sharon.Main;
+import it.polimi.deib.atg.sharon.configs.HouseMap;
+import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
+import it.polimi.deib.atg.sharon.data.Coordinate;
+import it.polimi.deib.atg.sharon.data.Sensor;
+import it.polimi.deib.atg.sharon.engine.ADL;
+import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
+import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
+
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-
-
-import it.polimi.deib.atg.sharon.Main;
-import it.polimi.deib.atg.sharon.configs.HouseMap;
-import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
-import it.polimi.deib.atg.sharon.data.Sensor;
-import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
-import it.polimi.deib.atg.sharon.data.Coordinate;
-import it.polimi.deib.atg.sharon.engine.ADL;
-import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
 
 public class SensorSimulationThread implements Runnable{
 
@@ -150,13 +149,20 @@ public class SensorSimulationThread implements Runnable{
 								if (path.isEmpty()) {	//New station case
 									newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
 								}
+                                int points = path.size();
 
-								if (path.size() > 0) {	//With a target the target moves toward that direction
-									String x = path.get(0);
-									//System.out.println(x);	//TODO: row log 
-
-									path.remove(0);
-									String[] tokens = x.split(delims);
+                                if (points > 0) {    //With a target the target moves toward that direction
+                                    String x;
+                                    if (points < HouseMap.ppm) {
+                                        x = path.get(path.size() - 1);
+                                    } else {
+                                        x = path.get(HouseMap.ppm - 1);
+                                    }
+                                    //System.out.println(x);	//TODO: row log
+                                    for (int i = 0; i < HouseMap.ppm && i < points; i++) {
+                                        path.remove(0);
+                                    }
+                                    String[] tokens = x.split(delims);
 									Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
 									if (!target.equals(actor)) {
 										actor.setX(target.getX());
@@ -180,9 +186,9 @@ public class SensorSimulationThread implements Runnable{
 				
 				if ((timeInstant %86400==0)&&(timeInstant >0)) {
 					out.close();
-					out = new PrintWriter(new FileWriter(simulationOutputPrefix +(int) timeInstant /86400+".txt"));
-				}
-				out.println(printActiveSensors(action));	//TODO: Log row
+                    out = new PrintWriter(new FileWriter(simulationOutputPrefix + "_" + (int) timeInstant / 86400 + ".txt"));
+                }
+                out.println(printActiveSensors(action));	//TODO: Log row
 			}
 			out.close();
 		} catch (Exception e) {
@@ -202,7 +208,7 @@ public class SensorSimulationThread implements Runnable{
 
 		Sensor [] s= HouseMap.getS();
 
-		Target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
+        Target = new Coordinate(s[indexSensor - 1].getX(), s[indexSensor - 1].getY());
 
 		// Start point:
 		DE.setInitial(actor.getX() + ","+ actor.getY());
@@ -224,8 +230,6 @@ public class SensorSimulationThread implements Runnable{
 
 		Sensor[] sensorsArray = HouseMap.getS();
 
-		activeSensors += timeInstant;
-		activeSensors += ", ";
         //TODO Change this so we can have ranges or leave sensors active
         for (Sensor aSensorsArray : sensorsArray) {
             if (((aSensorsArray.getX() == actor.getX()) &&
@@ -239,10 +243,12 @@ public class SensorSimulationThread implements Runnable{
 
         //TODO Change this so it is possible to choose whether to have position and ground truth
         activeSensors += action;
-        activeSensors += ", ";
-        activeSensors += (int)actor.getX() * (HouseMap.scale);
-        activeSensors += ", ";
-        activeSensors += (int)actor.getY() * (HouseMap.scale);
+        activeSensors += ", 1";
+//        activeSensors += timeInstant;
+//        activeSensors += ", ";
+//        activeSensors += (int)actor.getX() * (HouseMap.scale);
+//        activeSensors += ", ";
+//        activeSensors += (int)actor.getY() * (HouseMap.scale);
 
 		return activeSensors;
 	}

@@ -22,9 +22,6 @@
 
 package it.polimi.deib.atg.sharon;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.NeedsDrift;
 import it.polimi.deib.atg.sharon.configs.Parameters;
@@ -33,19 +30,22 @@ import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
 import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
 import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 public class Main {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int def_simulatedDays 	= 3; 	//Days to simulate
-	//***** END PARAMETERS *****
-	
-	Parameters param = Parameters.getInstance();
+    private static int def_simulatedDays = 11;    //Days to simulate
+    //***** END PARAMETERS *****
+
+    Parameters param = Parameters.getInstance();
 
 	// Extra parameters - not to touch
-	public static final boolean ENABLE_SENSORS_ACTIVITY = true;	//0: only High Level, 1: High Level + Low Level (Experimental!)
-	public static final boolean PRINT_LOG 				= false;	//0: no log print, 1: print (histograms...)
-	public static final boolean DISABLE_DIJKSTRA        = true;	//0: ENABLE_DIJKSTRA (slow), 1: DISABLE_DIJKSTRA
-	public static final boolean USE_DRIFTS				= false;		// activates drifts
+    public static final boolean ENABLE_SENSORS_ACTIVITY = true;        //0: only High Level, 1: High Level + Low Level (Experimental!)
+    public static final boolean PRINT_LOG 				= false;	//0: no log print, 1: print (histograms...)
+    public static final boolean DISABLE_DIJKSTRA = false;    //0: ENABLE_DIJKSTRA (slow), 1: DISABLE_DIJKSTRA
+    public static final boolean USE_DRIFTS				= false;		// activates drifts
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.

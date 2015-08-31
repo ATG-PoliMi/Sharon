@@ -41,8 +41,8 @@ public class HouseMap {
     private static final String SENSORS_FILENAME="sensors.conf";
 
 	private int map [][];
-    public static int scale = 1;
-	private Sensor[] s;
+    public static int ppm = 1;
+    private Sensor[] s;
 
 	private static HouseMap instance;
 
@@ -70,7 +70,7 @@ public class HouseMap {
                 for( int k = 0; k < cols; k++){
                     Integer elem = Integer.parseInt(chunks[k]);
                     if (elem > 1) {
-                        scale = elem;
+                        ppm = elem;
                         rows--;
                         break;
                     }
@@ -110,8 +110,8 @@ public class HouseMap {
             line = reader.readLine();
             while(line != null) {
                 String[] chunks = line.split(",");
-                sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1])*scale)/100
-                        , (Integer.parseInt(chunks[2])*scale)/100));
+                sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * ppm) / 100
+                        , (Integer.parseInt(chunks[2]) * ppm) / 100));
                 line = reader.readLine();
             }
         } catch (IOException e) {
