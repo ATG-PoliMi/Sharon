@@ -22,21 +22,20 @@
 
 package it.polimi.deib.atg.sharon.engine.thread;
 
+import it.polimi.deib.atg.sharon.Main;
+import it.polimi.deib.atg.sharon.configs.HouseMap;
+import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
+import it.polimi.deib.atg.sharon.data.Coordinate;
+import it.polimi.deib.atg.sharon.data.Sensor;
+import it.polimi.deib.atg.sharon.engine.ADL;
+import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
+import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
+
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-
-
-import it.polimi.deib.atg.sharon.Main;
-import it.polimi.deib.atg.sharon.configs.HouseMap;
-import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
-import it.polimi.deib.atg.sharon.data.Sensor;
-import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
-import it.polimi.deib.atg.sharon.data.Coordinate;
-import it.polimi.deib.atg.sharon.engine.ADL;
-import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
 
 public class SensorSimulationThread implements Runnable{
 
@@ -136,15 +135,19 @@ public class SensorSimulationThread implements Runnable{
 								Sensor[] s = HouseMap.getS();
 								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getX(),
 										s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getY());
-								if (Target.getX()>actor.getX()) 
-									actor.setX(actor.getX()+1);
-								if (Target.getX()<actor.getX()) 
-									actor.setX(actor.getX()-1);
+                                int count = HouseMap.scale;
+                                while (count > 0) {
+                                    if (Target.getX() > actor.getX())
+                                        actor.setX(actor.getX() + 1);
+                                    if (Target.getX() < actor.getX())
+                                        actor.setX(actor.getX() - 1);
 
-								if (Target.getY()>actor.getY())
-									actor.setY(actor.getY()+1);
-								if (Target.getY()<actor.getY())
-									actor.setY(actor.getY()-1);
+                                    if (Target.getY() > actor.getY())
+                                        actor.setY(actor.getY() + 1);
+                                    if (Target.getY() < actor.getY())
+                                        actor.setY(actor.getY() - 1);
+                                    count--;
+                                }
 
 							} else {
 								if (path.isEmpty()) {	//New station case
