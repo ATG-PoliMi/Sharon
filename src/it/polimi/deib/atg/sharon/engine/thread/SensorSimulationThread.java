@@ -231,16 +231,16 @@ public class SensorSimulationThread implements Runnable{
         for (Sensor aSensorsArray : sensorsArray) {
             if (((aSensorsArray.getX() == actor.getX()) &&
                     (aSensorsArray.getY() == actor.getY()))) {
-                activeSensors += "1, ";
+                activeSensors += "1 ";
 
             } else {
-                activeSensors += "0, ";
+                activeSensors += "0 ";
             }
         }
 
         //TODO Change this so it is possible to choose whether to have position and ground truth
         activeSensors += action;
-        activeSensors += ", 0";
+        activeSensors += " 1";
 //        activeSensors += timeInstant;
 //        activeSensors += ", ";
 //        activeSensors += (int)actor.getX() * (HouseMap.scale);
