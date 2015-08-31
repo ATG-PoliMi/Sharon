@@ -135,15 +135,19 @@ public class SensorSimulationThread implements Runnable{
 								Sensor[] s = HouseMap.getS();
 								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getX(),
 										s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getY());
-								if (Target.getX()>actor.getX()) 
-									actor.setX(actor.getX()+1);
-								if (Target.getX()<actor.getX()) 
-									actor.setX(actor.getX()-1);
+                                int count = HouseMap.scale;
+                                while (count > 0) {
+                                    if (Target.getX() > actor.getX())
+                                        actor.setX(actor.getX() + 1);
+                                    if (Target.getX() < actor.getX())
+                                        actor.setX(actor.getX() - 1);
 
-								if (Target.getY()>actor.getY())
-									actor.setY(actor.getY()+1);
-								if (Target.getY()<actor.getY())
-									actor.setY(actor.getY()-1);
+                                    if (Target.getY() > actor.getY())
+                                        actor.setY(actor.getY() + 1);
+                                    if (Target.getY() < actor.getY())
+                                        actor.setY(actor.getY() - 1);
+                                    count--;
+                                }
 
 							} else {
 								if (path.isEmpty()) {	//New station case
