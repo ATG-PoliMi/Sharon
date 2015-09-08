@@ -13,10 +13,10 @@ Other ANT task are:
 * **jar**: create `Sharon_<VERSION>.jar` package
 * **run**: run the compiled software
 
-To run the program simply launch ant without task name. 
+To run the program simply launch ant without task name, specifying the number of days to simulate (Default 5).  
 
 
-    $ ant
+    $ ant [-Dnum_days=5]
 
 
 Results will be produced in `data/ActivityOutput` directory.
