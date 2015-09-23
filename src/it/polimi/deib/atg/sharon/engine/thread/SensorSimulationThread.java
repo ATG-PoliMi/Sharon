@@ -157,8 +157,8 @@ public class SensorSimulationThread implements Runnable{
                                     newTarget(lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId());
                                 }
 
-								if (path.size() > 0) {	//With a target the target moves toward that direction
-									String x = path.get(0);
+                                if (path.size() > 0) {    //Given a target the actor moves toward that direction
+                                    String x = path.get(0);
 									//System.out.println(x);	//TODO: row log 
 
 									path.remove(0);
@@ -171,8 +171,8 @@ public class SensorSimulationThread implements Runnable{
 								}
 							}
 
-						} else {	//Time at the station ended
-							idling=0;
+                        } else {    //Time at the place ended
+                            idling=0;
                             placesCounter++;
                             tTime.remove(0);
 						}					
@@ -234,7 +234,7 @@ public class SensorSimulationThread implements Runnable{
 		activeSensors += ", ";
 
         for (Sensor aSensorsArray : sensorsArray) {
-            if (geoDist(aSensorsArray.getX(), actor.getX(), aSensorsArray.getY(), actor.getY())
+            if (geoDist(aSensorsArray.getX(), aSensorsArray.getY(), actor.getX(), actor.getY())
                     <= aSensorsArray.getRange()) {
                 if (Math.random() < aSensorsArray.getProb()) {
                     activeSensors += "1, ";

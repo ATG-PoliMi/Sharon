@@ -113,12 +113,12 @@ public class HouseMap {
             line = reader.readLine();
             while(line != null) {
                 String[] chunks = line.split(",");
-                if (chunks.length > 3) {
+                if (chunks.length == 3) {
                     sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
                             , (Integer.parseInt(chunks[2]) * scale) / 100));
                 } else {
                     sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
-                            , (Integer.parseInt(chunks[2]) * scale) / 100, Integer.parseInt(chunks[3]),
+                            , (Integer.parseInt(chunks[2]) * scale) / 100, (Integer.parseInt(chunks[3]) * scale) / 100,
                             Double.parseDouble(chunks[4])));
                 }
                 line = reader.readLine();

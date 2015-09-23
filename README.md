@@ -73,12 +73,20 @@ Three main configurations must be provided: the house map, the sensors descripti
 
     config/env/maps.conf
     config/env/sensors.conf
+    config/env/places.conf
 
-The folder must contain both `maps.conf` and `sensors.conf`. The first represents the house map through binary values
+The folder must contain both `maps.conf`, `sensors.conf`. and `places.conf`. The first represents the house map through binary values
 separated by spaces: 0s represent walkable area, 1s represent walls; the final line should contain the scale of the representation in points per meter.
 
 The sensors description should be formatted as follows:
-`<Name>,<pos_x>,<pos_y>` where the coordinates should be referred to the origin of the map, in centimeters.
+`<Name>,<pos_x>,<pos_y>,<range>,<activation_probability>` where the coordinates should be referred to the origin of the map, 
+in centimeters; range is the maximum agent distance (in centimeters) for the device activation. Activation probability
+is a double between zero and one. It is possible also to shorten the config using only `<Name>,<pos_x>,<pos_y>`, whereas range and probability are guessed as 0 and 1 respectively.
+
+<!--- Extend Places Explanation -->
+The places description should be formatted as follows:
+`<Name>,<pos_x>,<pos_y>` where the coordinates should be referred to the origin of the map, in centimeters. IDs are guessed given the row of the respective place
+
 
 ### Execution Pattern ###
 
@@ -86,12 +94,12 @@ The sensors description should be formatted as follows:
 
 Patterns configuration files have all the same syntax, in which every line has the following format:
 
-    <ADL_ID>, <Prob>, <Pattern_ID>, <Patter_Name>, <Station_ID_1>, <Perc_time_1>, ... , <Station_ID_n>, <Perc_time_n>
+    <ADL_ID>, <Prob>, <Pattern_ID>, <Patter_Name>, <Place_ID_1>, <Perc_time_1>, ... , <Place_ID_n>, <Perc_time_n>
      
 * `<ADL_ID>` holds the ID of the ADL the pattern is associated to;
 * [Experimental]`<Prob>` is the probability of choosing that specific pattern among all the patterns available for the ADL (Float [0 1]); 
 * `<Pattern_ID>` is the unique pattern ID; 
 * `<Patter_Name>` contains the human readable pattern identificator;
-* `<Station_ID_1>, <Perc_time_1>, ... , <Station_ID_n>, <Perc_time_n>` are the couples describing the positions of the agent,
- `<Station_ID>` is the ID of the sensor to trigger and `<Perc_time>` (Float [0 1]) the time to be spent in such position with respect 
+* `<Place_ID_1>, <Perc_time_1>, ... , <Place_ID_n>, <Perc_time_n>` are the couples describing the positions of the agent,
+ `<Place_ID>` is the ID of the sensor to trigger and `<Perc_time>` (Float [0 1]) the time to be spent in such position with respect 
  to the overall time devoted to the ADL.
