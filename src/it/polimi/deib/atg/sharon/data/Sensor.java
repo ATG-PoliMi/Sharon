@@ -26,14 +26,14 @@ package it.polimi.deib.atg.sharon.data;
 public class Sensor {
 
     private int value, x, y, range;
-    private float prob;
+    private double prob;
     private String name;
 
     public Sensor(String name, int value, int x, int y) {
         this(name, value, x, y, 0, 1);
     }
 
-    public Sensor(String name, int value, int x, int y, int range, int prob) {
+    public Sensor(String name, int value, int x, int y, int range, double prob) {
         this.name = name;
         this.value = value;
         this.x = x;
@@ -82,11 +82,11 @@ public class Sensor {
         this.range = range;
     }
 
-    public float getProb() {
+    public double getProb() {
         return prob;
     }
 
-    public void setProb(float prob) {
+    public void setProb(double prob) {
         this.prob = prob;
     }
 }

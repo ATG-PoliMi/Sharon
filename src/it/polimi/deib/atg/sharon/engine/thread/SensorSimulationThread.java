@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import static it.polimi.deib.atg.sharon.utils.Methods.geoDist;
+
 public class SensorSimulationThread implements Runnable{
 
 
@@ -113,15 +115,15 @@ public class SensorSimulationThread implements Runnable{
 							CADL = queue.take();
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
-							if (CADL != null) {
-								llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // TODO missing random choice between patterns: implement it in Match?
-								tTime.clear();
 
-                                for (int i = 0; i < lLADL.get(llADLIndex).getPlaces().size(); i++) {
-                                    tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage()));
-                                }
-								agentStatus=2;							
-							}	
+                            llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // TODO missing random choice between patterns: implement it in Match?
+                            tTime.clear();
+
+                            for (int i = 0; i < lLADL.get(llADLIndex).getPlaces().size(); i++) {
+                                tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage()));
+                            }
+                            agentStatus = 2;
+
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -230,12 +232,15 @@ public class SensorSimulationThread implements Runnable{
 
 		activeSensors += timeInstant;
 		activeSensors += ", ";
-        //TODO Change this so we can have ranges or leave sensors active
-        for (Sensor aSensorsArray : sensorsArray) {
-            if (((aSensorsArray.getX() == actor.getX()) &&
-                    (aSensorsArray.getY() == actor.getY()))) {
-                activeSensors += "1, ";
 
+        for (Sensor aSensorsArray : sensorsArray) {
+            if (geoDist(aSensorsArray.getX(), actor.getX(), aSensorsArray.getY(), actor.getY())
+                    <= aSensorsArray.getRange()) {
+                if (Math.random() < aSensorsArray.getProb()) {
+                    activeSensors += "1, ";
+                } else {
+                    activeSensors += "0, ";
+                }
             } else {
                 activeSensors += "0, ";
             }
