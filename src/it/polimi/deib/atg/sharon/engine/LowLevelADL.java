@@ -22,23 +22,23 @@
 
 package it.polimi.deib.atg.sharon.engine;
 
-import java.util.ArrayList;
+import it.polimi.deib.atg.sharon.data.PatternPlace;
 
-import it.polimi.deib.atg.sharon.data.Station;
+import java.util.ArrayList;
 
 public class LowLevelADL {
 	
 	int id;
 	String name;
-	private ArrayList <Station> stations = new ArrayList<Station>();
-	
-	
-	public LowLevelADL(int id, String name, ArrayList<Station> stations) {
-		super();
+    private ArrayList<PatternPlace> places = new ArrayList<PatternPlace>();
+
+
+    public LowLevelADL(int id, String name, ArrayList<PatternPlace> places) {
+        super();
 		this.id 		= id;
 		this.name 		= name;
-		this.stations 	= stations;
-	}
+        this.places = places;
+    }
 	
 	public int getId() {
 		return id;
@@ -52,11 +52,13 @@ public class LowLevelADL {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public ArrayList<Station> getStations() {
-		return stations;
-	}
-	public void setStations(ArrayList<Station> stations) {
-		this.stations = stations;
-	}
+
+    public ArrayList<PatternPlace> getPlaces() {
+        return places;
+    }
+
+    public void setPatternPlaces(ArrayList<PatternPlace> places) {
+        this.places = places;
+    }
 	
 }

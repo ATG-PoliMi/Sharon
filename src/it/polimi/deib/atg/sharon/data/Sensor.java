@@ -23,11 +23,70 @@
 package it.polimi.deib.atg.sharon.data;
 
 
-public class Sensor extends SensorAbstract {
+public class Sensor {
 
-	public Sensor(String name, int value, int x, int y) {
-		super(name, value, x, y);
-	}
-	
+    private int value, x, y, range;
+    private float prob;
+    private String name;
 
+    public Sensor(String name, int value, int x, int y) {
+        this(name, value, x, y, 0, 1);
+    }
+
+    public Sensor(String name, int value, int x, int y, int range, int prob) {
+        this.name = name;
+        this.value = value;
+        this.x = x;
+        this.y = y;
+        this.range = range;
+        this.prob = prob;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public float getProb() {
+        return prob;
+    }
+
+    public void setProb(float prob) {
+        this.prob = prob;
+    }
 }

@@ -1,12 +1,15 @@
 package it.polimi.deib.atg.sharon.configs;
 
-import it.polimi.deib.atg.sharon.data.Station;
+import it.polimi.deib.atg.sharon.data.PatternPlace;
 import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
 
 import java.io.*;
 import java.nio.file.NotDirectoryException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <h2>EXPERIMENTAL</h2>
@@ -87,7 +90,7 @@ public class LowLevelADLDB {
                 }
             }
             for(String pattern:configLines){
-                // act_ID, prob, pattern_ID, Patter_Name, Station_ID, perc_time, [...]
+                // act_ID, prob, pattern_ID, Patter_Name, Place_ID, perc_time, [...]
                 // [...]
                 String[] chunks = pattern.split(",");
 
@@ -105,11 +108,11 @@ public class LowLevelADLDB {
                 }
                 patternIdList.get(act_ID).add(patternId);
 
-                ArrayList<Station> stations = new ArrayList<Station>();
+                ArrayList<PatternPlace> places = new ArrayList<>();
                 for(int m = 4; m < chunks.length; m=m+2 ){
-                    stations.add(new Station(Integer.parseInt(chunks[m]),Float.parseFloat(chunks[m+1])));
+                    places.add(new PatternPlace(Integer.parseInt(chunks[m]), Float.parseFloat(chunks[m + 1])));
                 }
-                patternMap.put(patternId, new LowLevelADL(act_ID,chunks[3],stations));
+                patternMap.put(patternId, new LowLevelADL(act_ID, chunks[3], places));
             }
         }
 

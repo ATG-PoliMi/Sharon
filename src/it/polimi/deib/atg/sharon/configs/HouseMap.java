@@ -23,6 +23,7 @@
 
 package it.polimi.deib.atg.sharon.configs;
 
+import it.polimi.deib.atg.sharon.data.Place;
 import it.polimi.deib.atg.sharon.data.Sensor;
 
 import java.io.*;
@@ -39,10 +40,12 @@ public class HouseMap {
     private static final String CONFIG_PATH="config/env";
     private static final String MAP_FILENAME="map.conf";
     private static final String SENSORS_FILENAME="sensors.conf";
+    private static final String PLACES_FILENAME = "sensors.conf";
 
 	private int map [][];
     public static int scale = 1;
 	private Sensor[] s;
+    private Place[] p;
 
 	private static HouseMap instance;
 
@@ -118,6 +121,28 @@ public class HouseMap {
             e.printStackTrace();
         }
         s = sAsList.toArray(new Sensor[sAsList.size()]);
+
+        try {
+            reader = new BufferedReader(new FileReader(new File(
+                    CONFIG_PATH, PLACES_FILENAME)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<Place> pAsList = new ArrayList<Place>();
+
+        try {
+            line = reader.readLine();
+            while (line != null) {
+                String[] chunks = line.split(",");
+                pAsList.add(new Place(chunks[0], (Integer.parseInt(chunks[1]) * scale) / 100,
+                        (Integer.parseInt(chunks[2]) * scale) / 100));
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        p = pAsList.toArray(new Place[sAsList.size()]);
     }
 
 	public static synchronized HouseMap getInstance(){

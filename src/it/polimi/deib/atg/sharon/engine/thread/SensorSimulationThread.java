@@ -64,7 +64,7 @@ public class SensorSimulationThread implements Runnable{
 	//TARGETS
 	private Integer llADLIndex; 
 	private ArrayList<Integer> tTime = new ArrayList<Integer>();
-	private static int stationCounter = 0; //Station Counter
+    private static int stationCounter = 0; //Place Counter
 
 	//Support ADL
 	static CumulateHistogram hist = new CumulateHistogram();
@@ -116,9 +116,9 @@ public class SensorSimulationThread implements Runnable{
 								llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // TODO missing random choice between patterns: implement it in Match?
 								tTime.clear();
 
-								for (int i=0; i<lLADL.get(llADLIndex).getStations().size(); i++) {
-									tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getStations().get(i).getTimePercentage())); 
-								}
+                                for (int i = 0; i < lLADL.get(llADLIndex).getPlaces().size(); i++) {
+                                    tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage()));
+                                }
 								agentStatus=2;							
 							}	
 						}
@@ -133,8 +133,8 @@ public class SensorSimulationThread implements Runnable{
 						if (idling < tTime.get(0)) {
 							if (Main.DISABLE_DIJKSTRA) {
 								Sensor[] s = HouseMap.getS();
-								Target = new Coordinate(s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getX(),
-										s[lLADL.get(llADLIndex).getStations().get(stationCounter).getId()-1].getY());
+                                Target = new Coordinate(s[lLADL.get(llADLIndex).getPlaces().get(stationCounter).getId() - 1].getX(),
+                                        s[lLADL.get(llADLIndex).getPlaces().get(stationCounter).getId() - 1].getY());
                                 int count = HouseMap.scale;
                                 while (count > 0) {
                                     if (Target.getX() > actor.getX())
@@ -151,8 +151,8 @@ public class SensorSimulationThread implements Runnable{
 
 							} else {
 								if (path.isEmpty()) {	//New station case
-									newTarget(lLADL.get(llADLIndex).getStations().get(stationCounter).getId());
-								}
+                                    newTarget(lLADL.get(llADLIndex).getPlaces().get(stationCounter).getId());
+                                }
 
 								if (path.size() > 0) {	//With a target the target moves toward that direction
 									String x = path.get(0);
