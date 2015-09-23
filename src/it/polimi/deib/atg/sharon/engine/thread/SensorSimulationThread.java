@@ -26,6 +26,7 @@ import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.data.Coordinate;
+import it.polimi.deib.atg.sharon.data.Place;
 import it.polimi.deib.atg.sharon.data.Sensor;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
@@ -64,7 +65,7 @@ public class SensorSimulationThread implements Runnable{
 	//TARGETS
 	private Integer llADLIndex; 
 	private ArrayList<Integer> tTime = new ArrayList<Integer>();
-    private static int stationCounter = 0; //Place Counter
+    private static int placesCounter = 0; //Place Counter
 
 	//Support ADL
 	static CumulateHistogram hist = new CumulateHistogram();
@@ -132,9 +133,9 @@ public class SensorSimulationThread implements Runnable{
 					if (!tTime.isEmpty()) {	//tTime contains timings for each station
 						if (idling < tTime.get(0)) {
 							if (Main.DISABLE_DIJKSTRA) {
-								Sensor[] s = HouseMap.getS();
-                                Target = new Coordinate(s[lLADL.get(llADLIndex).getPlaces().get(stationCounter).getId() - 1].getX(),
-                                        s[lLADL.get(llADLIndex).getPlaces().get(stationCounter).getId() - 1].getY());
+                                Place[] p = HouseMap.getP();
+                                Target = new Coordinate(p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
+                                        p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getY());
                                 int count = HouseMap.scale;
                                 while (count > 0) {
                                     if (Target.getX() > actor.getX())
@@ -151,7 +152,7 @@ public class SensorSimulationThread implements Runnable{
 
 							} else {
 								if (path.isEmpty()) {	//New station case
-                                    newTarget(lLADL.get(llADLIndex).getPlaces().get(stationCounter).getId());
+                                    newTarget(lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId());
                                 }
 
 								if (path.size() > 0) {	//With a target the target moves toward that direction
@@ -170,13 +171,13 @@ public class SensorSimulationThread implements Runnable{
 
 						} else {	//Time at the station ended
 							idling=0;
-							stationCounter++;
-							tTime.remove(0);					
+                            placesCounter++;
+                            tTime.remove(0);
 						}					
 					} else {	//	ADL completed
 						agentStatus = 1;
-						stationCounter=0;
-						action = 0; //(Walking)
+                        placesCounter = 0;
+                        action = 0; //(Walking)
 					}
 					break;
 				}

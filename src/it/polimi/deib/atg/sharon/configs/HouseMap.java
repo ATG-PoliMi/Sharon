@@ -157,6 +157,10 @@ public class HouseMap {
         return getInstance().s;
     }
 
+    public static Place[] getP() {
+        return getInstance().p;
+    }
+
     public static int[][] getMap(){
         return getInstance().map;
     }
