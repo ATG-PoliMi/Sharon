@@ -37,10 +37,10 @@ import java.util.ListIterator;
 public class HouseMap {
 
     // TODO migrate these to a single ref in the main file?
-    private static final String CONFIG_PATH="config/env";
-    private static final String MAP_FILENAME="map.conf";
-    private static final String SENSORS_FILENAME="sensors.conf";
-    private static final String PLACES_FILENAME = "sensors.conf";
+    private static final String CONFIG_PATH = "config/env";
+    private static final String MAP_FILENAME = "map.conf";
+    private static final String SENSORS_FILENAME = "sensors.conf";
+    private static final String PLACES_FILENAME = "places.conf";
 
 	private int map [][];
     public static int scale = 1;
@@ -113,8 +113,14 @@ public class HouseMap {
             line = reader.readLine();
             while(line != null) {
                 String[] chunks = line.split(",");
-                sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1])*scale)/100
-                        , (Integer.parseInt(chunks[2])*scale)/100));
+                if (chunks.length > 3) {
+                    sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
+                            , (Integer.parseInt(chunks[2]) * scale) / 100));
+                } else {
+                    sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
+                            , (Integer.parseInt(chunks[2]) * scale) / 100, Integer.parseInt(chunks[3]),
+                            Double.parseDouble(chunks[4])));
+                }
                 line = reader.readLine();
             }
         } catch (IOException e) {
