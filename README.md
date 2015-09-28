@@ -79,9 +79,11 @@ The folder must contain both `maps.conf`, `sensors.conf`. and `places.conf`. The
 separated by spaces: 0s represent walkable area, 1s represent walls; the final line should contain the scale of the representation in points per meter.
 
 The sensors description should be formatted as follows:
-`<Name>,<pos_x>,<pos_y>,<range>,<activation_probability>` where the coordinates should be referred to the origin of the map, 
-in centimeters; range is the maximum agent distance (in centimeters) for the device activation. Activation probability
-is a double between zero and one. It is possible also to shorten the config using only `<Name>,<pos_x>,<pos_y>`, whereas range and probability are guessed as 0 and 1 respectively.
+`<Name>,<pos_x>,<pos_y>,<area_x1>,<area_y1>,<area_x2>,<area_y2>,<activation_probability>` where the coordinates should 
+be referred to the origin of the map, in centimeters; `area_XX` are the corner points identifying a rectangular activation
+ area -- suggested to avoid through wall activations. `<Name>,<pos_x>,<pos_y>,<range>,<activation_probability>` where range
+is the maximum agent distance (in centimeters) for the device activation. Activation probability is a double between 
+zero and one. It is possible also to shorten the config using only `<Name>,<pos_x>,<pos_y>`, whereas range and probability are guessed as 0 and 1 respectively.
 
 <!--- Extend Places Explanation -->
 The places description should be formatted as follows:
