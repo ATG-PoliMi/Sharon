@@ -113,14 +113,36 @@ public class HouseMap {
             line = reader.readLine();
             while(line != null) {
                 String[] chunks = line.split(",");
-                if (chunks.length == 3) {
-                    sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
-                            , (Integer.parseInt(chunks[2]) * scale) / 100));
-                } else {
-                    sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
-                            , (Integer.parseInt(chunks[2]) * scale) / 100, (Integer.parseInt(chunks[3]) * scale) / 100,
-                            Double.parseDouble(chunks[4])));
+                switch (chunks.length) {
+                    case 3: {
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
+                                , (Integer.parseInt(chunks[2]) * scale) / 100));
+                    }
+                    break;
+                    case 5: {
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
+                                , (Integer.parseInt(chunks[2]) * scale) / 100, (Integer.parseInt(chunks[3]) * scale) / 100,
+                                Double.parseDouble(chunks[4])));
+                    }
+                    break;
+                    case 8: {
+                        int[] areax = new int[2];
+                        int[] areay = new int[2];
+                        areax[0] = (Integer.parseInt(chunks[3]) * scale) / 100;
+                        areax[1] = (Integer.parseInt(chunks[4]) * scale) / 100;
+                        areay[0] = (Integer.parseInt(chunks[5]) * scale) / 100;
+                        areay[1] = (Integer.parseInt(chunks[6]) * scale) / 100;
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
+                                , (Integer.parseInt(chunks[2]) * scale) / 100, areax, areay,
+                                Double.parseDouble(chunks[7])));
+                    }
+                    break;
+                    default: {
+                        //TODO add exception here for wrong parameters
+                    }
+                    break;
                 }
+
                 line = reader.readLine();
             }
         } catch (IOException e) {

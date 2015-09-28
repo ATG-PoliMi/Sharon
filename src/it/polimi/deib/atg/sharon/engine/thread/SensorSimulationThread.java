@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import static it.polimi.deib.atg.sharon.utils.Methods.geoDist;
-
 public class SensorSimulationThread implements Runnable{
 
 
@@ -234,8 +232,7 @@ public class SensorSimulationThread implements Runnable{
 		activeSensors += ", ";
 
         for (Sensor aSensorsArray : sensorsArray) {
-            if (geoDist(aSensorsArray.getX(), aSensorsArray.getY(), actor.getX(), actor.getY())
-                    <= aSensorsArray.getRange()) {
+            if (aSensorsArray.isActivatedBy(actor.getX(), actor.getY())) {
                 if (Math.random() < aSensorsArray.getProb()) {
                     activeSensors += "1, ";
                 } else {

@@ -23,9 +23,13 @@
 package it.polimi.deib.atg.sharon.data;
 
 
+import static it.polimi.deib.atg.sharon.utils.Methods.geoDist;
+import static java.util.Arrays.sort;
+
 public class Sensor {
 
     private int value, x, y, range;
+    private int[] areax, areay;
     private double prob;
     private String name;
 
@@ -40,6 +44,28 @@ public class Sensor {
         this.y = y;
         this.range = range;
         this.prob = prob;
+    }
+
+    public Sensor(String name, int value, int x, int y, int[] areax, int[] areay, double prob) {
+        this.name = name;
+        this.value = value;
+        this.x = x;
+        this.y = y;
+        this.areax = new int[2];
+        System.arraycopy(areax, 0, this.areax, 0, areax.length);
+        this.areay = new int[2];
+        System.arraycopy(areay, 0, this.areay, 0, areax.length);
+        sort(this.areax);
+        sort(this.areay);
+        this.prob = prob;
+    }
+
+    public boolean isActivatedBy(int tgt_x, int tgt_y) {
+        if (areax == null) {
+            return (geoDist(x, y, tgt_x, tgt_y) <= range);
+        } else {
+            return (areax[0] < tgt_x && tgt_x <= areax[1] && areay[0] < tgt_y && tgt_y <= areay[1]);
+        }
     }
 
     public String getName() {
