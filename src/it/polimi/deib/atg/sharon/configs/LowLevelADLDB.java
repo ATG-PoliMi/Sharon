@@ -1,8 +1,10 @@
 package it.polimi.deib.atg.sharon.configs;
 
 import it.polimi.deib.atg.sharon.data.PatternPlace;
+import it.polimi.deib.atg.sharon.data.PatternSS;
 import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
+import it.polimi.deib.atg.sharon.engine.LowLevelSSADL;
 
 import java.io.*;
 import java.nio.file.NotDirectoryException;
@@ -27,6 +29,7 @@ public class LowLevelADLDB {
     // TODO migrate these to a single ref in the main file?
     private static final String CONFIG_PATH="config/patterns";
     private static final String PATTERN_PRE="patt";
+    private static final String PATTERN_PRE_SS="pattSS";
 
     private static LowLevelADLDB instance;
 
@@ -113,6 +116,102 @@ public class LowLevelADLDB {
                     places.add(new PatternPlace(Integer.parseInt(chunks[m]), Float.parseFloat(chunks[m + 1])));
                 }
                 patternMap.put(patternId, new LowLevelADL(act_ID, chunks[3], places));
+            }
+        }
+
+        for(Integer act_Id:probList.keySet()){
+            matcher.put(act_Id,new ADLMatch(act_Id, patternIdList.get(act_Id), probList.get(act_Id)));
+        }
+    }
+    
+    private void loadSSConfigs(Map<Integer, LowLevelSSADL> patternMap) throws NotDirectoryException, FileNotFoundException {
+        File folder = new File(CONFIG_PATH);
+        if(!folder.exists()){
+            throw new NotDirectoryException(null);
+        }
+
+        BufferedReader reader = null;
+
+        FilenameFilter ActFilter = (dir, name) -> {
+            if(name.lastIndexOf('.')>0){
+                if(name.contains("_")){
+                    if(!name.equals("patt_template.conf")){
+                        int lastIndexDot = name.lastIndexOf('.');
+                        int lastIndexUnSl = name.lastIndexOf('_');
+                        String filename = name.subSequence(0, lastIndexUnSl).toString();
+                        String extension = name.substring(lastIndexDot);
+                        if(filename.equals(PATTERN_PRE_SS) && extension.equals(".conf")){
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+        ArrayList<File> fileList = new ArrayList<File>(Arrays.asList(folder.listFiles(ActFilter)));
+        if(fileList.isEmpty()){
+            throw new FileNotFoundException(null);
+        }
+
+        HashMap<Integer,ArrayList<Float>> probList = new HashMap<Integer,ArrayList<Float>>();
+        HashMap<Integer,ArrayList<Integer>> patternIdList = new HashMap<Integer,ArrayList<Integer>>();
+
+        for (File CurrentFile : fileList) {
+            ArrayList<String> configLines = new ArrayList<String>();
+            try {
+                reader = new BufferedReader(new FileReader(CurrentFile));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    configLines.add(line);
+                }
+            } catch (NullPointerException | IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (reader != null){
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            //this is the parser to import sensorset
+            Integer numLine=0;
+            for(String pattern:configLines){
+            	numLine++;
+                // idAct, prob, Name, numberOfSSInPattern, listOfSSID (comma separated), matrix of probability in line
+            
+                String[] chunks = pattern.split(",");
+
+                if (chunks.length < 6){
+                    // TODO throw proper exception
+                }
+                Integer act_ID = Integer.parseInt(chunks[0]);
+                if(!probList.containsKey(act_ID)){
+                    probList.put(act_ID,new ArrayList<Float>());
+                }
+                probList.get(act_ID).add(Float.parseFloat(chunks[1]));
+                Integer patternId = Integer.valueOf((new Integer(act_ID*100)).toString()+numLine.toString());
+                if(!patternIdList.containsKey(act_ID)){
+                    patternIdList.put(act_ID,new ArrayList<Integer>());
+                }
+                patternIdList.get(act_ID).add(patternId);
+                
+                Integer nSS=Integer.parseInt(chunks[3]);
+               ArrayList<Integer> ssIds=new ArrayList<Integer>();
+                for(int m = 4; m < 4+nSS; m++ ){
+                	//id of the sensorset of the patter
+                	ssIds.add(Integer.parseInt(chunks[m]));
+                }
+                Float[][] probMatrix=new Float[nSS][nSS];
+                for(int row = 0; row < nSS; row++ ){
+                	for(int col = 0; col < nSS; col++ ){
+                		int m=4+nSS+(row*nSS)+col;
+                        probMatrix[row][col]= Float.parseFloat(chunks[m]);
+                    }
+                }
+                PatternSS patternSS=new PatternSS(patternId,ssIds,probMatrix);
+                patternMap.put(patternId, new LowLevelSSADL(act_ID, chunks[2], patternSS));
             }
         }
 

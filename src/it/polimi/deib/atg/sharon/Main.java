@@ -32,6 +32,7 @@ import it.polimi.deib.atg.sharon.engine.Needs;
 import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
 import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
 import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
+import it.polimi.deib.atg.sharon.engine.thread.SensorsetSimulationThread;
 
 public class Main {
 
@@ -53,7 +54,8 @@ public class Main {
 
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
-	private static SensorSimulationThread sensorSimulationThread;
+	//private static SensorSimulationThread sensorSimulationThread;
+	private static SensorsetSimulationThread sensorsetSimulationThread;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
 
 	public static void main(String[] args) {
@@ -85,8 +87,13 @@ public class Main {
 
 		//LOW LEVEL SIMULATION
 		if (ENABLE_SENSORS_ACTIVITY) {
-			sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-			new Thread(sensorSimulationThread).start();
+			//Simulation by sensor
+			//sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+			//new Thread(sensorSimulationThread).start();
+			
+			//Simulation by sensorset
+			sensorsetSimulationThread = new SensorsetSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+			new Thread(sensorsetSimulationThread).start();
 			System.out.println("Consumer Starts");	
 		}			
 	}
