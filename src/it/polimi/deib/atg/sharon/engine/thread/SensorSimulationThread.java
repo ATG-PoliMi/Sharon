@@ -114,11 +114,13 @@ public class SensorSimulationThread implements Runnable{
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
 
-                            llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // TODO missing random choice between patterns: implement it in Match?
+                         //   llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // this gives back the first pattern
+                            llADLIndex = lLADL.getMatch(action).getPatternID(); //this choose the pattern "randomly" according to the specified probabilities
                             tTime.clear();
 
                             for (int i = 0; i < lLADL.get(llADLIndex).getPlaces().size(); i++) {
                                 tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage()));
+                                //TODO [Andrea wrote] why cast to integer of the probability?
                             }
                             agentStatus = 2;
 
