@@ -180,7 +180,7 @@ public class LowLevelADLDB {
             Integer numLine=0;
             for(String pattern:configLines){
             	numLine++;
-                // idAct, prob, Name, numberOfSSInPattern, listOfSSID (comma separated), matrix of probability in line
+                // idAct, prob, Name, numberOfSSInPattern, listOfSSID (comma separated), listOfInitialProb, matrix of probability in line
             
                 String[] chunks = pattern.split(",");
 
@@ -239,6 +239,10 @@ public class LowLevelADLDB {
 
     public LowLevelADL get(Integer key){
         return getInstance().patternMap.get(key);
+    }
+    
+    public LowLevelSSADL getPatternSS(Integer key){
+        return getInstance().patternSSMap.get(key);
     }
 
     public ADLMatch getMatch(Integer key){

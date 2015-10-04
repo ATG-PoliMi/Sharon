@@ -19,6 +19,7 @@ import java.util.HashMap;
 public class SensorsetManager {
 	private static SensorsetManager instance;
 	private ArrayList<Sensorset> sensorsets;
+	private Float[][] transitionProb;
 	private BufferedReader reader;
 	private static final String CONFIG_ENV = ConfigurationManager.getInstance()
 			.getCONFIG_ENV();
@@ -26,7 +27,10 @@ public class SensorsetManager {
 	private SensorsetManager() throws IOException {
 		super();
 		sensorsets = new ArrayList<Sensorset>();
-		this.loadConfigs();
+		this.loadConfigsSS();
+		int numberSS=sensorsets.size();
+		transitionProb=new Float[numberSS][numberSS];
+		this.loadConfigsTransition();
 	}
 
 	public static SensorsetManager getInstance() throws IOException {
@@ -54,7 +58,7 @@ public class SensorsetManager {
 		sensorsets.add(ss);
 	}
 
-	public void loadConfigs() throws IOException {
+	public void loadConfigsSS() throws IOException {
 		File folder = new File(CONFIG_ENV);
 		if (!folder.exists()) {
 			throw new NotDirectoryException(null);
@@ -95,6 +99,36 @@ public class SensorsetManager {
 				}
 			}
 			this.addSensorset(ss_ID, minTime, maxTime, actSensorId);
+		}
+
+	}
+	
+	public void loadConfigsTransition() throws IOException {
+		File folder = new File(CONFIG_ENV);
+		if (!folder.exists()) {
+			throw new NotDirectoryException(null);
+		}
+
+		File currentFile = new File(CONFIG_ENV + "/SStransitionProbability.conf");
+		if (!currentFile.exists()) {
+			throw new FileNotFoundException(null);
+		}
+
+		ArrayList<String> configLines = new ArrayList<String>();
+			reader = new BufferedReader(new FileReader(currentFile));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				configLines.add(line);
+			}
+		reader.close();
+				
+		Integer row = 0;
+		for (String pattern : configLines) {
+			String[] chunks = pattern.split(",");
+			for(int col=0; col<chunks.length;col++){
+				this.transitionProb[row][col]=Float.parseFloat(chunks[col]);
+			}
+			row++;
 		}
 
 	}

@@ -120,7 +120,6 @@ public class SensorSimulationThread implements Runnable{
 
                             for (int i = 0; i < lLADL.get(llADLIndex).getPlaces().size(); i++) {
                                 tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage()));
-                                //TODO [Andrea wrote] why cast to integer of the probability?
                             }
                             agentStatus = 2;
 

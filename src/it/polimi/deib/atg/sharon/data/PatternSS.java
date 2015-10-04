@@ -71,6 +71,28 @@ public class PatternSS {
 		this.initialProb = initialProb;
 	}
     
+	public Integer getInitialSSId(){
+		float rnd=(float) Math.random();
+		
+		float cumulativeProb=0;
+		int position=0;
+		for(Float p:initialProb){
+			cumulativeProb+=p.floatValue();
+			if(rnd<cumulativeProb){
+				return this.getSsIds().get(position);
+			}
+			position++;
+		}
+		return this.getSsIds().get(this.getSsIds().size());
+	}
 	
-
+	public Integer getDifferentSS(Integer actualSS){
+		//TODO choose a SS different from the previous SS using transition prob
+		return null;
+	}
+	
+	public Integer getNextSS(Integer actualSS){
+		//TODO choose a SS using transition prob
+		return null;
+	}
 }

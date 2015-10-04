@@ -22,6 +22,8 @@
 
 package it.polimi.deib.atg.sharon.engine;
 
+import it.polimi.deib.atg.sharon.data.Sensorset;
+
 import java.util.ArrayList;
 
 public class ADLMatch {
@@ -82,5 +84,24 @@ public class ADLMatch {
 
 	public void setLLadlProbability(ArrayList<Float> lLadlProbability) {
 		LLadlProbability = lLadlProbability;
+	}
+
+	public Integer getPatternIDSS(Sensorset currentSS) {
+		
+		//TODO choose the next pattern according to the last SS 
+		
+		/*float rnd=(float) Math.random();	
+		float cumulativeProb=0;
+		int position=0;
+		for(Float p:LLadlProbability){
+			cumulativeProb+=p.floatValue();
+			if(rnd<cumulativeProb){
+				return this.getLLadl().get(position);
+			}
+			position++;
+		}
+		return this.getLLadl().get(this.getLLadl().size());
+		*/
+		return null;
 	}
 }

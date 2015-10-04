@@ -61,5 +61,10 @@ public class LowLevelSSADL {
     public void setPatternSS(PatternSS places) {
         this.patternSS= places;
     }
+    
+    public Integer getInitialSSId(){
+    	return this.patternSS.getInitialSSId();
+    }
+ 
 	
 }
