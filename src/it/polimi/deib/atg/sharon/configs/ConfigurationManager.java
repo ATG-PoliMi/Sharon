@@ -5,6 +5,7 @@ import it.polimi.deib.atg.sharon.data.Sensorset;
 public class ConfigurationManager {
 	private static ConfigurationManager instance;
 	private String CONFIG_PATH;
+	private String CONFIG_ENV;
     private String PATTERN_PRE;
     private String PATTERN_PRE_SS;
 	
@@ -12,6 +13,7 @@ public class ConfigurationManager {
     private ConfigurationManager(){
     	super();
     	this.CONFIG_PATH="config/patterns";
+    	this.CONFIG_ENV="config/env";
         this.PATTERN_PRE="patt";
         this.PATTERN_PRE_SS="pattSS";
     }
@@ -45,6 +47,14 @@ public class ConfigurationManager {
 
 	public void setPATTERN_PRE_SS(String pATTERN_PRE_SS) {
 		PATTERN_PRE_SS = pATTERN_PRE_SS;
+	}
+
+	public String getCONFIG_ENV() {
+		return CONFIG_ENV;
+	}
+
+	public void setCONFIG_ENV(String cONFIG_ENV) {
+		CONFIG_ENV = cONFIG_ENV;
 	}
     
     

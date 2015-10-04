@@ -34,6 +34,7 @@ import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
 import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class SensorsetSimulationThread implements Runnable{
 	private int action;
 	private String simulationOutputPrefix;
 
-	public SensorsetSimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, String sOutput){
+	public SensorsetSimulationThread(BlockingQueue<ADLQueue> q, int simulatedDays, String sOutput) throws IOException{
 		this.queue=q;
 		this.simulatedDays = simulatedDays;
 		this.simulationOutputPrefix = sOutput;

@@ -90,11 +90,15 @@ public class Main {
 			//Simulation by sensor
 			//sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
 			//new Thread(sensorSimulationThread).start();
+			//System.out.println("Consumer Starts");	
 			
 			//Simulation by sensorset
-			sensorsetSimulationThread = new SensorsetSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-			new Thread(sensorsetSimulationThread).start();
-			System.out.println("Consumer Starts");	
+			try{
+				sensorsetSimulationThread = new SensorsetSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+				new Thread(sensorsetSimulationThread).start();
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}			
 	}
 }
