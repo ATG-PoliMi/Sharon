@@ -25,6 +25,7 @@ package it.polimi.deib.atg.sharon.engine.thread;
 import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
+import it.polimi.deib.atg.sharon.configs.SensorsetManager;
 import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.data.Place;
 import it.polimi.deib.atg.sharon.data.Sensor;
@@ -54,6 +55,9 @@ public class SensorsetSimulationThread implements Runnable{
 	//Map<Integer, ADLMatch> matchADL;
     HouseMap houseMap;
 
+    //Sensorset Handling
+    SensorsetManager ssManager;
+    
 	//User actions
 	static int agentStatus	=	1; //1: extracting; 2: acting;
 	static int idling 		= 	0;	
@@ -82,8 +86,7 @@ public class SensorsetSimulationThread implements Runnable{
 
         houseMap = HouseMap.getInstance();
 		lLADL = LowLevelADLDB.getInstance();
-		//matchADL = ADLMatcher.getInstance();
-
+		this.ssManager= SensorsetManager.getInstance();
 	}
 
 	@Override

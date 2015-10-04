@@ -24,12 +24,12 @@ import java.util.Map;
 public class LowLevelADLDB {
 
     private Map<Integer,LowLevelADL> patternMap;
+    private Map<Integer,LowLevelSSADL> patternSSMap;
     private Map<Integer, ADLMatch> matcher = new HashMap<>();
 
-    // TODO migrate these to a single ref in the main file?
-    private static final String CONFIG_PATH="config/patterns";
-    private static final String PATTERN_PRE="patt";
-    private static final String PATTERN_PRE_SS="pattSS";
+    private static final String CONFIG_PATH =ConfigurationManager.getInstance().getCONFIG_PATH();
+    private static final String PATTERN_PRE=ConfigurationManager.getInstance().getPATTERN_PRE();
+    private static final String PATTERN_PRE_SS=ConfigurationManager.getInstance().getPATTERN_PRE_SS();
 
     private static LowLevelADLDB instance;
 
@@ -39,6 +39,7 @@ public class LowLevelADLDB {
     private LowLevelADLDB() throws NotDirectoryException, FileNotFoundException {
         patternMap = new HashMap<>();
         loadConfigs(patternMap);
+        loadSSConfigs(patternSSMap);
     }
 
     private void loadConfigs(Map<Integer, LowLevelADL> patternMap) throws NotDirectoryException, FileNotFoundException {
@@ -175,7 +176,7 @@ public class LowLevelADLDB {
                     e.printStackTrace();
                 }
             }
-            //this is the parser to import sensorset
+            //this is the parser to import sensorset patterns
             Integer numLine=0;
             for(String pattern:configLines){
             	numLine++;
