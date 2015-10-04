@@ -203,14 +203,19 @@ public class LowLevelADLDB {
                 	//id of the sensorset of the patter
                 	ssIds.add(Integer.parseInt(chunks[m]));
                 }
+                ArrayList<Float> iniProb=new ArrayList<Float>();
+                for(int m = 4+nSS; m < 4+nSS+nSS; m++ ){
+                	//id of the sensorset of the patter
+                	iniProb.add(Float.parseFloat(chunks[m]));
+                }
                 Float[][] probMatrix=new Float[nSS][nSS];
                 for(int row = 0; row < nSS; row++ ){
                 	for(int col = 0; col < nSS; col++ ){
-                		int m=4+nSS+(row*nSS)+col;
+                		int m=4+(2*nSS)+(row*nSS)+col;
                         probMatrix[row][col]= Float.parseFloat(chunks[m]);
                     }
                 }
-                PatternSS patternSS=new PatternSS(patternId,ssIds,probMatrix);
+                PatternSS patternSS=new PatternSS(patternId,ssIds,iniProb,probMatrix);
                 patternMap.put(patternId, new LowLevelSSADL(act_ID, chunks[2], patternSS));
             }
         }

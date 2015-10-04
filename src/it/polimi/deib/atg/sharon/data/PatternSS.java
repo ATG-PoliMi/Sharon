@@ -28,13 +28,15 @@ public class PatternSS {
 
     private int id;
     private ArrayList<Integer> ssIds;
+    private ArrayList<Float> initialProb;
     private Float[][] probMatrix;
 
-    public PatternSS(Integer id, ArrayList<Integer> ssIds, Float[][] probMatrix) {
+    public PatternSS(Integer id, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
         super();
         this.id = id;
+        this.initialProb = initialProb;
         this.probMatrix = probMatrix;
-        this.ssIds=ssIds;
+        this.ssIds = ssIds;
     }
 
     public int getId() {
@@ -60,6 +62,15 @@ public class PatternSS {
 	public void setSsIds(ArrayList<Integer> ssIds) {
 		this.ssIds = ssIds;
 	}
+
+	public ArrayList<Float> getInitialProb() {
+		return initialProb;
+	}
+
+	public void setInitialProb(ArrayList<Float> initialProb) {
+		this.initialProb = initialProb;
+	}
     
+	
 
 }
