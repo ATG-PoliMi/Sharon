@@ -26,6 +26,7 @@ public class LowLevelADLDB {
     private Map<Integer,LowLevelADL> patternMap;
     private Map<Integer,LowLevelSSADL> patternSSMap;
     private Map<Integer, ADLMatch> matcher = new HashMap<>();
+    private ArrayList<PatternSS> patternSSs;
 
     private static final String CONFIG_PATH =ConfigurationManager.getInstance().getCONFIG_PATH();
     private static final String PATTERN_PRE=ConfigurationManager.getInstance().getPATTERN_PRE();
@@ -38,6 +39,7 @@ public class LowLevelADLDB {
      */
     private LowLevelADLDB() throws NotDirectoryException, FileNotFoundException {
         patternMap = new HashMap<>();
+        patternSSs=new ArrayList<PatternSS>();
         loadConfigs(patternMap);
         loadSSConfigs(patternSSMap);
     }
@@ -216,8 +218,9 @@ public class LowLevelADLDB {
                         probMatrix[row][col]= Float.parseFloat(chunks[m]);
                     }
                 }
-                PatternSS patternSS=new PatternSS(patternId,ssIds,iniProb,probMatrix);
+                PatternSS patternSS=new PatternSS(patternId,chunks[2],Float.parseFloat(chunks[1]),ssIds,iniProb,probMatrix);
                 patternMap.put(patternId, new LowLevelSSADL(act_ID, chunks[2], patternSS));
+                patternSSs.add(patternSS);
             }
         }
 
@@ -245,7 +248,17 @@ public class LowLevelADLDB {
         return getInstance().patternSSMap.get(key);
     }
 
+    
     public ADLMatch getMatch(Integer key){
         return getInstance().matcher.get(key);
     }
+
+	public ArrayList<PatternSS> getPatternSSs() {
+		return patternSSs;
+	}
+
+	public void setPatternSSs(ArrayList<PatternSS> patternSSs) {
+		this.patternSSs = patternSSs;
+	}
+    
 }

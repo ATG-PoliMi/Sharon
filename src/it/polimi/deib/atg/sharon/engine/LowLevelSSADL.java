@@ -33,7 +33,6 @@ public class LowLevelSSADL {
 	String name;
 	PatternSS patternSS;
 
-
     public LowLevelSSADL(int id, String name, PatternSS places) {
         super();
 		this.id 		= id;
@@ -62,8 +61,15 @@ public class LowLevelSSADL {
         this.patternSS= places;
     }
     
-    public Integer getInitialSSId(){
-    	return this.patternSS.getInitialSSId();
+    public Integer getInitialSSIdAPrioriAndTransitionMatrix(Integer previousSSId){
+    	//This function choose the SS that maximize the probability in the transition  matrix
+    	//from the previous SS
+    	return this.patternSS.getInitialSSIdAPrioriAndTransitionMatrix(previousSSId);
+    }
+    
+    public Integer getInitialSSIdAPriori(){ 	
+    	//This function use only a priori initial probability for that pattern 
+    	return this.patternSS.getInitialSSIdAPriori(); 
     }
  
 	

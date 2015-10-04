@@ -133,4 +133,14 @@ public class SensorsetManager {
 
 	}
 
+	public Float[][] getTransitionProb() {
+		return transitionProb;
+	}
+
+	public void setTransitionProb(Float[][] transitionProb) {
+		this.transitionProb = transitionProb;
+	}
+	
+	
+
 }

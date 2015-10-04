@@ -22,18 +22,25 @@
 
 package it.polimi.deib.atg.sharon.data;
 
+import it.polimi.deib.atg.sharon.configs.SensorsetManager;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class PatternSS {
 
     private int id;
+    private String name;
+    private Float prob;
     private ArrayList<Integer> ssIds;
     private ArrayList<Float> initialProb;
     private Float[][] probMatrix;
 
-    public PatternSS(Integer id, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
+    public PatternSS(Integer id,String name, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
         super();
         this.id = id;
+        this.name=name;
+        this.prob=prob;
         this.initialProb = initialProb;
         this.probMatrix = probMatrix;
         this.ssIds = ssIds;
@@ -70,29 +77,97 @@ public class PatternSS {
 	public void setInitialProb(ArrayList<Float> initialProb) {
 		this.initialProb = initialProb;
 	}
-    
-	public Integer getInitialSSId(){
-		float rnd=(float) Math.random();
-		
+	
+	private Integer pseudoRandomchoice(ArrayList<Integer> ids, ArrayList<Float> probs){
+		Float maxProb=(float) 0;
+		for(Float p:probs){
+			maxProb+=p;
+		}
+		float rnd=(float) Math.random()*maxProb;	
 		float cumulativeProb=0;
 		int position=0;
-		for(Float p:initialProb){
+		for(Float p:probs){
 			cumulativeProb+=p.floatValue();
 			if(rnd<cumulativeProb){
-				return this.getSsIds().get(position);
+				return ids.get(position);
 			}
 			position++;
 		}
-		return this.getSsIds().get(this.getSsIds().size());
+		return ids.get(ids.size());
+	}
+	
+	public Integer getInitialSSIdAPriori(){
+		return this.pseudoRandomchoice(this.getSsIds(),this.initialProb);
+	}
+	
+	public Integer getInitialSSIdAPrioriAndTransitionMatrix(Integer previousSSId){	
+		Float maxValue=(float) 0;
+		ArrayList<Integer> maxSSid=new ArrayList<Integer>();
+		ArrayList<Float> maxSSprob=new ArrayList<Float>();
+		
+		for(int posSS=0;posSS<this.ssIds.size();posSS++){
+			//within each SS of the pattern I should find the one with highest prob
+			Float probCurrent=(float) 0.0;
+			try {
+				probCurrent=SensorsetManager.getInstance().getTransitionProb()[previousSSId][this.getSsIds().get(posSS)];
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(probCurrent.equals(maxValue)){
+				maxSSid.add(this.getSsIds().get(posSS));
+				maxSSprob.add(this.getInitialProb().get(posSS));
+			}
+			if(probCurrent>maxValue){	
+				maxValue=probCurrent;
+				maxSSid=new ArrayList<Integer>();
+				maxSSprob=new ArrayList<Float>();
+				maxSSid.add(this.getSsIds().get(posSS));
+				maxSSprob.add(this.getInitialProb().get(posSS));
+			}
+		}
+		//pseudo Random choice of the SS with highest transition probability according to their apriori initial prob
+		return this.pseudoRandomchoice(maxSSid, maxSSprob);
 	}
 	
 	public Integer getDifferentSS(Integer actualSS){
-		//TODO choose a SS different from the previous SS using transition prob
-		return null;
+		Float[][] pm=this.getProbMatrix();
+		ArrayList<Integer> sSid=new ArrayList<Integer>();
+		ArrayList<Float> sSprob=new ArrayList<Float>();
+		for(Integer idss:this.getSsIds()){
+			//here I am not considering the probability to stay in the same ss
+			if(!actualSS.equals(idss)){
+				sSid.add(idss);
+				sSprob.add(pm[actualSS][idss]);
+			}
+		}
+		return this.pseudoRandomchoice(sSid, sSprob);
 	}
 	
 	public Integer getNextSS(Integer actualSS){
-		//TODO choose a SS using transition prob
-		return null;
+		Float[][] pm=this.getProbMatrix();
+		ArrayList<Integer> sSid=new ArrayList<Integer>();
+		ArrayList<Float> sSprob=new ArrayList<Float>();
+		for(Integer idss:this.getSsIds()){
+			sSid.add(idss);
+			sSprob.add(pm[actualSS][idss]);
+		}
+		return this.pseudoRandomchoice(sSid, sSprob);
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Float getProb() {
+		return prob;
+	}
+
+	public void setProb(Float prob) {
+		this.prob = prob;
+	}
+	
 }

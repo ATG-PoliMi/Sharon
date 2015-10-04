@@ -111,7 +111,7 @@ public class SensorsetSimulationThread implements Runnable {
 			//initialization phase
 			action=1;//sleep
 			currentPattern=lLADL.getPatternSS(lLADL.getMatch(action).getPatternID());
-			initialSS = currentPattern.getInitialSSId();
+			initialSS = currentPattern.getInitialSSIdAPriori();
 			currentSS=SensorsetManager.getInstance().getSensorsetByID(initialSS);
 			
 			//loop for every second
@@ -139,7 +139,7 @@ public class SensorsetSimulationThread implements Runnable {
 							currentPattern = lLADL.getPatternSS(llADLIndex);
 
 							// chosen ss to start the pattern
-							initialSS = currentPattern.getInitialSSId();
+							initialSS = currentPattern.getInitialSSIdAPrioriAndTransitionMatrix(currentSS.getIdSensorset());
 							currentSS = SensorsetManager.getInstance().getSensorsetByID(initialSS);
 
 							// time counters set to zero
