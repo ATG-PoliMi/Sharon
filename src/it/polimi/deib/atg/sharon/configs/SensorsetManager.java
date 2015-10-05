@@ -64,7 +64,7 @@ public class SensorsetManager {
 			throw new NotDirectoryException(null);
 		}
 
-		File currentFile = new File(CONFIG_ENV + "/sensorset.conf");
+		File currentFile = new File(CONFIG_ENV + "/sensorsets.conf");
 		if (!currentFile.exists()) {
 			throw new FileNotFoundException(null);
 		}

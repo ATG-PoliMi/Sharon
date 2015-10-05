@@ -30,15 +30,17 @@ import java.util.ArrayList;
 public class PatternSS {
 
     private int id;
+    private Integer idAct;
     private String name;
     private Float prob;
     private ArrayList<Integer> ssIds;
     private ArrayList<Float> initialProb;
     private Float[][] probMatrix;
 
-    public PatternSS(Integer id,String name, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
+    public PatternSS(Integer id,Integer idAct,String name, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
         super();
         this.id = id;
+        this.idAct=idAct;
         this.name=name;
         this.prob=prob;
         this.initialProb = initialProb;
@@ -78,22 +80,33 @@ public class PatternSS {
 		this.initialProb = initialProb;
 	}
 	
-	private Integer pseudoRandomchoice(ArrayList<Integer> ids, ArrayList<Float> probs){
-		Float maxProb=(float) 0;
-		for(Float p:probs){
-			maxProb+=p;
-		}
-		float rnd=(float) Math.random()*maxProb;	
-		float cumulativeProb=0;
-		int position=0;
-		for(Float p:probs){
-			cumulativeProb+=p.floatValue();
-			if(rnd<cumulativeProb){
-				return ids.get(position);
+	private Integer pseudoRandomchoice(ArrayList<Integer> ids,ArrayList<Float> probs) {
+		try {
+			if (ids.size() > 0) {
+				Float maxProb = (float) 0;
+				for (Float p : probs) {
+					maxProb += p;
+				}
+				float rnd = (float) Math.random() * maxProb;
+				float cumulativeProb = 0;
+				int position = 0;
+				for (Float p : probs) {
+					cumulativeProb += p.floatValue();
+					if (rnd < cumulativeProb) {
+						return ids.get(position);
+					}
+					position++;
+				}
+				return ids.get(ids.size() - 1);
+			} else {
+
+				throw new Exception("The choice cannot be performed on empty list");
+
 			}
-			position++;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		return ids.get(ids.size());
 	}
 	
 	public Integer getInitialSSIdAPriori(){
@@ -109,7 +122,7 @@ public class PatternSS {
 			//within each SS of the pattern I should find the one with highest prob
 			Float probCurrent=(float) 0.0;
 			try {
-				probCurrent=SensorsetManager.getInstance().getTransitionProb()[previousSSId][this.getSsIds().get(posSS)];
+				probCurrent=SensorsetManager.getInstance().getTransitionProb()[previousSSId-1][this.getSsIds().get(posSS)-1];
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -137,7 +150,7 @@ public class PatternSS {
 			//here I am not considering the probability to stay in the same ss
 			if(!actualSS.equals(idss)){
 				sSid.add(idss);
-				sSprob.add(pm[actualSS][idss]);
+				sSprob.add(pm[actualSS-1][idss-1]);
 			}
 		}
 		return this.pseudoRandomchoice(sSid, sSprob);
@@ -149,7 +162,7 @@ public class PatternSS {
 		ArrayList<Float> sSprob=new ArrayList<Float>();
 		for(Integer idss:this.getSsIds()){
 			sSid.add(idss);
-			sSprob.add(pm[actualSS][idss]);
+			sSprob.add(pm[actualSS-1][idss-1]);
 		}
 		return this.pseudoRandomchoice(sSid, sSprob);
 	}
@@ -168,6 +181,14 @@ public class PatternSS {
 
 	public void setProb(Float prob) {
 		this.prob = prob;
+	}
+
+	public Integer getIdAct() {
+		return idAct;
+	}
+
+	public void setIdAct(Integer idAct) {
+		this.idAct = idAct;
 	}
 	
 }

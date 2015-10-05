@@ -2,6 +2,7 @@ package it.polimi.deib.atg.sharon.configs;
 
 import it.polimi.deib.atg.sharon.data.PatternPlace;
 import it.polimi.deib.atg.sharon.data.PatternSS;
+import it.polimi.deib.atg.sharon.data.Sensorset;
 import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.LowLevelADL;
 import it.polimi.deib.atg.sharon.engine.LowLevelSSADL;
@@ -39,8 +40,9 @@ public class LowLevelADLDB {
      */
     private LowLevelADLDB() throws NotDirectoryException, FileNotFoundException {
         patternMap = new HashMap<>();
+        patternSSMap = new HashMap<>();
         patternSSs=new ArrayList<PatternSS>();
-        loadConfigs(patternMap);
+        //loadConfigs(patternMap);
         loadSSConfigs(patternSSMap);
     }
 
@@ -218,7 +220,7 @@ public class LowLevelADLDB {
                         probMatrix[row][col]= Float.parseFloat(chunks[m]);
                     }
                 }
-                PatternSS patternSS=new PatternSS(patternId,chunks[2],Float.parseFloat(chunks[1]),ssIds,iniProb,probMatrix);
+                PatternSS patternSS=new PatternSS(patternId,act_ID,chunks[2],Float.parseFloat(chunks[1]),ssIds,iniProb,probMatrix);
                 patternMap.put(patternId, new LowLevelSSADL(act_ID, chunks[2], patternSS));
                 patternSSs.add(patternSS);
             }
@@ -244,8 +246,13 @@ public class LowLevelADLDB {
         return getInstance().patternMap.get(key);
     }
     
-    public LowLevelSSADL getPatternSS(Integer key){
-        return getInstance().patternSSMap.get(key);
+    public PatternSS getPatternSS(Integer key){
+        for(PatternSS pss:patternSSs){
+        	if(pss.getId()==key){
+        		return pss;
+        	}
+        }
+        return null;
     }
 
     
@@ -261,4 +268,74 @@ public class LowLevelADLDB {
 		this.patternSSs = patternSSs;
 	}
     
+	private ArrayList<PatternSS> getPatternsSSbyAct(Integer idAct){
+		ArrayList<PatternSS> pss=new ArrayList<PatternSS>();
+		for(PatternSS ps:patternSSs){
+			if (ps.getIdAct().equals(idAct)){
+				pss.add(ps);
+			}
+		}
+		return pss;
+	}
+	
+	public Integer getPatternIDSS(Sensorset currentSS,Integer idAct) {
+		
+		ArrayList<PatternSS> allPatterns=getPatternsSSbyAct(idAct);
+		
+		//choose the next pattern according to the last SS
+		
+		//for every Pattern retrieve the max probability
+		Float absoluteMax=(float) 0;
+		Float[] maxProbForPattern=new Float[allPatterns.size()];
+		for(int posPattern=0; posPattern<allPatterns.size();posPattern++){
+			PatternSS patternSS=allPatterns.get(posPattern);
+			Float maxValue=(float) 0;
+			for(int posSS=0;posSS<patternSS.getSsIds().size();posSS++){
+				//within each SS of the pattern I should find the one with highest prob
+				Float probCurrent=(float) 0.0;
+				try {
+					probCurrent=SensorsetManager.getInstance().getTransitionProb()[currentSS.getIdSensorset()-1][patternSS.getSsIds().get(posSS)-1]; 
+					//-1 because the id of the sensorsets are ordered starting from 1 but the position in the matrix starts from zero
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if(probCurrent>=maxValue){
+					maxValue=probCurrent;
+				}
+			}
+			maxProbForPattern[posPattern]=maxValue;
+			if(maxValue>=absoluteMax){
+				absoluteMax=maxValue;
+			}
+		}
+		
+		//retrieve the list of the pattern with highest probability (can be more than one with same prob)
+		ArrayList<Integer> idToConsider=new ArrayList<Integer>();
+		ArrayList<Float> initialProb=new ArrayList<Float>();
+		Float maxPrioriProb=(float) 0;
+		for(int pos=0;pos<maxProbForPattern.length;pos++){
+			if(maxProbForPattern[pos]>=absoluteMax){
+				PatternSS pss=allPatterns.get(pos);
+				idToConsider.add(pss.getId());
+				initialProb.add(pss.getProb());
+				maxPrioriProb+=pss.getProb();
+			}
+		}
+		
+	
+		//choose pseudoRandomly among the selected one according to the a priori probability
+		Integer selectedPatternId=0;
+		float rnd=(float) Math.random()*maxPrioriProb;	
+		float cumulativeProb=0;
+		int position=0;
+		for(Float p:initialProb){
+			cumulativeProb+=p.floatValue();
+			if(rnd<=cumulativeProb){
+				selectedPatternId= idToConsider.get(position);
+			}
+			position++;
+		}
+		
+		return selectedPatternId;
+	} 
 }

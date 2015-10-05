@@ -45,9 +45,7 @@ public class ADLMatch {
 	}
 	
 	public Integer getPatternID(){
-		float rnd=(float) Math.random();
-		
-		
+		float rnd=(float) Math.random();	
 		float cumulativeProb=0;
 		int position=0;
 		for(Float p:LLadlProbability){
@@ -57,7 +55,7 @@ public class ADLMatch {
 			}
 			position++;
 		}
-		return this.getLLadl().get(this.getLLadl().size());
+		return this.getLLadl().get(this.getLLadl().size()-1);
 	}
 
 
@@ -90,61 +88,62 @@ public class ADLMatch {
 		LLadlProbability = lLadlProbability;
 	}
 
-	public Integer getPatternIDSS(Sensorset currentSS) {
-		
-		//choose the next pattern according to the last SS
-		
-		//for every Pattern retrieve the max probability
-		Float absoluteMax=(float) 0;
-		Float[] maxProbForPattern=new Float[LowLevelADLDB.getInstance().getPatternSSs().size()];
-		for(int posPattern=0; posPattern<LowLevelADLDB.getInstance().getPatternSSs().size();posPattern++){
-			PatternSS patternSS=LowLevelADLDB.getInstance().getPatternSSs().get(posPattern);
-			Float maxValue=(float) 0;
-			for(int posSS=0;posSS<patternSS.getSsIds().size();posSS++){
-				//within each SS of the pattern I should find the one with highest prob
-				Float probCurrent=(float) 0.0;
-				try {
-					probCurrent=SensorsetManager.getInstance().getTransitionProb()[currentSS.getIdSensorset()][patternSS.getSsIds().get(posSS)];
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if(probCurrent>=maxValue){
-					maxValue=probCurrent;
-				}
-			}
-			maxProbForPattern[posPattern]=maxValue;
-			if(maxValue>=absoluteMax){
-				absoluteMax=maxValue;
-			}
-		}
-		
-		//retrieve the list of the pattern with highest probability (can be more than one with same prob)
-		ArrayList<Integer> idToConsider=new ArrayList<Integer>();
-		ArrayList<Float> initialProb=new ArrayList<Float>();
-		Float maxPrioriProb=(float) 0;
-		for(int pos=0;pos<maxProbForPattern.length;pos++){
-			if(maxProbForPattern[pos]>=absoluteMax){
-				PatternSS pss=LowLevelADLDB.getInstance().getPatternSSs().get(pos);
-				idToConsider.add(pss.getId());
-				initialProb.add(pss.getProb());
-				maxPrioriProb+=pss.getProb();
-			}
-		}
-		
-	
-		//choose pseudoRandomly among the selected one according to the a priori probability
-		Integer selectedPatternId=0;
-		float rnd=(float) Math.random()*maxPrioriProb;	
-		float cumulativeProb=0;
-		int position=0;
-		for(Float p:initialProb){
-			cumulativeProb+=p.floatValue();
-			if(rnd<=cumulativeProb){
-				selectedPatternId= idToConsider.get(position);
-			}
-			position++;
-		}
-		
-		return selectedPatternId;
-	}
+//	public Integer getPatternIDSS(Sensorset currentSS) {
+//		
+//		//choose the next pattern according to the last SS
+//		
+//		//for every Pattern retrieve the max probability
+//		Float absoluteMax=(float) 0;
+//		Float[] maxProbForPattern=new Float[LowLevelADLDB.getInstance().getPatternSSs().size()];
+//		for(int posPattern=0; posPattern<LowLevelADLDB.getInstance().getPatternSSs().size();posPattern++){
+//			PatternSS patternSS=LowLevelADLDB.getInstance().getPatternSSs().get(posPattern);
+//			Float maxValue=(float) 0;
+//			for(int posSS=0;posSS<patternSS.getSsIds().size();posSS++){
+//				//within each SS of the pattern I should find the one with highest prob
+//				Float probCurrent=(float) 0.0;
+//				try {
+//					probCurrent=SensorsetManager.getInstance().getTransitionProb()[currentSS.getIdSensorset()-1][patternSS.getSsIds().get(posSS)-1]; 
+//					//-1 because the id of the sensorsets are ordered starting from 1 but the position in the matrix starts from zero
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				if(probCurrent>=maxValue){
+//					maxValue=probCurrent;
+//				}
+//			}
+//			maxProbForPattern[posPattern]=maxValue;
+//			if(maxValue>=absoluteMax){
+//				absoluteMax=maxValue;
+//			}
+//		}
+//		
+//		//retrieve the list of the pattern with highest probability (can be more than one with same prob)
+//		ArrayList<Integer> idToConsider=new ArrayList<Integer>();
+//		ArrayList<Float> initialProb=new ArrayList<Float>();
+//		Float maxPrioriProb=(float) 0;
+//		for(int pos=0;pos<maxProbForPattern.length;pos++){
+//			if(maxProbForPattern[pos]>=absoluteMax){
+//				PatternSS pss=LowLevelADLDB.getInstance().getPatternSSs().get(pos);
+//				idToConsider.add(pss.getId());
+//				initialProb.add(pss.getProb());
+//				maxPrioriProb+=pss.getProb();
+//			}
+//		}
+//		
+//	
+//		//choose pseudoRandomly among the selected one according to the a priori probability
+//		Integer selectedPatternId=0;
+//		float rnd=(float) Math.random()*maxPrioriProb;	
+//		float cumulativeProb=0;
+//		int position=0;
+//		for(Float p:initialProb){
+//			cumulativeProb+=p.floatValue();
+//			if(rnd<=cumulativeProb){
+//				selectedPatternId= idToConsider.get(position);
+//			}
+//			position++;
+//		}
+//		
+//		return selectedPatternId;
+//	}
 }

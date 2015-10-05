@@ -22,34 +22,26 @@
 
 package it.polimi.deib.atg.sharon.engine.thread;
 
-import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
 import it.polimi.deib.atg.sharon.data.Coordinate;
-import it.polimi.deib.atg.sharon.data.Place;
+import it.polimi.deib.atg.sharon.data.PatternSS;
 import it.polimi.deib.atg.sharon.data.Sensor;
 import it.polimi.deib.atg.sharon.data.Sensorset;
 import it.polimi.deib.atg.sharon.engine.ADL;
-import it.polimi.deib.atg.sharon.engine.LowLevelSSADL;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
-import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 public class SensorsetSimulationThread implements Runnable {
 
 	private Coordinate actor = new Coordinate(10, 10);
-	private Coordinate Target = new Coordinate(15, 25);
-	private DijkstraEngine DE;
 	int[][] worldMapMatrix;
-	private ArrayList<String> path = new ArrayList<String>();
-	private String delims = ",";
 
 	// ADL Handling
 	Map<Integer, ADL> hLADL;
@@ -59,7 +51,7 @@ public class SensorsetSimulationThread implements Runnable {
 
 	// Sensorset Handling
 	SensorsetManager ssManager;
-	LowLevelSSADL currentPattern;
+	PatternSS currentPattern;
 	Integer initialSS;
 	Sensorset currentSS;
 	Integer newSSId;
@@ -77,7 +69,6 @@ public class SensorsetSimulationThread implements Runnable {
 
 	// TARGETS
 	private Integer llADLIndex;
-	private static int placesCounter = 0; // Place Counter
 
 	// Support ADL
 	static CumulateHistogram hist = new CumulateHistogram();
@@ -101,7 +92,6 @@ public class SensorsetSimulationThread implements Runnable {
 	@Override
 	public void run() {
 
-		int emptyN = 0;
 		PrintWriter out;
 		try {
 			Thread.sleep(1000);
@@ -115,7 +105,7 @@ public class SensorsetSimulationThread implements Runnable {
 			currentSS=SensorsetManager.getInstance().getSensorsetByID(initialSS);
 			
 			//loop for every second
-			for (timeInstant = 0; timeInstant < (86400 * simulatedDays) - 5000; timeInstant++) {
+			for (timeInstant = 0; timeInstant < (86400 * simulatedDays) -5000; timeInstant++) {
 
 				idling++;
 				switch (agentStatus) {
@@ -125,7 +115,6 @@ public class SensorsetSimulationThread implements Runnable {
 						if (queue.isEmpty()) {
 							System.out.println("***** A: EMPTY queue *****");
 							timeInstant--;
-							emptyN++;
 
 						} else {
 							CADL = queue.take();
@@ -133,7 +122,8 @@ public class SensorsetSimulationThread implements Runnable {
 							totalTimePattern = (int) (long) CADL.getTime(); // TODO check the cast here... should be ok
 							
 							//choose the pattern according to the last sensorset and the probability
-							llADLIndex = lLADL.getMatch(action).getPatternIDSS(currentSS); 
+							//llADLIndex = lLADL.getMatch(action).getPatternIDSS(currentSS); 
+							llADLIndex = lLADL.getPatternIDSS(currentSS,action);
 							
 							// chosen pattern for the activity
 							currentPattern = lLADL.getPatternSS(llADLIndex);
@@ -169,10 +159,10 @@ public class SensorsetSimulationThread implements Runnable {
 							//if the actual duration of this ss is > then its minimum is possible to change
 							if(currentTimeSS>=currentSS.getMaxTime()){
 								//force to change SS
-								newSSId=currentPattern.getPatternSS().getDifferentSS(currentSS.getIdSensorset());
+								newSSId=currentPattern.getDifferentSS(currentSS.getIdSensorset());
 							}else{
 								//compute using probability the next SS (can be the same)
-								newSSId=currentPattern.getPatternSS().getNextSS(currentSS.getIdSensorset());
+								newSSId=currentPattern.getNextSS(currentSS.getIdSensorset());
 							}
 							if(!newSSId.equals(currentSS.getIdSensorset())){
 								currentTimeSS=0;
@@ -188,47 +178,22 @@ public class SensorsetSimulationThread implements Runnable {
 					out = new PrintWriter(new FileWriter(simulationOutputPrefix
 							+ (int) timeInstant / 86400 + ".txt"));
 				}
-				out.println(printActiveSensors(action,currentSS));
-				out.close();
+				out.println(printActiveSensors(action,currentSS));		
 			}
-
+			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void newTarget(int indexSensor) {
-		DE = new DijkstraEngine();
-		worldMapMatrix = HouseMap.getMap();
-		DE.buildAdjacencyMatrix(worldMapMatrix);
 
-		Sensor[] s = HouseMap.getS();
-
-		Target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
-
-		// Start point:
-		DE.setInitial(actor.getX() + "," + actor.getY());
-
-		// End point:
-		path = DE.computePath(Target.getX() + "," + Target.getY());
-		// System.out.println("PATH:"+path);
-
-	}
-	
-	/**
-	 * printActiveSensors computes the values for each sensor of the house and
-	 * returns a String in the following format:
-	 * "timeInstant, home area, ADL id, UserX, UserY, sensors 0-k"
-	 * 
-	 * @return
-	 */
 	public String printActiveSensors(int action,Sensorset currentSS) {
 
 		String activeSensors = "";
 
 		Sensor[] sensorsArray = HouseMap.getS();
 
-		activeSensors += timeInstant;
+		activeSensors += timeInstant % 86400;
 		activeSensors += ", ";
 		
 		int sId=0;
@@ -247,7 +212,6 @@ public class SensorsetSimulationThread implements Runnable {
 		activeSensors += (int) actor.getX() * (HouseMap.scale);
 		activeSensors += ", ";
 		activeSensors += (int) actor.getY() * (HouseMap.scale);
-
 		return activeSensors;
 	}
 }
