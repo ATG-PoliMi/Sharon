@@ -32,16 +32,18 @@ public class PatternSS {
     private int id;
     private Integer idAct;
     private String name;
+    private String nameAct;
     private Float prob;
     private ArrayList<Integer> ssIds;
     private ArrayList<Float> initialProb;
     private Float[][] probMatrix;
 
-    public PatternSS(Integer id,Integer idAct,String name, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
+    public PatternSS(Integer id,Integer idAct,String name,String nameAct, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
         super();
         this.id = id;
         this.idAct=idAct;
         this.name=name;
+        this.nameAct=nameAct;
         this.prob=prob;
         this.initialProb = initialProb;
         this.probMatrix = probMatrix;
@@ -100,8 +102,10 @@ public class PatternSS {
 				return ids.get(ids.size() - 1);
 			} else {
 
-				throw new Exception("The choice cannot be performed on empty list");
-
+				//throw new Exception("The choice cannot be performed on empty list");
+				//we are forcing a sensorset which is the only one in the pattern to stay more than 
+				//its maximum time to complete the pattern time
+				return null;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -142,6 +146,17 @@ public class PatternSS {
 		return this.pseudoRandomchoice(maxSSid, maxSSprob);
 	}
 	
+	public Integer getPosOfIdInList(ArrayList<Integer> l,Integer id){
+		int pos=0;
+		for(Integer num:l){
+			if (num==id){
+				return pos;
+			}
+			pos++;
+		}
+		return 0;
+	}
+	
 	public Integer getDifferentSS(Integer actualSS){
 		Float[][] pm=this.getProbMatrix();
 		ArrayList<Integer> sSid=new ArrayList<Integer>();
@@ -150,10 +165,14 @@ public class PatternSS {
 			//here I am not considering the probability to stay in the same ss
 			if(!actualSS.equals(idss)){
 				sSid.add(idss);
-				sSprob.add(pm[actualSS-1][idss-1]);
+				sSprob.add(pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idss)]);
 			}
 		}
-		return this.pseudoRandomchoice(sSid, sSprob);
+		Integer returned=this.pseudoRandomchoice(sSid, sSprob);
+		if (returned==null){
+			returned=getNextSS(actualSS);
+		}
+		return returned;
 	}
 	
 	public Integer getNextSS(Integer actualSS){
@@ -162,7 +181,11 @@ public class PatternSS {
 		ArrayList<Float> sSprob=new ArrayList<Float>();
 		for(Integer idss:this.getSsIds()){
 			sSid.add(idss);
-			sSprob.add(pm[actualSS-1][idss-1]);
+			try{
+				sSprob.add(pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idss)]);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		return this.pseudoRandomchoice(sSid, sSprob);
 	}
@@ -189,6 +212,14 @@ public class PatternSS {
 
 	public void setIdAct(Integer idAct) {
 		this.idAct = idAct;
+	}
+
+	public String getNameAct() {
+		return nameAct;
+	}
+
+	public void setNameAct(String nameAct) {
+		this.nameAct = nameAct;
 	}
 	
 }

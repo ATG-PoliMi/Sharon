@@ -51,7 +51,7 @@ public class ActivitySimulationThread implements Runnable {
 	private BlockingQueue<ADLQueue> queue;
 
 	//ADL Handling
-	static LowLevelADLDB lLADL;
+	//static LowLevelADLDB lLADL;
 	//static Map<Integer, ADLMatch> 	matchADL;
 
 	//User actions
@@ -75,7 +75,7 @@ public class ActivitySimulationThread implements Runnable {
         this.outFile = null;
 
         //	HighLevelADLDB.getInstance().getAdlmap()		= 	HighLevelADLDB.getInstance().getAdlmap();
-		lLADL 		= 	LowLevelADLDB.getInstance();
+		//lLADL 		= 	LowLevelADLDB.getInstance();
 		ongoingAdl = 	HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
 	}
 
@@ -104,7 +104,7 @@ public class ActivitySimulationThread implements Runnable {
 						if (Main.ENABLE_SENSORS_ACTIVITY)
 							queue.put(ADLQ);
 
-						System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
+						//TODO Andrea comment System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
                         ADL adl = HighLevelADLDB.getInstance().getADLById(ADLQ.getADLId());
                         outFile.println(timeInstant+","+ ongoingAdl.getId()+","+ ongoingAdl.getName()+","+new Time(timeInstant % 86400) );
 
@@ -148,7 +148,7 @@ public class ActivitySimulationThread implements Runnable {
 				ongoingAdl = bestAdl;
 				ongoingAdl.setActive(true);
 				elapsed_time = 0;
-                this.printVerboseOnConsole();
+                //TODO andrea comment this.printVerboseOnConsole();
 				return X;
 			}
 		}

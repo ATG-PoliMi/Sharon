@@ -184,7 +184,14 @@ public class HouseMap {
     public static Sensor[] getS() {
         return getInstance().s;
     }
-
+    
+    public Sensor getSensorById(Integer sid){
+    	if((sid>0)&&(sid<=this.s.length)){
+    		return this.s[sid-1];
+    	}
+    	return null;
+    }
+    
     public static Place[] getP() {
         return getInstance().p;
     }

@@ -42,6 +42,7 @@ public class LowLevelADLDB {
         patternMap = new HashMap<>();
         patternSSMap = new HashMap<>();
         patternSSs=new ArrayList<PatternSS>();
+        //TODO switch
         //loadConfigs(patternMap);
         loadSSConfigs(patternSSMap);
     }
@@ -185,7 +186,6 @@ public class LowLevelADLDB {
             for(String pattern:configLines){
             	numLine++;
                 // idAct, prob, Name, numberOfSSInPattern, listOfSSID (comma separated), listOfInitialProb, matrix of probability in line
-            
                 String[] chunks = pattern.split(",");
 
                 if (chunks.length < 6){
@@ -220,7 +220,8 @@ public class LowLevelADLDB {
                         probMatrix[row][col]= Float.parseFloat(chunks[m]);
                     }
                 }
-                PatternSS patternSS=new PatternSS(patternId,act_ID,chunks[2],Float.parseFloat(chunks[1]),ssIds,iniProb,probMatrix);
+                String nameAct=HighLevelADLDB.getInstance().getADLById(act_ID).getName();
+                PatternSS patternSS=new PatternSS(patternId,act_ID,chunks[2],nameAct,Float.parseFloat(chunks[1]),ssIds,iniProb,probMatrix);
                 patternMap.put(patternId, new LowLevelSSADL(act_ID, chunks[2], patternSS));
                 patternSSs.add(patternSS);
             }

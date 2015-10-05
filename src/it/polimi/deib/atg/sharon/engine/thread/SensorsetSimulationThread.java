@@ -113,14 +113,14 @@ public class SensorsetSimulationThread implements Runnable {
 					ADLQueue CADL;
 					try {
 						if (queue.isEmpty()) {
-							System.out.println("***** A: EMPTY queue *****");
+							System.out.println("***** A: EMPTY queue SensorsetSimulation *****");
 							timeInstant--;
-
+							throw new Exception("***** A: EMPTY queue SensorsetSimulation *****");
 						} else {
 							CADL = queue.take();
 							action = CADL.getADLId();
 							totalTimePattern = (int) (long) CADL.getTime(); // TODO check the cast here... should be ok
-							
+							System.out.println("Time for the current activity"+totalTimePattern);
 							//choose the pattern according to the last sensorset and the probability
 							//llADLIndex = lLADL.getMatch(action).getPatternIDSS(currentSS); 
 							llADLIndex = lLADL.getPatternIDSS(currentSS,action);
@@ -153,6 +153,8 @@ public class SensorsetSimulationThread implements Runnable {
 					currentTimePattern++;
 					if(currentTimePattern.equals(totalTimePattern)){
 						//force to change the activity
+						System.out.println("Generated time for current activity"+currentTimePattern);
+						currentTimePattern=0;
 						agentStatus=1;
 					}else{
 						if(currentTimeSS>currentSS.getMinTime()){
@@ -178,7 +180,7 @@ public class SensorsetSimulationThread implements Runnable {
 					out = new PrintWriter(new FileWriter(simulationOutputPrefix
 							+ (int) timeInstant / 86400 + ".txt"));
 				}
-				out.println(printActiveSensors(action,currentSS));		
+				out.println(printActiveSensors2(action,currentSS,currentPattern.getName(),currentPattern.getNameAct()));		
 			}
 			out.close();
 		} catch (Exception e) {
@@ -212,6 +214,29 @@ public class SensorsetSimulationThread implements Runnable {
 		activeSensors += (int) actor.getX() * (HouseMap.scale);
 		activeSensors += ", ";
 		activeSensors += (int) actor.getY() * (HouseMap.scale);
+		return activeSensors;
+	}
+	
+	public String printActiveSensors2(int action,Sensorset currentSS,String pattName,String aname) {
+
+		String activeSensors = "";
+
+		Sensor[] sensorsArray = HouseMap.getS();
+
+		activeSensors += timeInstant % 86400;
+		activeSensors += ", "+aname+"  -----";
+		
+		int sId=0;
+		for (Sensor aSensorsArray : sensorsArray) {
+			sId++;
+			if(currentSS.getActivatedSensorsId().contains(sId)){
+				//activeSensors +="1, ";
+				activeSensors +=this.houseMap.getSensorById(sId).getName()+", ";
+			}
+		}
+
+		// and ground truth
+		activeSensors += "-----   "+pattName;
 		return activeSensors;
 	}
 }

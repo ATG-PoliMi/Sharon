@@ -1,20 +1,14 @@
 package it.polimi.deib.atg.sharon.configs;
 
-import it.polimi.deib.atg.sharon.data.PatternSS;
 import it.polimi.deib.atg.sharon.data.Sensorset;
-import it.polimi.deib.atg.sharon.engine.ADLMatch;
-import it.polimi.deib.atg.sharon.engine.LowLevelSSADL;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class SensorsetManager {
 	private static SensorsetManager instance;
