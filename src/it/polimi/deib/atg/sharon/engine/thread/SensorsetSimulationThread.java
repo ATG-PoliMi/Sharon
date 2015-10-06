@@ -41,6 +41,9 @@ import java.util.concurrent.BlockingQueue;
 public class SensorsetSimulationThread implements Runnable {
 
 	private Coordinate actor = new Coordinate(10, 10);
+	private static Boolean printConsoleActPatternSS=false;
+	private static Boolean fileHumanReadable=false;
+	private static Boolean shortPrint=false;
 	int[][] worldMapMatrix;
 
 	// ADL Handling
@@ -54,6 +57,7 @@ public class SensorsetSimulationThread implements Runnable {
 	PatternSS currentPattern;
 	Integer initialSS;
 	Sensorset currentSS;
+	Sensorset previousSS;
 	Integer newSSId;
 	Integer currentTimePattern;
 	Integer currentTimeSS;
@@ -103,6 +107,7 @@ public class SensorsetSimulationThread implements Runnable {
 			currentPattern=lLADL.getPatternSS(lLADL.getMatch(action).getPatternID());
 			initialSS = currentPattern.getInitialSSIdAPriori();
 			currentSS=SensorsetManager.getInstance().getSensorsetByID(initialSS);
+			previousSS=currentSS;
 			
 			//loop for every second
 			for (timeInstant = 0; timeInstant < (86400 * simulatedDays) ; timeInstant++) {
@@ -136,7 +141,14 @@ public class SensorsetSimulationThread implements Runnable {
 							// time counters set to zero
 							currentTimeSS = 0;
 							currentTimePattern = 0;
-
+							
+							if(printConsoleActPatternSS){
+								String sssids=" ids of SSs: ";
+								for(Integer sss:currentPattern.getSsIds()){
+									sssids+=sss.toString()+" , ";
+								}
+								System.out.println("Second: "+timeInstant+" actionId: "+action+" action: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName()+sssids);
+							}
 							agentStatus = 2;
 
 						}
@@ -181,7 +193,14 @@ public class SensorsetSimulationThread implements Runnable {
 					out = new PrintWriter(new FileWriter(simulationOutputPrefix
 							+ (int) timeInstant / 86400 + ".txt"));
 				}
-				out.println(printActiveSensors2(action,currentSS,currentPattern.getName(),currentPattern.getNameAct()));		
+				if((!shortPrint)||(!previousSS.equals(currentSS))){
+					if(fileHumanReadable){
+						out.println(printActiveSensors2(action,currentSS,currentPattern.getName(),currentPattern.getNameAct()));		
+					}else{
+						out.println(printActiveSensors(action,currentSS));
+					}
+				}
+				previousSS=currentSS;
 			}
 			out.close();
 		} catch (Exception e) {
@@ -212,10 +231,10 @@ public class SensorsetSimulationThread implements Runnable {
 
 		// and ground truth
 		activeSensors += action;
-		activeSensors += ", ";
-		activeSensors += (int) actor.getX() * (HouseMap.scale);
-		activeSensors += ", ";
-		activeSensors += (int) actor.getY() * (HouseMap.scale);
+		//activeSensors += ", ";
+		//activeSensors += (int) actor.getX() * (HouseMap.scale);
+		//activeSensors += ", ";
+		//activeSensors += (int) actor.getY() * (HouseMap.scale);
 		return activeSensors;
 	}
 	
@@ -226,16 +245,21 @@ public class SensorsetSimulationThread implements Runnable {
 		Sensor[] sensorsArray = HouseMap.getS();
 
 		activeSensors += timeInstant % 86400;
-		activeSensors += ", "+aname+"  -----";
+		activeSensors += ", "+aname+" ss: "+currentSS.getIdSensorset()+" nsens: "+currentSS.getActivatedSensorsId().size()+" -----";
 		
-		int sId=0;
+		/*int sId=0;
 		for (Sensor aSensorsArray : sensorsArray) {
 			sId++;
 			if(currentSS.getActivatedSensorsId().contains(sId)){
 				//activeSensors +="1, ";
 				activeSensors +=this.houseMap.getSensorById(sId).getName()+", ";
 			}
+		}*/
+		
+		for(Integer i:currentSS.getActivatedSensorsId()){
+			activeSensors +=this.houseMap.getSensorById(i).getName()+", ";
 		}
+		
 
 		// and ground truth
 		activeSensors += "-----   "+pattName;

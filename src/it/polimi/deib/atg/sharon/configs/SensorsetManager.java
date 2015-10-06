@@ -36,19 +36,20 @@ public class SensorsetManager {
 
 	public Sensorset getSensorsetByID(Integer idSensorset) {
 		for (Sensorset ss : sensorsets) {
-			if (ss.getIdSensorset() == idSensorset) {
+			if (ss.getIdSensorset().equals(idSensorset)) {
 				return ss;
 			}
 		}
-		return new Sensorset(idSensorset);
+		return null;
 	}
 
 	public void addSensorset(Integer idSensorset, Integer minTime,
 			Integer maxTime, ArrayList<Integer> activatedSensorsId) {
-		Sensorset ss = this.getSensorsetByID(idSensorset);
-		ss.setMinTime(minTime);
-		ss.setMaxTime(maxTime);
-		ss.setActivatedSensorsId(activatedSensorsId);
+		//Sensorset ss = this.getSensorsetByID(idSensorset);
+		//ss.setMinTime(minTime);
+		//ss.setMaxTime(maxTime);
+		//ss.setActivatedSensorsId(activatedSensorsId);
+		Sensorset ss=new Sensorset(idSensorset, minTime, maxTime, activatedSensorsId);
 		sensorsets.add(ss);
 	}
 
@@ -82,17 +83,17 @@ public class SensorsetManager {
 			if (chunks.length < 3) {
 				// TODO throw proper exception
 			}
-
 			Integer ss_ID = Integer.parseInt(chunks[0]);
 			Integer minTime = Integer.parseInt(chunks[1]);
 			Integer maxTime = Integer.parseInt(chunks[2]);
 			ArrayList<Integer> actSensorId=new ArrayList<Integer>();
-			if(chunks.length>3){
-				for(int pos=4; pos<chunks.length;pos++){
+				for(int pos=3; pos<chunks.length;pos++){
 					actSensorId.add(Integer.parseInt(chunks[pos]));
 				}
-			}
 			this.addSensorset(ss_ID, minTime, maxTime, actSensorId);
+			if(actSensorId.size()==0){
+				System.out.println("SS id "+ss_ID+" has 0 activated sensors");
+			}
 		}
 
 	}
