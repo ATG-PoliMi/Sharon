@@ -32,12 +32,10 @@ import java.util.concurrent.BlockingQueue;
 
 import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
-import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
-import it.polimi.deib.atg.sharon.engine.LowLevelADL;
+
 import it.polimi.deib.atg.sharon.data.Day;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.engine.ADLEffect;
-import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.Needs;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;

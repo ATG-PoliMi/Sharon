@@ -44,11 +44,7 @@ public class SensorsetManager {
 	}
 
 	public void addSensorset(Integer idSensorset, Integer minTime,
-			Integer maxTime, ArrayList<Integer> activatedSensorsId) {
-		//Sensorset ss = this.getSensorsetByID(idSensorset);
-		//ss.setMinTime(minTime);
-		//ss.setMaxTime(maxTime);
-		//ss.setActivatedSensorsId(activatedSensorsId);
+		Integer maxTime, ArrayList<Integer> activatedSensorsId) {
 		Sensorset ss=new Sensorset(idSensorset, minTime, maxTime, activatedSensorsId);
 		sensorsets.add(ss);
 	}

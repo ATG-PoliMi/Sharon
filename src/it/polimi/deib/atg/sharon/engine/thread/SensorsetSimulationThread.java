@@ -40,7 +40,6 @@ import java.util.concurrent.BlockingQueue;
 
 public class SensorsetSimulationThread implements Runnable {
 
-	private Coordinate actor = new Coordinate(10, 10);
 	private static Boolean printConsoleActPatternSS=false;
 	private static Boolean fileHumanReadable=false;
 	private static Boolean shortPrint=false;
@@ -126,9 +125,8 @@ public class SensorsetSimulationThread implements Runnable {
 							CADL = queue.take();
 							action = CADL.getADLId();
 							totalTimePattern = (int) (long) CADL.getTime(); // TODO check the cast here... should be ok
-							//System.out.println("Time for the current activity"+totalTimePattern);
+							
 							//choose the pattern according to the last sensorset and the probability
-							//llADLIndex = lLADL.getMatch(action).getPatternIDSS(currentSS); 
 							llADLIndex = lLADL.getPatternIDSS(currentSS,action);
 							
 							// chosen pattern for the activity
@@ -166,7 +164,6 @@ public class SensorsetSimulationThread implements Runnable {
 					currentTimePattern++;
 					if(currentTimePattern.equals(totalTimePattern)){
 						//force to change the activity
-						//System.out.println("Generated time for current activity"+currentTimePattern);
 						currentTimePattern=0;
 						agentStatus=1;
 					}else{
@@ -231,18 +228,12 @@ public class SensorsetSimulationThread implements Runnable {
 
 		// and ground truth
 		activeSensors += action;
-		//activeSensors += ", ";
-		//activeSensors += (int) actor.getX() * (HouseMap.scale);
-		//activeSensors += ", ";
-		//activeSensors += (int) actor.getY() * (HouseMap.scale);
 		return activeSensors;
 	}
 	
 	public String printActiveSensors2(int action,Sensorset currentSS,String pattName,String aname) {
 
 		String activeSensors = "";
-
-		Sensor[] sensorsArray = HouseMap.getS();
 
 		activeSensors += timeInstant % 86400;
 		activeSensors += ", "+aname+" ss: "+currentSS.getIdSensorset()+" nsens: "+currentSS.getActivatedSensorsId().size()+" -----";
