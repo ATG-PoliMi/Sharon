@@ -29,7 +29,8 @@ import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.data.Place;
 import it.polimi.deib.atg.sharon.data.Sensor;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
-import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
+import it.polimi.deib.atg.sharon.utils.PathEngine;
+import it.polimi.deib.atg.sharon.utils.astar.AstarEngine;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -41,10 +42,10 @@ public class SensorSimulationThread implements Runnable{
 
 	private Coordinate actor = new Coordinate (10,10);
 	private Coordinate Target = new Coordinate(15, 25);
-	private DijkstraEngine DE;
-	int[][] worldMapMatrix;
-	private ArrayList<String> path = new ArrayList<String>();
-	private String delims = ",";
+    private PathEngine pathEngine;
+    int[][] worldMapMatrix;
+    private ArrayList<Coordinate> path = new ArrayList<Coordinate>();
+    private String delims = ",";
 
 	//ADL Handling
     //Map<Integer, ADL> hLADL;
@@ -80,9 +81,11 @@ public class SensorSimulationThread implements Runnable{
 
         houseMap = HouseMap.getInstance();
 		lLADL = LowLevelADLDB.getInstance();
-		//matchADL = ADLMatcher.getInstance();
 
-	}
+        pathEngine = new AstarEngine();
+        worldMapMatrix = HouseMap.getMap();
+        pathEngine.setMap(worldMapMatrix);
+    }
 
 	@Override
 	public void run() {
@@ -150,20 +153,15 @@ public class SensorSimulationThread implements Runnable{
 
 							} else {
 								if (path.isEmpty()) {	//New station case
-                                    newTarget(lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId());
+                                    computePath(lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId());
                                 }
 
                                 if (path.size() > 0) {    //Given a target the actor moves toward that direction
-                                    String x = path.get(0);
-									//System.out.println(x);	//TODO: row log 
-
-									path.remove(0);
-									String[] tokens = x.split(delims);
-									Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-									if (!target.equals(actor)) {
-										actor.setX(target.getX());
-										actor.setY(target.getY());
-									}
+                                    Coordinate nexPathPoint = path.remove(0);
+                                    if (!nexPathPoint.equals(actor)) {
+                                        actor.setX(nexPathPoint.getX());
+                                        actor.setY(nexPathPoint.getY());
+                                    }
 								}
 							}
 
@@ -197,21 +195,16 @@ public class SensorSimulationThread implements Runnable{
 	}
 
 
-	public void newTarget(int indexSensor) {
-		DE = new DijkstraEngine();
-		worldMapMatrix = HouseMap.getMap();
-		DE.buildAdjacencyMatrix(worldMapMatrix);
-
-		Sensor [] s= HouseMap.getS();
+    public void computePath(int indexSensor) {
+        Sensor [] s= HouseMap.getS();
 
 		Target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
 
 		// Start point:
-		DE.setInitial(actor.getX() + ","+ actor.getY());
+        pathEngine.setStart(actor);
 
 		// End point:
-		path = DE.computePath(Target.getX()+","+Target.getY());
-		//System.out.println("PATH:"+path);
+        path = pathEngine.computePath(Target);
 
 	}
 
