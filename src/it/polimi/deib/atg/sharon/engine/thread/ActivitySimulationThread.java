@@ -148,7 +148,7 @@ public class ActivitySimulationThread implements Runnable {
 				ongoingAdl = bestAdl;
 				ongoingAdl.setActive(true);
 				elapsed_time = 0;
-                //TODO andrea comment this.printVerboseOnConsole();
+                this.printVerboseOnConsole();
 				return X;
 			}
 		}

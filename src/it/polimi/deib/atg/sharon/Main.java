@@ -87,6 +87,7 @@ public class Main {
 
 		//LOW LEVEL SIMULATION
 		if (ENABLE_SENSORS_ACTIVITY) {
+			
 			//Simulation by sensor
 			//sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
 			//new Thread(sensorSimulationThread).start();
@@ -99,6 +100,6 @@ public class Main {
 			}catch (Exception e){
 				e.printStackTrace();
 			}
-		}			
+		}	
 	}
 }

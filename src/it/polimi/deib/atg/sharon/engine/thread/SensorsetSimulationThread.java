@@ -91,7 +91,7 @@ public class SensorsetSimulationThread implements Runnable {
 
 	@Override
 	public void run() {
-
+		Integer notScheduledSeconds=0;
 		PrintWriter out;
 		try {
 			Thread.sleep(1000);
@@ -99,28 +99,29 @@ public class SensorsetSimulationThread implements Runnable {
 					+ "0.txt"));
 			
 			//initialization phase
-			action=1;//sleep
+			action=3;//sleep
 			currentPattern=lLADL.getPatternSS(lLADL.getMatch(action).getPatternID());
 			initialSS = currentPattern.getInitialSSIdAPriori();
 			currentSS=SensorsetManager.getInstance().getSensorsetByID(initialSS);
 			
 			//loop for every second
-			for (timeInstant = 0; timeInstant < (86400 * simulatedDays) -5000; timeInstant++) {
-
+			for (timeInstant = 0; timeInstant < (86400 * simulatedDays) ; timeInstant++) {
+				
 				idling++;
 				switch (agentStatus) {
 				case 1: // Extracting + computing
 					ADLQueue CADL;
 					try {
-						if (queue.isEmpty()) {
-							System.out.println("***** A: EMPTY queue SensorsetSimulation *****");
-							timeInstant--;
-							throw new Exception("***** A: EMPTY queue SensorsetSimulation *****");
+						if (queue.isEmpty()){
+							//System.out.println("***** A: EMPTY queue SensorsetSimulation *****");
+							notScheduledSeconds++;
+							//timeInstant--;
+							//throw new Exception("***** A: EMPTY queue SensorsetSimulation *****");
 						} else {
 							CADL = queue.take();
 							action = CADL.getADLId();
 							totalTimePattern = (int) (long) CADL.getTime(); // TODO check the cast here... should be ok
-							System.out.println("Time for the current activity"+totalTimePattern);
+							//System.out.println("Time for the current activity"+totalTimePattern);
 							//choose the pattern according to the last sensorset and the probability
 							//llADLIndex = lLADL.getMatch(action).getPatternIDSS(currentSS); 
 							llADLIndex = lLADL.getPatternIDSS(currentSS,action);
@@ -153,7 +154,7 @@ public class SensorsetSimulationThread implements Runnable {
 					currentTimePattern++;
 					if(currentTimePattern.equals(totalTimePattern)){
 						//force to change the activity
-						System.out.println("Generated time for current activity"+currentTimePattern);
+						//System.out.println("Generated time for current activity"+currentTimePattern);
 						currentTimePattern=0;
 						agentStatus=1;
 					}else{
@@ -186,6 +187,7 @@ public class SensorsetSimulationThread implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.print("Not scheduled seconds:"+notScheduledSeconds.toString());
 	}
 
 
