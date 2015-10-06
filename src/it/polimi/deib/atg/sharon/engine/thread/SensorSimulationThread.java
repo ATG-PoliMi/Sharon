@@ -28,14 +28,12 @@ import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.data.Place;
 import it.polimi.deib.atg.sharon.data.Sensor;
-import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
 import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 public class SensorSimulationThread implements Runnable{
@@ -49,9 +47,9 @@ public class SensorSimulationThread implements Runnable{
 	private String delims = ",";
 
 	//ADL Handling
-	Map<Integer, ADL> hLADL;
-	LowLevelADLDB lLADL;
-	//Map<Integer, ADLMatch> matchADL;
+    //Map<Integer, ADL> hLADL;
+    //Map<Integer, ADLMatch> matchADL;
+    LowLevelADLDB lLADL;
     HouseMap houseMap;
 
 	//User actions
@@ -88,7 +86,6 @@ public class SensorSimulationThread implements Runnable{
 
 	@Override
 	public void run() {
-
 		int emptyN=0;
 		PrintWriter out;
 		try {
