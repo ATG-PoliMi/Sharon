@@ -47,7 +47,7 @@ public class Main {
     public static final boolean PRINT_LOG = false;//False: no log
     public static final boolean DISABLE_DIJKSTRA = true;
     public static final boolean USE_DRIFTS = false;// activates drifts
-    public static final boolean USE_HMM_LL = false;// activates LowLevel Based on HMM
+    public static final boolean USE_HMM_LL = true;// activates LowLevel Based on HMM
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.
@@ -85,17 +85,20 @@ public class Main {
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
         Runnable sensorSimulationThread;
         //LOW LEVEL SIMULATION
-        if (ENABLE_SENSORS_ACTIVITY) {
-            if (USE_HMM_LL)
-                try {
-                    sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            else
-                sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-            new Thread(sensorSimulationThread).start();
-			System.out.println("LowLevel Starts");	
-		}			
+		try {
+			if (ENABLE_SENSORS_ACTIVITY) {
+				if (USE_HMM_LL)
+
+					sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+
+				else
+					sensorSimulationThread = new SensorSimulationThread(queue,simulatedDays, sensorOutputPrefix);
+				
+				new Thread(sensorSimulationThread).start();
+				System.out.println("LowLevel Starts");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

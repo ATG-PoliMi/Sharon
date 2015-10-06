@@ -38,7 +38,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-public class SensorsetSimulationThread implements Runnable {
+public class OLDSensorsetSimulationThread implements Runnable {
 
 	private static Boolean printConsoleActPatternSS=false;
 	private static Boolean fileHumanReadable=false;
@@ -81,7 +81,7 @@ public class SensorsetSimulationThread implements Runnable {
 	private int action;
 	private String simulationOutputPrefix;
 
-	public SensorsetSimulationThread(BlockingQueue<ADLQueue> q,
+	public OLDSensorsetSimulationThread(BlockingQueue<ADLQueue> q,
 			int simulatedDays, String sOutput) throws IOException {
 		this.queue = q;
 		this.simulatedDays = simulatedDays;

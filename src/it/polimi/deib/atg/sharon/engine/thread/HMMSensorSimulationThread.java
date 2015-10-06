@@ -63,7 +63,7 @@ public class HMMSensorSimulationThread implements Runnable {
 	 */
 
 		private static Boolean printConsoleActPatternSS=false;
-		private static Boolean fileHumanReadable=false;
+		private static Boolean fileHumanReadable=true;
 		private static Boolean shortPrint=false;
 		int[][] worldMapMatrix;
 
