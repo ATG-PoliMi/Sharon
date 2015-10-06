@@ -83,15 +83,19 @@ public class Main {
 		activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
 		new Thread(activitySimulationThread).start();
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
-
-		//LOW LEVEL SIMULATION
-		if (ENABLE_SENSORS_ACTIVITY) {
+        Runnable sensorSimulationThread;
+        //LOW LEVEL SIMULATION
+        if (ENABLE_SENSORS_ACTIVITY) {
             if (USE_HMM_LL)
-                sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+                try {
+                    sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             else
                 sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
             new Thread(sensorSimulationThread).start();
-			System.out.println("Consumer Starts");	
-		}			
-	}
+            System.out.println("Consumer Starts");
+        }
+    }
 }
