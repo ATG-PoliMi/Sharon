@@ -28,9 +28,10 @@ import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.engine.Needs;
 import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
 import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
+import it.polimi.deib.atg.sharon.engine.thread.HMMSensorSimulationThread;
 import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
-import it.polimi.deib.atg.sharon.engine.thread.SensorsetSimulationThread;
 
+import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -56,8 +57,8 @@ public class Main {
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
 	//private static SensorSimulationThread sensorSimulationThread;
-	private static SensorsetSimulationThread sensorsetSimulationThread;
-	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
+    private static HMMSensorSimulationThread HMMSensorSimulationThread;
+    private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
 
 	public static void main(String[] args) {
 
@@ -85,11 +86,15 @@ public class Main {
 		activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
 		new Thread(activitySimulationThread).start();
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
-
-		//LOW LEVEL SIMULATION
+        Runnable sensorSimulationThread;
+        //LOW LEVEL SIMULATION
 		if (ENABLE_SENSORS_ACTIVITY) {
             if (USE_HMM_LL)
-                sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+                try {
+                    sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             else
                 sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
             new Thread(sensorSimulationThread).start();

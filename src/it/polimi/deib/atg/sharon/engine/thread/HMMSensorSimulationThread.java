@@ -38,7 +38,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-public class SensorsetSimulationThread implements Runnable {
+public class HMMSensorSimulationThread implements Runnable {
 
 	private Coordinate actor = new Coordinate(10, 10);
 	int[][] worldMapMatrix;
@@ -78,9 +78,9 @@ public class SensorsetSimulationThread implements Runnable {
 	private int action;
 	private String simulationOutputPrefix;
 
-	public SensorsetSimulationThread(BlockingQueue<ADLQueue> q,
-			int simulatedDays, String sOutput) throws IOException {
-		this.queue = q;
+    public HMMSensorSimulationThread(BlockingQueue<ADLQueue> q,
+                                     int simulatedDays, String sOutput) throws IOException {
+        this.queue = q;
 		this.simulatedDays = simulatedDays;
 		this.simulationOutputPrefix = sOutput;
 
