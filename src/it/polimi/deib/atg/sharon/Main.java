@@ -56,8 +56,6 @@ public class Main {
 
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
-	//private static SensorSimulationThread sensorSimulationThread;
-    private static HMMSensorSimulationThread HMMSensorSimulationThread;
     private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
 
 	public static void main(String[] args) {
@@ -88,7 +86,7 @@ public class Main {
 		System.out.println("Simulator correctly instantiated... Beginning the simulation");
         Runnable sensorSimulationThread;
         //LOW LEVEL SIMULATION
-		if (ENABLE_SENSORS_ACTIVITY) {
+        if (ENABLE_SENSORS_ACTIVITY) {
             if (USE_HMM_LL)
                 try {
                     sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
@@ -98,7 +96,7 @@ public class Main {
             else
                 sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
             new Thread(sensorSimulationThread).start();
-			System.out.println("Consumer Starts");	
+			System.out.println("LowLevel Starts");	
 		}			
 	}
 }
