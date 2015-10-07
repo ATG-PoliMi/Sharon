@@ -211,9 +211,9 @@ public class HMMSensorSimulationThread implements Runnable {
 		// and ground truth
 		activeSensors += action;
 		activeSensors += ", ";
-		activeSensors += (int) actor.getX() * (HouseMap.scale);
+		activeSensors += (int) actor.getX() * (HouseMap.spacing);
 		activeSensors += ", ";
-		activeSensors += (int) actor.getY() * (HouseMap.scale);
+		activeSensors += (int) actor.getY() * (HouseMap.spacing);
 		return activeSensors;
 	}
 	

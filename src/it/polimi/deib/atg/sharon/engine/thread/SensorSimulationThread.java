@@ -41,7 +41,7 @@ public class SensorSimulationThread implements Runnable{
 
 
 	private Coordinate actor = new Coordinate (10,10);
-	private Coordinate Target = new Coordinate(15, 25);
+    private Coordinate target = new Coordinate(15, 25);
     private PathEngine pathEngine;
     int[][] worldMapMatrix;
     private ArrayList<Coordinate> path = new ArrayList<Coordinate>();
@@ -79,12 +79,9 @@ public class SensorSimulationThread implements Runnable{
 		this.simulatedDays = simulatedDays;
 		this.simulationOutputPrefix = sOutput;
 
-        houseMap = HouseMap.getInstance();
-		lLADL = LowLevelADLDB.getInstance();
+        lLADL = LowLevelADLDB.getInstance();
+        pathEngine = new AstarEngine(HouseMap.getMap(), HouseMap.spacing);
 
-        pathEngine = new AstarEngine();
-        worldMapMatrix = HouseMap.getMap();
-        pathEngine.setMap(worldMapMatrix);
     }
 
 	@Override
@@ -103,8 +100,6 @@ public class SensorSimulationThread implements Runnable{
 					ADLQueue CADL;
 					try {
 						if (queue.isEmpty()) {
-							//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
-							//Fake ADLS for demo: start demo:		//queue.put(new ADLQueue(8, 300));queue.put(new ADLQueue(6, 300));queue.put(new ADLQueue(3, 666));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));				//end demo
 							System.out.println("***** A: EMPTY queue *****");
 							timeInstant--;
 							emptyN++;
@@ -133,20 +128,21 @@ public class SensorSimulationThread implements Runnable{
 				case 2:	//Walking+Acting
 					if (!tTime.isEmpty()) {	//tTime contains timings for each station
 						if (idling < tTime.get(0)) {
-							if (Main.DISABLE_DIJKSTRA) {
+                            if (Main.DISABLE_PATH) {
                                 Place[] p = HouseMap.getP();
-                                Target = new Coordinate(p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
+                                target = new Coordinate(p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
                                         p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getY());
-                                int count = HouseMap.scale;
+                                //TODO fix this if the person should wlak faster or slower
+                                int count = HouseMap.ppm;
                                 while (count > 0) {
-                                    if (Target.getX() > actor.getX())
+                                    if (target.getX() > actor.getX())
                                         actor.setX(actor.getX() + 1);
-                                    if (Target.getX() < actor.getX())
+                                    if (target.getX() < actor.getX())
                                         actor.setX(actor.getX() - 1);
 
-                                    if (Target.getY() > actor.getY())
+                                    if (target.getY() > actor.getY())
                                         actor.setY(actor.getY() + 1);
-                                    if (Target.getY() < actor.getY())
+                                    if (target.getY() < actor.getY())
                                         actor.setY(actor.getY() - 1);
                                     count--;
                                 }
@@ -188,9 +184,6 @@ public class SensorSimulationThread implements Runnable{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//System.out.println("Empty ticks: "+emptyN);
-		//System.out.println("Consumer Thread ends");
 
 	}
 
@@ -198,13 +191,9 @@ public class SensorSimulationThread implements Runnable{
     public void computePath(int indexSensor) {
         Sensor [] s= HouseMap.getS();
 
-		Target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
+        target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
 
-		// Start point:
-        pathEngine.setStart(actor);
-
-		// End point:
-        path = pathEngine.computePath(Target);
+        path = pathEngine.computePath(actor, target);
 
 	}
 
@@ -237,9 +226,9 @@ public class SensorSimulationThread implements Runnable{
         //TODO Change this so it is possible to choose whether to have position and ground truth
         activeSensors += action;
         activeSensors += ", ";
-        activeSensors += (int)actor.getX() * (HouseMap.scale);
+        activeSensors += (int) actor.getX() * (HouseMap.spacing);
         activeSensors += ", ";
-        activeSensors += (int)actor.getY() * (HouseMap.scale);
+        activeSensors += (int) actor.getY() * (HouseMap.spacing);
 
 		return activeSensors;
 	}
