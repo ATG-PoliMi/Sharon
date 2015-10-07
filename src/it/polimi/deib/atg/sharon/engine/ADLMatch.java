@@ -22,12 +22,6 @@
 
 package it.polimi.deib.atg.sharon.engine;
 
-import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
-import it.polimi.deib.atg.sharon.configs.SensorsetManager;
-import it.polimi.deib.atg.sharon.data.PatternSS;
-import it.polimi.deib.atg.sharon.data.Sensorset;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class ADLMatch {
@@ -47,14 +41,14 @@ public class ADLMatch {
 	public Integer getPatternID(){
 		float rnd=(float) Math.random();	
 		float cumulativeProb=0;
-		int position=0;
-		for(Float p:LLadlProbability){
+        int index = 0;
+        for(Float p:LLadlProbability){
 			cumulativeProb+=p.floatValue();
 			if(rnd<cumulativeProb){
-				return this.getLLadl().get(position);
-			}
-			position++;
-		}
+                return this.getLLadl().get(index);
+            }
+            index++;
+        }
 		return this.getLLadl().get(this.getLLadl().size()-1);
 	}
 

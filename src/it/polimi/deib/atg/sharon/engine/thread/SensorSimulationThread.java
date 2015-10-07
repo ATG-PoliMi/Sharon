@@ -108,8 +108,6 @@ public class SensorSimulationThread implements Runnable{
 							CADL = queue.take();
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
-
-                         //   llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // this gives back the first pattern
                             llADLIndex = lLADL.getMatch(action).getPatternID(); //this choose the pattern "randomly" according to the specified probabilities
                             tTime.clear();
 
