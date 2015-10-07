@@ -40,7 +40,7 @@ import java.util.concurrent.BlockingQueue;
 public class SensorSimulationThread implements Runnable{
 
 
-	private Coordinate actor = new Coordinate (10,10);
+    private Coordinate actor = new Coordinate(20, 20);
     private Coordinate target = new Coordinate(15, 25);
     private PathEngine pathEngine;
     int[][] worldMapMatrix;
@@ -147,7 +147,7 @@ public class SensorSimulationThread implements Runnable{
 
 							} else {
 								if (path.isEmpty()) {	//New station case
-                                    computePath(lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId());
+                                    computePath(lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1);
                                 }
 
                                 if (path.size() > 0) {    //Given a target the actor moves toward that direction
@@ -186,10 +186,10 @@ public class SensorSimulationThread implements Runnable{
 	}
 
 
-    public void computePath(int indexSensor) {
-        Sensor [] s= HouseMap.getS();
+    public void computePath(int indexPlace) {
+        Place[] p = HouseMap.getP();
 
-        target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
+        target = new Coordinate(p[indexPlace].getX(), p[indexPlace].getY());
 
         path = pathEngine.computePath(actor, target);
 

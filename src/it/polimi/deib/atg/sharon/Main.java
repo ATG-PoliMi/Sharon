@@ -46,7 +46,7 @@ public class Main {
 	// Extra parameters - not to touch
     public static final boolean ENABLE_SENSORS_ACTIVITY = true;    //False: Only High Level, True: High Level + Low Level (Experimental!)
     public static final boolean PRINT_LOG = false;//False: no log
-    public static final boolean DISABLE_PATH = true;
+    public static final boolean DISABLE_PATH = false;
     public static final boolean USE_DRIFTS = false;// activates drifts
     public static final boolean USE_HMM_LL = false;// activates LowLevel Based on HMM
 

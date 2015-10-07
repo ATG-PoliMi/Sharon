@@ -126,6 +126,7 @@ public class AstarEngine extends PathEngine {
 
         int[] curr = fringe.get(0);
         fringe.remove(0);
+        scores.remove(0);
 
         // Boundaries Check
         if (curr[0] <= 0) {

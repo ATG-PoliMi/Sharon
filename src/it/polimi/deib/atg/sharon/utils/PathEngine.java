@@ -19,15 +19,13 @@ public abstract class PathEngine {
     public PathEngine(int[][] map, int spacing) {
         this.map = map.clone();
         this.spacing = spacing;
+        internalCache = new HashMap<>();
     }
-
-    ;
 
     protected String keyfy(Coordinate start, Coordinate end) {
         return start.toString() + end.toString();
     }
 
-    ;
 
     public ArrayList<Coordinate> computePath(Coordinate start, Coordinate target) {
         String key = keyfy(start, target);

@@ -10,9 +10,13 @@ import static java.lang.Math.sqrt;
 public class Methods {
 
     public static int searchInPoint(ArrayList<Double> list, double a) {
+        if (list.size() == 0)
+            return 0;
         int c = 0;
-        while (list.get(0) < a) {
+        while (list.get(c) < a) {
             c++;
+            if (list.size() <= c)
+                return list.size();
         }
         return c;
     }
