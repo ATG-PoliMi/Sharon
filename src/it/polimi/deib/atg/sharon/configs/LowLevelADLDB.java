@@ -1,5 +1,6 @@
 package it.polimi.deib.atg.sharon.configs;
 
+import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.data.PatternPlace;
 import it.polimi.deib.atg.sharon.data.PatternSS;
 import it.polimi.deib.atg.sharon.data.Sensorset;
@@ -42,9 +43,13 @@ public class LowLevelADLDB {
         patternMap = new HashMap<>();
         patternSSMap = new HashMap<>();
         patternSSs=new ArrayList<PatternSS>();
-        //TODO switch
-        //loadConfigs(patternMap);
-        loadSSConfigs(patternSSMap);
+
+        if (Main.USE_HMM_LL) {
+            loadSSConfigs(patternSSMap);
+        } else {
+            loadConfigs(patternMap);
+        }
+
     }
 
     private void loadConfigs(Map<Integer, LowLevelADL> patternMap) throws NotDirectoryException, FileNotFoundException {
