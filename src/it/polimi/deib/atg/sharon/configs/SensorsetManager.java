@@ -22,6 +22,7 @@ public class SensorsetManager {
 		super();
 		sensorsets = new ArrayList<Sensorset>();
 		this.loadConfigsSS();
+		System.out.println("number of ss: "+sensorsets.size());
 		int numberSS=sensorsets.size();
 		transitionProb=new Float[numberSS][numberSS];
 		this.loadConfigsTransition();
@@ -116,12 +117,18 @@ public class SensorsetManager {
 		Integer row = 0;
 		for (String pattern : configLines) {
 			String[] chunks = pattern.split(",");
+			if(chunks.length!=this.getSensorsets().size()){
+				System.out.println("Unexpected number of parameters in the row");
+				System.out.println("row: "+row.toString());
+				System.out.println("Number of elements in the row: "+chunks.length);
+				System.out.println("Expected number = number of ss = "+this.getSensorsets().size());
+				//Throw the Exception
+			}
 			for(int col=0; col<chunks.length;col++){
 				this.transitionProb[row][col]=Float.parseFloat(chunks[col]);
 			}
 			row++;
 		}
-
 	}
 
 	public Float[][] getTransitionProb() {
@@ -130,6 +137,14 @@ public class SensorsetManager {
 
 	public void setTransitionProb(Float[][] transitionProb) {
 		this.transitionProb = transitionProb;
+	}
+
+	public ArrayList<Sensorset> getSensorsets() {
+		return sensorsets;
+	}
+
+	public void setSensorsets(ArrayList<Sensorset> sensorsets) {
+		this.sensorsets = sensorsets;
 	}
 	
 	

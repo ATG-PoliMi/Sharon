@@ -149,12 +149,12 @@ public class PatternSS {
 	public Integer getPosOfIdInList(ArrayList<Integer> l,Integer id){
 		int pos=0;
 		for(Integer num:l){
-			if (num==id){
+			if (num.equals(id)){
 				return pos;
 			}
 			pos++;
 		}
-		return 0;
+		return null;
 	}
 	
 	public Integer getDifferentSS(Integer actualSS){
@@ -176,6 +176,9 @@ public class PatternSS {
 	}
 	
 	public Integer getNextSS(Integer actualSS){
+		if(actualSS==158){
+			System.out.println("Here is 158");
+		}
 		Float[][] pm=this.getProbMatrix();
 		ArrayList<Integer> sSid=new ArrayList<Integer>();
 		ArrayList<Float> sSprob=new ArrayList<Float>();

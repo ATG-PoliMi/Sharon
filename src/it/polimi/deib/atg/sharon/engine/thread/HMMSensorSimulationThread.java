@@ -186,11 +186,12 @@ public class HMMSensorSimulationThread implements Runnable {
 						currentTimePattern++;
 						if(currentTimePattern.equals(totalTimePattern)){
 							//force to change the activity
+							currentTimeSS=0;
 							currentTimePattern=0;
 							agentStatus=1;
 						}else{
-							if(currentTimeSS>currentSS.getMinTime()){
-								//if the actual duration of this ss is > then its minimum is possible to change
+							if(currentTimeSS>=currentSS.getMinTime()){
+								//if the actual duration of this ss is >= then its minimum is possible to change
 								if(currentTimeSS>=currentSS.getMaxTime()){
 									//force to change SS
 									newSSId=currentPattern.getDifferentSS(currentSS.getIdSensorset());
