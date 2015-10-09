@@ -1,11 +1,13 @@
 package it.polimi.deib.atg.sharon.utils;
 
+import it.polimi.deib.atg.sharon.data.Coordinate;
+
 import java.util.ArrayList;
 
 import static java.lang.Math.sqrt;
 
 /**
- * Created by fabio on 9/23/15.
+ * Class containing computation or initialization methods, to keep the code light and fresh. :]
  */
 public class Methods {
 
@@ -41,5 +43,9 @@ public class Methods {
 
     public static double geoDist(int[] p1, int[] p2) {
         return geoDist(p1[0], p1[1], p2[0], p2[1]);
+    }
+
+    public static double geoDist(Coordinate p1, Coordinate p2) {
+        return geoDist(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 }

@@ -37,6 +37,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
+import static it.polimi.deib.atg.sharon.utils.Methods.geoDist;
+
 public class SensorSimulationThread implements Runnable{
 
 
@@ -124,8 +126,7 @@ public class SensorSimulationThread implements Runnable{
                             target = new Coordinate(p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
                                     p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getY());
                             if (Main.DISABLE_PATH) {
-                                //TODO fix this if the person should walk faster or slower
-                                int count = HouseMap.ppm;
+                                int count = (int) (HouseMap.ppm * Main.WALK_SPEED);
                                 while (count > 0) {
                                     if (target.getX() > actor.getX())
                                         actor.setX(actor.getX() + 1);
@@ -140,21 +141,21 @@ public class SensorSimulationThread implements Runnable{
                                 }
 
 							} else {
-                                if (!actor.eqs(target)) {
-                                    if (path.size() > 0) {    //Given a target the actor moves toward that direction
-                                        Coordinate nextPathPoint = path.remove(0);
-                                        actor.setX(nextPathPoint.getX());
-                                        actor.setY(nextPathPoint.getY());
-                                    } else {
-                                        computePath();
-                                        if (path.size() > 0) {
-                                            Coordinate nextPathPoint = path.remove(0);
-                                            actor.setX(nextPathPoint.getX());
-                                            actor.setY(nextPathPoint.getY());
-                                        }
+                                if (actor.eqs(target) || path.size() == 0) {
+                                    computePath();
+                                }
+                                if (path.size() > 0) {    //Given a target the actor moves toward that direction
+                                    double stepLength = 0;
+                                    Coordinate nextPathPoint = null;
+                                    Coordinate lastPathPoint = actor.copy();
+                                    while (path.size() > 0 && stepLength < (Main.WALK_SPEED * 100)) { // TODO Fix mess of cm and m
+                                        nextPathPoint = path.remove(0);
+                                        stepLength += geoDist(lastPathPoint, nextPathPoint);
+                                        lastPathPoint = nextPathPoint.copy();
                                     }
-								}
-							}
+                                    doWalk(nextPathPoint);
+                                }
+                            }
                         } else {    //Time at the place ended
                             currentTimeElapsed = 0;
                             placesCounter++;
@@ -188,6 +189,11 @@ public class SensorSimulationThread implements Runnable{
 
 	}
 
+    public void doWalk(Coordinate point) {
+        actor.setX(point.getX());
+        actor.setY(point.getY());
+    }
+
 	/**
 	 * printActiveSensors computes the values for each sensor of the house and returns a String in the following format:
 	 * "timeInstant, home area, ADL id, UserX, UserY, sensors 0-k"
@@ -220,7 +226,7 @@ public class SensorSimulationThread implements Runnable{
         if (Main.MIMIC_ARAS) {
             activeSensors += " 1 ";// padding just for compatibility
         } else {
-            activeSensors += " " + (int) actor.getX() + " " + (int) actor.getY();
+            activeSensors += " " + actor.getX() + " " + actor.getY();
         }
 
 		return activeSensors;

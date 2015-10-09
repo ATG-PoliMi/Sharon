@@ -34,7 +34,7 @@ public class Sensor {
     private String name;
 
     public Sensor(String name, int value, int x, int y) {
-        this(name, value, x, y, 10, 1);
+        this(name, value, x, y, 100, 1);
     }
 
     public Sensor(String name, int value, int x, int y, int range, double prob) {

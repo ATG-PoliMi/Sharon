@@ -57,6 +57,10 @@ public class Coordinate {
         return (tgt.getX() >= x && tgt.getY() >= y && tgt.getX() < x + HouseMap.spacing && tgt.getY() < y + HouseMap.spacing);
     }
 
+    public Coordinate copy() {
+        return new Coordinate(this.x, this.y);
+    }
+
     @Override
     public String toString() {
         return "" + x + "." + y;
