@@ -198,28 +198,30 @@ public class SensorSimulationThread implements Runnable{
 		String activeSensors = "";
 
 		Sensor[] sensorsArray = HouseMap.getS();
+        if (!Main.MIMIC_ARAS) {
+            activeSensors += timeInstant + " ";
+        }
 
-		activeSensors += timeInstant;
-		activeSensors += ", ";
 
         for (Sensor aSensorsArray : sensorsArray) {
             if (aSensorsArray.isActivatedBy(actor.getX(), actor.getY())) {
                 if (Math.random() < aSensorsArray.getProb()) {
-                    activeSensors += "1, ";
+                    activeSensors += "1 ";
                 } else {
-                    activeSensors += "0, ";
+                    activeSensors += "0 ";
                 }
             } else {
-                activeSensors += "0, ";
+                activeSensors += "0 ";
             }
         }
 
         //TODO Change this so it is possible to choose whether to have position and ground truth
         activeSensors += action;
-        activeSensors += ", ";
-        activeSensors += (int) actor.getX();
-        activeSensors += ", ";
-        activeSensors += (int) actor.getY();
+        if (Main.MIMIC_ARAS) {
+            activeSensors += " 1 ";// padding just for compatibility
+        } else {
+            activeSensors += " " + (int) actor.getX() + " " + (int) actor.getY();
+        }
 
 		return activeSensors;
 	}

@@ -49,6 +49,7 @@ public class Main {
     public static final boolean DISABLE_PATH = false;
     public static final boolean USE_DRIFTS = false;// activates drifts
     public static final boolean USE_HMM_LL = false;// activates LowLevel Based on HMM
+    public static final boolean MIMIC_ARAS = true; // output same format as ARAS Dataset
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.
