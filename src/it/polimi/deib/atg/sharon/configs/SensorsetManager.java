@@ -22,7 +22,6 @@ public class SensorsetManager {
 		super();
 		sensorsets = new ArrayList<Sensorset>();
 		this.loadConfigsSS();
-		System.out.println("number of ss: "+sensorsets.size());
 		int numberSS=sensorsets.size();
 		transitionProb=new Float[numberSS][numberSS];
 		this.loadConfigsTransition();
@@ -88,9 +87,9 @@ public class SensorsetManager {
 					actSensorId.add(Integer.parseInt(chunks[pos]));
 				}
 			this.addSensorset(ss_ID, minTime, maxTime, actSensorId);
-			if(actSensorId.size()==0){
+			/*if(actSensorId.size()==0){
 				System.out.println("SS id "+ss_ID+" has 0 activated sensors");
-			}
+			}*/
 		}
 
 	}

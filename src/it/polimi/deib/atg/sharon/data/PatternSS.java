@@ -176,9 +176,6 @@ public class PatternSS {
 	}
 	
 	public Integer getNextSS(Integer actualSS){
-		if(actualSS==158){
-			System.out.println("Here is 158");
-		}
 		Float[][] pm=this.getProbMatrix();
 		ArrayList<Integer> sSid=new ArrayList<Integer>();
 		ArrayList<Float> sSprob=new ArrayList<Float>();

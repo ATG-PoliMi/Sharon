@@ -25,7 +25,6 @@ package it.polimi.deib.atg.sharon.engine.thread;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
-import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.data.PatternSS;
 import it.polimi.deib.atg.sharon.data.Sensor;
 import it.polimi.deib.atg.sharon.data.Sensorset;
@@ -63,7 +62,7 @@ public class HMMSensorSimulationThread implements Runnable {
 	 */
 
 		private static Boolean printConsoleActPatternSS=false;
-		private static Boolean fileHumanReadable=true;
+		private static Boolean fileHumanReadable=false;
 		private static Boolean shortPrint=false;
 		int[][] worldMapMatrix;
 
@@ -108,7 +107,6 @@ public class HMMSensorSimulationThread implements Runnable {
 			this.queue = q;
 			this.simulatedDays = simulatedDays;
 			this.simulationOutputPrefix = sOutput;
-
 			houseMap = HouseMap.getInstance();
 			lLADL = LowLevelADLDB.getInstance();
 			this.ssManager = SensorsetManager.getInstance();
@@ -226,7 +224,7 @@ public class HMMSensorSimulationThread implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			System.out.print("Not scheduled seconds:"+notScheduledSeconds.toString());
+			System.out.println("Not scheduled seconds:"+notScheduledSeconds.toString());
 		}
 
 
@@ -239,8 +237,10 @@ public class HMMSensorSimulationThread implements Runnable {
 			activeSensors += timeInstant % 86400;
 			activeSensors += ", ";
 			
+			//activeSensors += currentSS.getIdSensorset();
+			//activeSensors += ", ";
 			int sId=0;
-			for (Sensor aSensorsArray : sensorsArray) {
+			   for (Sensor aSensorsArray : sensorsArray) {
 				sId++;
 				if(currentSS.getActivatedSensorsId().contains(sId)){
 					activeSensors +="1, ";
