@@ -239,18 +239,18 @@ public class HMMSensorSimulationThread implements Runnable {
 			
 			//activeSensors += currentSS.getIdSensorset();
 			//activeSensors += ", ";
+
 			int sId=0;
-			   for (Sensor aSensorsArray : sensorsArray) {
+			   for (@SuppressWarnings("unused") Sensor aSensorsArray : sensorsArray) {
 				sId++;
 				if(currentSS.getActivatedSensorsId().contains(sId)){
-					activeSensors +="1, ";
-				}else{
-					activeSensors +="0, ";
-				}	
-			}
+                    activeSensors += "1 ";
+                }else{
+                    activeSensors += "0 ";
+                }
+            }
+            activeSensors += action + " 0 ";
 
-			// and ground truth
-			activeSensors += action;
 			return activeSensors;
 		}
 		
