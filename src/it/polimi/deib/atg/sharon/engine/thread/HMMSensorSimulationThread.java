@@ -25,7 +25,6 @@ package it.polimi.deib.atg.sharon.engine.thread;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
-import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.data.PatternSS;
 import it.polimi.deib.atg.sharon.data.Sensor;
 import it.polimi.deib.atg.sharon.data.Sensorset;
@@ -235,21 +234,17 @@ public class HMMSensorSimulationThread implements Runnable {
 
 			Sensor[] sensorsArray = HouseMap.getS();
 
-			activeSensors += timeInstant % 86400;
-			activeSensors += ", ";
-			
 			int sId=0;
 			for (Sensor aSensorsArray : sensorsArray) {
 				sId++;
 				if(currentSS.getActivatedSensorsId().contains(sId)){
-					activeSensors +="1, ";
-				}else{
-					activeSensors +="0, ";
-				}	
-			}
+                    activeSensors += "1 ";
+                }else{
+                    activeSensors += "0 ";
+                }
+            }
+            activeSensors += action + " 0 ";
 
-			// and ground truth
-			activeSensors += action;
 			return activeSensors;
 		}
 		
