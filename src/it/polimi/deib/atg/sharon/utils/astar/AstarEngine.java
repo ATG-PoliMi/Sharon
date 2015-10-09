@@ -124,8 +124,7 @@ public class AstarEngine extends PathEngine {
         int[][] mask = new int[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
         boolean[] valid = truesArray(8);
 
-        int[] curr = fringe.get(0);
-        fringe.remove(0);
+        int[] curr = fringe.remove(0);
         scores.remove(0);
 
         // Boundaries Check
@@ -175,7 +174,7 @@ public class AstarEngine extends PathEngine {
         for (int k = 0; k < 8; k++) {
             int[] neib = new int[]{curr[0] + mask[k][0], curr[1] + mask[k][1]};
             if (valid[k]) {
-                if (!(map[neib[0]][neib[1]] == 0 || visited[neib[0]][neib[1]])) {
+                if (!(map[neib[0]][neib[1]] != 0 || visited[neib[0]][neib[1]])) {
                     if (mask[k][0] != 0 ^ mask[k][1] != 0) {
                         neibdist = 1;
                     } else {

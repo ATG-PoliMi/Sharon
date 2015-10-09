@@ -22,6 +22,8 @@
 
 package it.polimi.deib.atg.sharon.data;
 
+import it.polimi.deib.atg.sharon.configs.HouseMap;
+
 public class Coordinate {
 	private int x,y;
 	
@@ -51,8 +53,12 @@ public class Coordinate {
 		this.y = y;
 	}
 
+    public boolean eqs(Coordinate tgt) {
+        return (tgt.getX() >= x && tgt.getY() >= y && tgt.getX() < x + HouseMap.spacing && tgt.getY() < y + HouseMap.spacing);
+    }
+
     @Override
     public String toString() {
-        return "" + x + y;
+        return "" + x + "." + y;
     }
 }

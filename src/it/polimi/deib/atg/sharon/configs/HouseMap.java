@@ -75,7 +75,7 @@ public class HouseMap {
                     Integer elem = Integer.parseInt(chunks[k]);
                     if (elem > 1) {
                         ppm = elem;
-                        // TODO we are here workning in cm, check if everywhere is cm
+                        // TODO we are here working in cm, check if everywhere is cm
                         spacing = 100 / ppm;
                         rows--;
                         break;
@@ -88,8 +88,8 @@ public class HouseMap {
             ListIterator<Integer> itAsList = asList.listIterator();
             // The map reproduced as seen has x on cols and y on rows
             map = new int[cols][rows];
-            for(int x=0; x<cols; x++){
-                for(int y=0; y<rows; y++){
+            for (int y = 0; y < rows; y++) {
+                for (int x = 0; x < cols; x++) {
                     map[x][y]=itAsList.next();
                 }
             }
@@ -118,25 +118,25 @@ public class HouseMap {
                 String[] chunks = line.split(",");
                 switch (chunks.length) {
                     case 3: {
-                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * spacing) / 100
-                                , (Integer.parseInt(chunks[2]) * spacing) / 100));
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]))
+                                , (Integer.parseInt(chunks[2]))));
                     }
                     break;
                     case 5: {
-                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * spacing) / 100
-                                , (Integer.parseInt(chunks[2]) * spacing) / 100, (Integer.parseInt(chunks[3]) * spacing) / 100,
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]))
+                                , (Integer.parseInt(chunks[2])), (Integer.parseInt(chunks[3])),
                                 Double.parseDouble(chunks[4])));
                     }
                     break;
                     case 8: {
                         int[] areax = new int[2];
                         int[] areay = new int[2];
-                        areax[0] = (Integer.parseInt(chunks[3]) * spacing) / 100;
-                        areax[1] = (Integer.parseInt(chunks[4]) * spacing) / 100;
-                        areay[0] = (Integer.parseInt(chunks[5]) * spacing) / 100;
-                        areay[1] = (Integer.parseInt(chunks[6]) * spacing) / 100;
-                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * spacing) / 100
-                                , (Integer.parseInt(chunks[2]) * spacing) / 100, areax, areay,
+                        areax[0] = (Integer.parseInt(chunks[3]));
+                        areax[1] = (Integer.parseInt(chunks[4]));
+                        areay[0] = (Integer.parseInt(chunks[5]));
+                        areay[1] = (Integer.parseInt(chunks[6]));
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]))
+                                , (Integer.parseInt(chunks[2])), areax, areay,
                                 Double.parseDouble(chunks[7])));
                     }
                     break;
@@ -166,8 +166,8 @@ public class HouseMap {
             line = reader.readLine();
             while (line != null) {
                 String[] chunks = line.split(",");
-                pAsList.add(new Place(chunks[0], (Integer.parseInt(chunks[1]) * spacing) / 100,
-                        (Integer.parseInt(chunks[2]) * spacing) / 100));
+                pAsList.add(new Place(chunks[0], (Integer.parseInt(chunks[1])),
+                        (Integer.parseInt(chunks[2]))));
                 line = reader.readLine();
             }
         } catch (IOException e) {

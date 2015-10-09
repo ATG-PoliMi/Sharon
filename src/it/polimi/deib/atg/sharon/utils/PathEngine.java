@@ -23,22 +23,22 @@ public abstract class PathEngine {
     }
 
     protected String keyfy(Coordinate start, Coordinate end) {
-        return start.toString() + end.toString();
+        return start.toString() + ":" + end.toString();
     }
 
 
     public ArrayList<Coordinate> computePath(Coordinate start, Coordinate target) {
         String key = keyfy(start, target);
         if (internalCache.containsKey(key)) {
-            return internalCache.get(key);
+            return (ArrayList<Coordinate>) internalCache.get(key).clone();
         } else {
             if (internalCache.containsKey(keyfy(target, start))) {
-                ArrayList<Coordinate> path = internalCache.get(keyfy(target, start));
+                ArrayList<Coordinate> path = (ArrayList<Coordinate>) internalCache.get(keyfy(target, start)).clone();
                 reverse(path);
                 return path;
             }
             ArrayList<Coordinate> path = innerComputePath(start, target);
-            internalCache.put(key, path);
+            internalCache.put(key, (ArrayList<Coordinate>) path.clone());
             return path;
         }
     }
