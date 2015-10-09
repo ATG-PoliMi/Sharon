@@ -62,7 +62,7 @@ public class HMMSensorSimulationThread implements Runnable {
 	 */
 
 		private static Boolean printConsoleActPatternSS=false;
-		private static Boolean fileHumanReadable=false;
+		private static Integer fileHumanReadable=3; // 1- ARAS Format, 2-Human readable format, 3-Standard datasetCollector format
 		private static Boolean shortPrint=false;
 		int[][] worldMapMatrix;
 
@@ -110,6 +110,7 @@ public class HMMSensorSimulationThread implements Runnable {
 			houseMap = HouseMap.getInstance();
 			lLADL = LowLevelADLDB.getInstance();
 			this.ssManager = SensorsetManager.getInstance();
+			if((fileHumanReadable<1)||(fileHumanReadable>3)) fileHumanReadable=1;
 		}
 
 		@Override
@@ -144,7 +145,7 @@ public class HMMSensorSimulationThread implements Runnable {
 							} else {
 								CADL = queue.take();
 								action = CADL.getADLId();
-								totalTimePattern = (int) (long) CADL.getTime(); // TODO check the cast here... should be ok
+								totalTimePattern = (int) (long) CADL.getTime();
 								
 								//choose the pattern according to the last sensorset and the probability
 								llADLIndex = lLADL.getPatternIDSS(currentSS,action);
@@ -178,7 +179,7 @@ public class HMMSensorSimulationThread implements Runnable {
 
 					case 2: // Walking+Acting
 						
-						//TODO add here the algorithm to update the position
+						//-- add here the algorithm to update the position
 						
 						currentTimeSS++;
 						currentTimePattern++;
@@ -211,11 +212,18 @@ public class HMMSensorSimulationThread implements Runnable {
 						out = new PrintWriter(new FileWriter(simulationOutputPrefix
 								+ (int) timeInstant / 86400 + ".txt"));
 					}
+					
 					if((!shortPrint)||(!previousSS.equals(currentSS))){
-						if(fileHumanReadable){
-							out.println(printActiveSensors2(action,currentSS,currentPattern.getName(),currentPattern.getNameAct()));		
-						}else{
+						switch(fileHumanReadable){
+						case 1:
 							out.println(printActiveSensors(action,currentSS));
+							break;
+						case 2:
+							out.println(printActiveSensors2(action,currentSS,currentPattern.getName(),currentPattern.getNameAct()));
+							break;
+						case 3:
+							out.println(printActiveSensorsStandard(action,currentSS));
+							break;
 						}
 					}
 					previousSS=currentSS;
@@ -226,19 +234,25 @@ public class HMMSensorSimulationThread implements Runnable {
 			}
 			System.out.println("Not scheduled seconds:"+notScheduledSeconds.toString());
 		}
-
-
-		public String printActiveSensors(int action,Sensorset currentSS) {
-
+		
+		public String printActiveSensorsStandard(int action,Sensorset currentSS){
 			String activeSensors = "";
-
-			Sensor[] sensorsArray = HouseMap.getS();
 
 			activeSensors += timeInstant % 86400;
 			activeSensors += ", ";
 			
-			//activeSensors += currentSS.getIdSensorset();
-			//activeSensors += ", ";
+			activeSensors += currentSS.getIdSensorset();
+			activeSensors += ", ";
+			
+			activeSensors += action;
+			return activeSensors;
+		}
+
+
+		public String printActiveSensors(int action,Sensorset currentSS) {
+			//print in ARAS format
+			String activeSensors = "";
+			Sensor[] sensorsArray = HouseMap.getS();
 
 			int sId=0;
 			   for (@SuppressWarnings("unused") Sensor aSensorsArray : sensorsArray) {
