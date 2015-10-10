@@ -201,7 +201,7 @@ public class PatternSS {
 		
 		Double xn= ((1/Math.sqrt(N))*(listCoeff.get(0))*(Math.cos(0)));
 		for(Integer i=1;i<N;i++){
-			xn+=(Math.sqrt(2/N))*(listCoeff.get(i))*(Math.cos(((Math.PI)*((2*n)-1)*(i))/(2*N)));
+			xn+=(Math.sqrt((double) 2/N))*(listCoeff.get(i))*(Math.cos(((Math.PI)*((2*n)-1)*(i))/(2*N)));
 		}
 		
 		Float pself=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),actualSS)];

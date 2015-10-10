@@ -434,6 +434,6 @@ public class HighLevelADLDB {
 			}
 		}
 		
-		return adlmap.get(keys.toArray()[2]);
+		return adlmap.get(keys.toArray()[0]);
 	}
 }
