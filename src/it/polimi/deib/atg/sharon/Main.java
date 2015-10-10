@@ -37,7 +37,7 @@ import java.util.concurrent.BlockingQueue;
 public class Main {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int def_simulatedDays 	= 2; 	//Days to simulate
+	private static int def_simulatedDays 	= 4; 	//Days to simulate
 	//***** END PARAMETERS *****
 	
 	Parameters param = Parameters.getInstance();
@@ -49,8 +49,8 @@ public class Main {
     public static final boolean USE_DRIFTS = false;// activates drifts
     public static final boolean USE_HMM_LL = true;// activates LowLevel Based on HMM
 
-	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
-	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.
+	private static String sensorOutputPrefix = "data/SensorOutput/DAY_";	//this file is heavy. Open it from explorer.
+	private static String activityOutputPrefix = "data/ActivityOutput/DAY_";	//this file is heavy. Open it from explorer.
 	//
 
 	//Thread

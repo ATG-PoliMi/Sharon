@@ -22,10 +22,12 @@
 
 package it.polimi.deib.atg.sharon.data;
 
+import it.polimi.deib.atg.sharon.configs.ActivityManager;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PatternSS {
 
@@ -187,6 +189,41 @@ public class PatternSS {
 				e.printStackTrace();
 			}
 		}
+		return this.pseudoRandomchoice(sSid, sSprob);
+	}
+	
+	public Integer getNextSSRhythm(Integer actualSS, Integer activityId, Integer actualSecond, Integer activityTotalduration){
+		Float[][] pm=this.getProbMatrix();
+		
+		Integer n=Math.round(((actualSecond*100)/activityTotalduration));
+		List<Float> listCoeff=ActivityManager.getInsatnce().getRhythmCoeffByIdAct(activityId);
+		Integer N=listCoeff.size();
+		
+		Double xn= ((1/Math.sqrt(N))*(listCoeff.get(0))*(Math.cos(0)));
+		for(Integer i=1;i<N;i++){
+			xn+=(Math.sqrt(2/N))*(listCoeff.get(i))*(Math.cos(((Math.PI)*((2*n)-1)*(i))/(2*N)));
+		}
+		
+		Float pself=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),actualSS)];
+		Double kn=(1-(pself*xn))/(1-pself);
+		
+		ArrayList<Integer> sSid=new ArrayList<Integer>();
+		ArrayList<Float> sSprob=new ArrayList<Float>();
+		
+		for(Integer idSS: this.getSsIds()){
+			//prob transition from actualSS to idSS
+			Float pr=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idSS)];
+			if(idSS.equals(actualSS)){
+				//transition from actual to actual
+				pr=(float) (pr*xn);
+			}else{
+				//transition from actual to new SS
+				pr=(float) (pr*kn);
+			}
+			sSid.add(idSS);
+			sSprob.add(pr);
+		}
+		
 		return this.pseudoRandomchoice(sSid, sSprob);
 	}
 

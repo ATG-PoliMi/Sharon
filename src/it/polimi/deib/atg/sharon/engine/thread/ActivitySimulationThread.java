@@ -74,7 +74,7 @@ public class ActivitySimulationThread implements Runnable {
 
         //	HighLevelADLDB.getInstance().getAdlmap()		= 	HighLevelADLDB.getInstance().getAdlmap();
 		//lLADL 		= 	LowLevelADLDB.getInstance();
-		ongoingAdl = 	HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
+		ongoingAdl = HighLevelADLDB.getInstance().getADLById(3);//HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
 	}
 
 	@Override

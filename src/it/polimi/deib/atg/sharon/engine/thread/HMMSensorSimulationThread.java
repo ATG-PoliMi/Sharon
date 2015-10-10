@@ -22,6 +22,7 @@
 
 package it.polimi.deib.atg.sharon.engine.thread;
 
+import it.polimi.deib.atg.sharon.configs.ActivityManager;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
@@ -74,6 +75,7 @@ public class HMMSensorSimulationThread implements Runnable {
 
 		// Sensorset Handling
 		SensorsetManager ssManager;
+		ActivityManager aManager;
 		PatternSS currentPattern;
 		Integer initialSS;
 		Sensorset currentSS;
@@ -108,6 +110,7 @@ public class HMMSensorSimulationThread implements Runnable {
 			this.simulatedDays = simulatedDays;
 			this.simulationOutputPrefix = sOutput;
 			houseMap = HouseMap.getInstance();
+			this.aManager=ActivityManager.getInsatnce();
 			lLADL = LowLevelADLDB.getInstance();
 			this.ssManager = SensorsetManager.getInstance();
 			if((fileHumanReadable<1)||(fileHumanReadable>3)) fileHumanReadable=1;
@@ -191,6 +194,8 @@ public class HMMSensorSimulationThread implements Runnable {
 						}else{
 							if(currentTimeSS>=currentSS.getMinTime()){
 								//if the actual duration of this ss is >= then its minimum is possible to change
+								
+								/*  //  ----The check on the maximum time of the SS has been removed----
 								if(currentTimeSS>=currentSS.getMaxTime()){
 									//force to change SS
 									newSSId=currentPattern.getDifferentSS(currentSS.getIdSensorset());
@@ -198,6 +203,9 @@ public class HMMSensorSimulationThread implements Runnable {
 									//compute using probability the next SS (can be the same)
 									newSSId=currentPattern.getNextSS(currentSS.getIdSensorset());
 								}
+								*/
+								
+								newSSId=currentPattern.getNextSSRhythm(currentSS.getIdSensorset(),action,currentTimeSS,totalTimePattern);
 								if(!newSSId.equals(currentSS.getIdSensorset())){
 									currentTimeSS=0;
 									currentSS=SensorsetManager.getInstance().getSensorsetByID(newSSId);
@@ -238,7 +246,7 @@ public class HMMSensorSimulationThread implements Runnable {
 		public String printActiveSensorsStandard(int action,Sensorset currentSS){
 			String activeSensors = "";
 
-			activeSensors += timeInstant % 86400;
+			activeSensors += (timeInstant % 86400)+1;
 			activeSensors += ", ";
 			
 			activeSensors += currentSS.getIdSensorset();
