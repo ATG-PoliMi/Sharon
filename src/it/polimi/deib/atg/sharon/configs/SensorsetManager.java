@@ -43,9 +43,8 @@ public class SensorsetManager {
 		return null;
 	}
 
-	public void addSensorset(Integer idSensorset, Integer minTime,
-		Integer maxTime, ArrayList<Integer> activatedSensorsId) {
-		Sensorset ss=new Sensorset(idSensorset, minTime, maxTime, activatedSensorsId);
+	public void addSensorset(Integer idSensorset, ArrayList<Integer> dur, ArrayList<Integer> activatedSensorsId) {
+		Sensorset ss=new Sensorset(idSensorset, dur , activatedSensorsId);
 		sensorsets.add(ss);
 	}
 
@@ -71,25 +70,22 @@ public class SensorsetManager {
 		Integer numLine = 0;
 		for (String pattern : configLines) {
 			numLine++;
-			// idSensorset, mintime, maxtime, list of the ids of the activated
-			// sensors
-
+			// idSensorset, 100 element of durationDistribution, list of the ids of the activated sensors
 			String[] chunks = pattern.split(",");
 
-			if (chunks.length < 3) {
+			if (chunks.length < 101) {
 				// TODO throw proper exception
 			}
 			Integer ss_ID = Integer.parseInt(chunks[0]);
-			Integer minTime = Integer.parseInt(chunks[1]);
-			Integer maxTime = Integer.parseInt(chunks[2]);
+			ArrayList<Integer> durationDistr=new ArrayList<Integer>();
+			for(int pos=1; pos<=100;pos++){
+				durationDistr.add(Integer.parseInt(chunks[pos]));
+			}
 			ArrayList<Integer> actSensorId=new ArrayList<Integer>();
-				for(int pos=3; pos<chunks.length;pos++){
+				for(int pos=101; pos<chunks.length;pos++){
 					actSensorId.add(Integer.parseInt(chunks[pos]));
 				}
-			this.addSensorset(ss_ID, minTime, maxTime, actSensorId);
-			/*if(actSensorId.size()==0){
-				System.out.println("SS id "+ss_ID+" has 0 activated sensors");
-			}*/
+			this.addSensorset(ss_ID, durationDistr, actSensorId);
 		}
 
 	}

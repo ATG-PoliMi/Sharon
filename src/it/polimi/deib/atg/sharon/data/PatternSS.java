@@ -28,6 +28,7 @@ import it.polimi.deib.atg.sharon.configs.SensorsetManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class PatternSS {
 
@@ -84,14 +85,14 @@ public class PatternSS {
 		this.initialProb = initialProb;
 	}
 	
-	private Integer pseudoRandomchoice(ArrayList<Integer> ids,ArrayList<Float> probs) {
+	private Integer pseudoRandomchoice(Random rndmn,ArrayList<Integer> ids,ArrayList<Float> probs) {
 		try {
 			if (ids.size() > 0) {
 				Float maxProb = (float) 0;
 				for (Float p : probs) {
 					maxProb += p;
 				}
-				float rnd = (float) Math.random() * maxProb;
+				float rnd = (float) rndmn.nextDouble() * maxProb;
 				float cumulativeProb = 0;
 				int position = 0;
 				for (Float p : probs) {
@@ -116,7 +117,7 @@ public class PatternSS {
 	}
 	
 	public Integer getInitialSSIdAPriori(){
-		return this.pseudoRandomchoice(this.getSsIds(),this.initialProb);
+		return this.pseudoRandomchoice(new Random(),this.getSsIds(),this.initialProb);
 	}
 	
 	public Integer getInitialSSIdAPrioriAndTransitionMatrix(Integer previousSSId){	
@@ -145,7 +146,7 @@ public class PatternSS {
 			}
 		}
 		//pseudo Random choice of the SS with highest transition probability according to their apriori initial prob
-		return this.pseudoRandomchoice(maxSSid, maxSSprob);
+		return this.pseudoRandomchoice(new Random(),maxSSid, maxSSprob);
 	}
 	
 	public Integer getPosOfIdInList(ArrayList<Integer> l,Integer id){
@@ -159,25 +160,9 @@ public class PatternSS {
 		return null;
 	}
 	
-	public Integer getDifferentSS(Integer actualSS){
-		Float[][] pm=this.getProbMatrix();
-		ArrayList<Integer> sSid=new ArrayList<Integer>();
-		ArrayList<Float> sSprob=new ArrayList<Float>();
-		for(Integer idss:this.getSsIds()){
-			//here I am not considering the probability to stay in the same ss
-			if(!actualSS.equals(idss)){
-				sSid.add(idss);
-				sSprob.add(pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idss)]);
-			}
-		}
-		Integer returned=this.pseudoRandomchoice(sSid, sSprob);
-		if (returned==null){
-			returned=getNextSS(actualSS);
-		}
-		return returned;
-	}
 	
-	public Integer getNextSS(Integer actualSS){
+	
+	public Integer getNextSS(Random rndm,Integer actualSS){
 		Float[][] pm=this.getProbMatrix();
 		ArrayList<Integer> sSid=new ArrayList<Integer>();
 		ArrayList<Float> sSprob=new ArrayList<Float>();
@@ -189,15 +174,16 @@ public class PatternSS {
 				e.printStackTrace();
 			}
 		}
-		return this.pseudoRandomchoice(sSid, sSprob);
+		return this.pseudoRandomchoice(rndm,sSid, sSprob);
 	}
 	
-	public Integer getNextSSRhythm(Integer actualSS, Integer activityId, Integer actualSecond, Integer activityTotalduration){
+	public Integer getNextSSRhythm(Random rndm,Integer ti,String pattName,Integer actualSS, Integer activityId, Integer actualSecond, Integer activityTotalduration){
 		Float[][] pm=this.getProbMatrix();
 		
-		Integer n=Math.round(((actualSecond*100)/activityTotalduration));
+
 		List<Float> listCoeff=ActivityManager.getInsatnce().getRhythmCoeffByIdAct(activityId);
 		Integer N=listCoeff.size();
+		Integer n=(int) ((Math.floor(((actualSecond*N)/activityTotalduration))+1) % N);
 		
 		Double xn= ((1/Math.sqrt(N))*(listCoeff.get(0))*(Math.cos(0)));
 		for(Integer i=1;i<N;i++){
@@ -211,20 +197,26 @@ public class PatternSS {
 		ArrayList<Float> sSprob=new ArrayList<Float>();
 		
 		for(Integer idSS: this.getSsIds()){
+			//System.out.print();
 			//prob transition from actualSS to idSS
 			Float pr=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idSS)];
+			Float p2=(float) pr;
 			if(idSS.equals(actualSS)){
 				//transition from actual to actual
 				pr=(float) (pr*xn);
+				/*if(actualSecond<50){
+					System.out.println("ti: "+ti+" patt name:"+pattName+" second: "+actualSecond+" - ssCurrent: "+actualSS+" - considerSS: "+idSS+" - n:"+n+" - xn: "+xn+" -probMatrix: "+p2.floatValue()+" -probAfter:"+pr);
+				}*/				
 			}else{
 				//transition from actual to new SS
 				pr=(float) (pr*kn);
 			}
+			
 			sSid.add(idSS);
 			sSprob.add(pr);
 		}
 		
-		return this.pseudoRandomchoice(sSid, sSprob);
+		return this.pseudoRandomchoice(rndm,sSid, sSprob);
 	}
 
 	public String getName() {

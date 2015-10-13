@@ -36,6 +36,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 
 public class HMMSensorSimulationThread implements Runnable {
@@ -84,7 +85,9 @@ public class HMMSensorSimulationThread implements Runnable {
 		Integer currentTimePattern;
 		Integer currentTimeSS;
 		Integer totalTimePattern;
-
+		Integer plannedSSDuration;
+		Random randomDistrSSInPattern;
+		Random randomDistrTimeSS;
 		// User actions
 		static int agentStatus = 1; // 1: extracting; 2: acting;
 		static int idling = 0;
@@ -141,10 +144,7 @@ public class HMMSensorSimulationThread implements Runnable {
 						ADLQueue CADL;
 						try {
 							if (queue.isEmpty()){
-								//System.out.println("***** A: EMPTY queue SensorsetSimulation *****");
 								notScheduledSeconds++;
-								//timeInstant--;
-								//throw new Exception("***** A: EMPTY queue SensorsetSimulation *****");
 							} else {
 								CADL = queue.take();
 								action = CADL.getADLId();
@@ -159,10 +159,15 @@ public class HMMSensorSimulationThread implements Runnable {
 								// chosen ss to start the pattern
 								initialSS = currentPattern.getInitialSSIdAPrioriAndTransitionMatrix(currentSS.getIdSensorset());
 								currentSS = SensorsetManager.getInstance().getSensorsetByID(initialSS);
-
+								
+								//initializing distr prob for the pattern
+								randomDistrSSInPattern=new Random();
+								randomDistrTimeSS=new Random();
+								
 								// time counters set to zero
 								currentTimeSS = 0;
 								currentTimePattern = 0;
+								plannedSSDuration= currentSS.getDurationUsingDistribution(randomDistrTimeSS);
 								
 								if(printConsoleActPatternSS){
 									String sssids=" ids of SSs: ";
@@ -172,7 +177,6 @@ public class HMMSensorSimulationThread implements Runnable {
 									System.out.println("Second: "+timeInstant+" actionId: "+action+" action: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName()+sssids);
 								}
 								agentStatus = 2;
-
 							}
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -192,23 +196,20 @@ public class HMMSensorSimulationThread implements Runnable {
 							currentTimePattern=0;
 							agentStatus=1;
 						}else{
-							if(currentTimeSS>=currentSS.getMinTime()){
-								//if the actual duration of this ss is >= then its minimum is possible to change
+							if(currentTimeSS>=(plannedSSDuration+1)){
+								//CHANGE SS
+								Integer ti=(int) timeInstant;
 								
-								/*  //  ----The check on the maximum time of the SS has been removed----
-								if(currentTimeSS>=currentSS.getMaxTime()){
-									//force to change SS
-									newSSId=currentPattern.getDifferentSS(currentSS.getIdSensorset());
-								}else{
-									//compute using probability the next SS (can be the same)
-									newSSId=currentPattern.getNextSS(currentSS.getIdSensorset());
-								}
-								*/
+								//next ss chosen using transition probability (given current ss) and rythm
+								newSSId=currentPattern.getNextSSRhythm(randomDistrSSInPattern,ti,currentPattern.getName(),currentSS.getIdSensorset(),action,currentTimePattern,totalTimePattern);
 								
-								newSSId=currentPattern.getNextSSRhythm(currentSS.getIdSensorset(),action,currentTimeSS,totalTimePattern);
+								//next ss chosen using transition probability (given current ss)
+								//newSSId=currentPattern.getNextSS(randomDistrSSInPattern,currentSS.getIdSensorset());
+								
 								if(!newSSId.equals(currentSS.getIdSensorset())){
 									currentTimeSS=0;
 									currentSS=SensorsetManager.getInstance().getSensorsetByID(newSSId);
+									plannedSSDuration= currentSS.getDurationUsingDistribution(randomDistrTimeSS);
 								}
 							}
 						}
