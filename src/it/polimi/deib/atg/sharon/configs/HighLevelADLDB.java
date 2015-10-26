@@ -429,7 +429,7 @@ public class HighLevelADLDB {
 		while(ItrKey.hasNext()){
 			int cKey = ItrKey.next();
 			ADL cADL = adlmap.get(cKey);
-			if(cADL.getName().contains("sleeping")){
+			if(cADL.getName().contains("Sleeping")){
 				return cADL;
 			}
 		}

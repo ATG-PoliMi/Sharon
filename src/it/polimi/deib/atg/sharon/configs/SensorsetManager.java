@@ -79,13 +79,18 @@ public class SensorsetManager {
 			Integer ss_ID = Integer.parseInt(chunks[0]);
 			ArrayList<Integer> durationDistr=new ArrayList<Integer>();
 			for(int pos=1; pos<=100;pos++){
-				durationDistr.add(Integer.parseInt(chunks[pos]));
+				Float f=Float.parseFloat(chunks[pos]);
+				durationDistr.add(Math.round(f));
 			}
 			ArrayList<Integer> actSensorId=new ArrayList<Integer>();
+			//System.out.println("New sensorset id: "+ss_ID);
 				for(int pos=101; pos<chunks.length;pos++){
 					actSensorId.add(Integer.parseInt(chunks[pos]));
+				//	System.out.print(chunks[pos]);
 				}
 			this.addSensorset(ss_ID, durationDistr, actSensorId);
+			//System.out.println();
+			//System.out.println("---");
 		}
 
 	}
@@ -120,7 +125,13 @@ public class SensorsetManager {
 				//Throw the Exception
 			}
 			for(int col=0; col<chunks.length;col++){
-				this.transitionProb[row][col]=Float.parseFloat(chunks[col]);
+				Float f=(float) 0.0;
+				try{
+					f=Float.parseFloat(chunks[col]);
+				}catch(Exception e){
+					
+				}
+				this.transitionProb[row][col]=f;
 			}
 			row++;
 		}

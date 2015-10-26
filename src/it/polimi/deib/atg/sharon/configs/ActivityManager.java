@@ -56,7 +56,7 @@ public class ActivityManager {
 				// idAct, k, list of k values
 
 				String[] chunks = pattern.split(",");
-				if (chunks.length < 3) {
+				if (chunks.length < 2) {
 					throw new Exception("Unexpected format of row in configuration file");
 				}else{
 					List<Float> coeffAct=new ArrayList<Float>();

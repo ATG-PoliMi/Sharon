@@ -62,9 +62,8 @@ public class HMMSensorSimulationThread implements Runnable {
 	 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 *
 	 */
-
 		private static Boolean printConsoleActPatternSS=false;
-		private static Integer fileHumanReadable=3; // 1- ARAS Format, 2-Human readable format, 3-Standard datasetCollector format
+		private static Integer fileHumanReadable=1; // 1- ARAS Format, 2-Human readable format, 3-simple format
 		private static Boolean shortPrint=false;
 		int[][] worldMapMatrix;
 
@@ -132,6 +131,7 @@ public class HMMSensorSimulationThread implements Runnable {
 				action=3;//sleep
 				currentPattern=lLADL.getPatternSS(lLADL.getMatch(action).getPatternID());
 				initialSS = currentPattern.getInitialSSIdAPriori();
+				//System.out.println("initial ss "+initialSS);
 				currentSS=SensorsetManager.getInstance().getSensorsetByID(initialSS);
 				previousSS=currentSS;
 				
@@ -157,6 +157,7 @@ public class HMMSensorSimulationThread implements Runnable {
 								currentPattern = lLADL.getPatternSS(llADLIndex);
 
 								// chosen ss to start the pattern
+								//System.out.println("searching ss id "+currentSS.getIdSensorset());
 								initialSS = currentPattern.getInitialSSIdAPrioriAndTransitionMatrix(currentSS.getIdSensorset());
 								currentSS = SensorsetManager.getInstance().getSensorsetByID(initialSS);
 								
@@ -261,12 +262,16 @@ public class HMMSensorSimulationThread implements Runnable {
 		public String printActiveSensors(int action,Sensorset currentSS) {
 			//print in ARAS format
 			String activeSensors = "";
-			Sensor[] sensorsArray = HouseMap.getS();
+			//Sensor[] sensorsArray = HouseMap.getS();
 
-			int sId=0;
-			   for (@SuppressWarnings("unused") Sensor aSensorsArray : sensorsArray) {
-				sId++;
-				if(currentSS.getActivatedSensorsId().contains(sId)){
+			//int sid[]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+			int sid[]={5,6,7,8,10,15,16,18,20,21,22,23,25,27,28,29,30,35,36,38,39};
+			
+			//int sId=0;
+			  // for (@SuppressWarnings("unused") Sensor aSensorsArray : sensorsArray) {
+			for(int i=0;i<sid.length;i++){
+		//		sId++;
+				if(currentSS.getActivatedSensorsId().contains(sid[i])){
                     activeSensors += "1 ";
                 }else{
                     activeSensors += "0 ";
