@@ -1,6 +1,6 @@
 package it.polimi.deib.atg.sharon;
 
-import it.polimi.deib.atg.sharon.configs.ActivityManager;
+import it.polimi.deib.atg.sharon.configs.ParamsManager;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
 import it.polimi.deib.atg.sharon.data.PatternSS;

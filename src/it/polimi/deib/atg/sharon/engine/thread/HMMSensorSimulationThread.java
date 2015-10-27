@@ -22,7 +22,7 @@
 
 package it.polimi.deib.atg.sharon.engine.thread;
 
-import it.polimi.deib.atg.sharon.configs.ActivityManager;
+import it.polimi.deib.atg.sharon.configs.ParamsManager;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
@@ -75,7 +75,7 @@ public class HMMSensorSimulationThread implements Runnable {
 
 		// Sensorset Handling
 		SensorsetManager ssManager;
-		ActivityManager aManager;
+		ParamsManager pManager;
 		PatternSS currentPattern;
 		Integer initialSS;
 		Sensorset currentSS;
@@ -112,7 +112,7 @@ public class HMMSensorSimulationThread implements Runnable {
 			this.simulatedDays = simulatedDays;
 			this.simulationOutputPrefix = sOutput;
 			houseMap = HouseMap.getInstance();
-			this.aManager=ActivityManager.getInsatnce();
+			this.pManager=ParamsManager.getInsatnce();
 			lLADL = LowLevelADLDB.getInstance();
 			this.ssManager = SensorsetManager.getInstance();
 			if((fileHumanReadable<1)||(fileHumanReadable>3)) fileHumanReadable=1;
@@ -168,7 +168,7 @@ public class HMMSensorSimulationThread implements Runnable {
 								// time counters set to zero
 								currentTimeSS = 0;
 								currentTimePattern = 0;
-								plannedSSDuration= currentSS.getDurationUsingDistribution(randomDistrTimeSS);
+								plannedSSDuration= currentSS.getDurationUsingDistribution();
 								
 								if(printConsoleActPatternSS){
 									String sssids=" ids of SSs: ";
@@ -201,16 +201,13 @@ public class HMMSensorSimulationThread implements Runnable {
 								//CHANGE SS
 								Integer ti=(int) timeInstant;
 								
-								//next ss chosen using transition probability (given current ss) and rythm
-								newSSId=currentPattern.getNextSSRhythm(randomDistrSSInPattern,ti,currentPattern.getName(),currentSS.getIdSensorset(),action,currentTimePattern,totalTimePattern);
-								
-								//next ss chosen using transition probability (given current ss)
-								//newSSId=currentPattern.getNextSS(randomDistrSSInPattern,currentSS.getIdSensorset());
+								//next ss chosen using transition probability (given current ss) (no more rythm)
+								newSSId=currentPattern.getNextSS(randomDistrSSInPattern,ti,currentPattern.getName(),currentSS.getIdSensorset(),action,currentTimePattern,totalTimePattern);
 								
 								if(!newSSId.equals(currentSS.getIdSensorset())){
 									currentTimeSS=0;
 									currentSS=SensorsetManager.getInstance().getSensorsetByID(newSSId);
-									plannedSSDuration= currentSS.getDurationUsingDistribution(randomDistrTimeSS);
+									plannedSSDuration= currentSS.getDurationUsingDistribution();
 								}
 							}
 						}
@@ -262,15 +259,8 @@ public class HMMSensorSimulationThread implements Runnable {
 		public String printActiveSensors(int action,Sensorset currentSS) {
 			//print in ARAS format
 			String activeSensors = "";
-			//Sensor[] sensorsArray = HouseMap.getS();
-
-			//int sid[]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
-			int sid[]={5,6,7,8,10,15,16,18,20,21,22,23,25,27,28,29,30,35,36,38,39};
-			
-			//int sId=0;
-			  // for (@SuppressWarnings("unused") Sensor aSensorsArray : sensorsArray) {
+			int[] sid=ParamsManager.getInsatnce().getSid();
 			for(int i=0;i<sid.length;i++){
-		//		sId++;
 				if(currentSS.getActivatedSensorsId().contains(sid[i])){
                     activeSensors += "1 ";
                 }else{
@@ -278,7 +268,6 @@ public class HMMSensorSimulationThread implements Runnable {
                 }
             }
             activeSensors += action + " 0 ";
-
 			return activeSensors;
 		}
 		
@@ -288,15 +277,6 @@ public class HMMSensorSimulationThread implements Runnable {
 
 			activeSensors += timeInstant % 86400;
 			activeSensors += ", "+aname+" ss: "+currentSS.getIdSensorset()+" nsens: "+currentSS.getActivatedSensorsId().size()+" -----";
-			
-			/*int sId=0;
-			for (Sensor aSensorsArray : sensorsArray) {
-				sId++;
-				if(currentSS.getActivatedSensorsId().contains(sId)){
-					//activeSensors +="1, ";
-					activeSensors +=this.houseMap.getSensorById(sId).getName()+", ";
-				}
-			}*/
 			
 			for(Integer i:currentSS.getActivatedSensorsId()){
 				activeSensors +=this.houseMap.getSensorById(i).getName()+", ";

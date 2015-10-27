@@ -15,8 +15,7 @@ public class SensorsetManager {
 	private ArrayList<Sensorset> sensorsets;
 	private Float[][] transitionProb;
 	private BufferedReader reader;
-	private static final String CONFIG_ENV = ConfigurationManager.getInstance()
-			.getCONFIG_ENV();
+	private static final String CONFIG_ENV = ConfigurationManager.getInstance().getCONFIG_ENV();
 
 	private SensorsetManager() throws IOException {
 		super();
@@ -43,8 +42,8 @@ public class SensorsetManager {
 		return null;
 	}
 
-	public void addSensorset(Integer idSensorset, ArrayList<Integer> dur, ArrayList<Integer> activatedSensorsId) {
-		Sensorset ss=new Sensorset(idSensorset, dur , activatedSensorsId);
+	public void addSensorset(Integer idSensorset, int maxdur, float expv, ArrayList<Integer> activatedSensorsId) {
+		Sensorset ss=new Sensorset(idSensorset, maxdur, expv , activatedSensorsId);
 		sensorsets.add(ss);
 	}
 
@@ -70,25 +69,25 @@ public class SensorsetManager {
 		Integer numLine = 0;
 		for (String pattern : configLines) {
 			numLine++;
-			// idSensorset, 100 element of durationDistribution, list of the ids of the activated sensors
+			// idSensorset, maxdur, expValueTimeDistr, list of the ids of the activated sensors
 			String[] chunks = pattern.split(",");
 
-			if (chunks.length < 101) {
+			if (chunks.length < 3) {
 				// TODO throw proper exception
 			}
 			Integer ss_ID = Integer.parseInt(chunks[0]);
-			ArrayList<Integer> durationDistr=new ArrayList<Integer>();
-			for(int pos=1; pos<=100;pos++){
-				Float f=Float.parseFloat(chunks[pos]);
-				durationDistr.add(Math.round(f));
-			}
+			int maxdur=Integer.parseInt(chunks[1]);
+			float expv=Float.parseFloat(chunks[2]);
+			
 			ArrayList<Integer> actSensorId=new ArrayList<Integer>();
 			//System.out.println("New sensorset id: "+ss_ID);
-				for(int pos=101; pos<chunks.length;pos++){
+				for(int pos=3; pos<chunks.length;pos++){
 					actSensorId.add(Integer.parseInt(chunks[pos]));
 				//	System.out.print(chunks[pos]);
 				}
-			this.addSensorset(ss_ID, durationDistr, actSensorId);
+			
+				
+				this.addSensorset(ss_ID, maxdur, expv, actSensorId);
 			//System.out.println();
 			//System.out.println("---");
 		}

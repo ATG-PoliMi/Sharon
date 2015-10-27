@@ -4,29 +4,39 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Sensorset {
-	public ArrayList<Integer> getDurationDistribution() {
-		return durationDistribution;
+	public int getMaxDuration() {
+		return maxDuration;
 	}
 
-	public void setDurationDistribution(ArrayList<Integer> durationDistribution) {
-		this.durationDistribution = durationDistribution;
+	public void setMaxDuration(int maxDuration) {
+		this.maxDuration = maxDuration;
+	}
+
+	public float getExpValTimeDist() {
+		return expValTimeDist;
+	}
+
+	public void setExpValTimeDist(float expValTimeDist) {
+		this.expValTimeDist = expValTimeDist;
 	}
 	private Integer idSensorset;
-	private ArrayList<Integer> durationDistribution;
+	private int maxDuration;
+	private float expValTimeDist;
 	private ArrayList<Integer> activatedSensorsId;
 	
-	public Sensorset(Integer idSensorset, ArrayList<Integer> durDistr,
-			ArrayList<Integer> activatedSensorsId) {
+	public Sensorset(Integer idSensorset, int maxdur, float expValTimeDist ,ArrayList<Integer> activatedSensorsId) {
 		super();
 		this.idSensorset = idSensorset;
-		this.durationDistribution = durDistr;
+		this.maxDuration=maxdur;
+		this.expValTimeDist=expValTimeDist;
 		this.activatedSensorsId = activatedSensorsId;
 	}
 	
 	public Sensorset(Integer idSensorset) {
 		super();
 		this.idSensorset = idSensorset;
-		this.durationDistribution = new ArrayList<Integer>();
+		this.maxDuration=0;
+		this.expValTimeDist=(float) 0;
 		this.activatedSensorsId = new ArrayList<Integer>();
 	}
 	
@@ -43,11 +53,12 @@ public class Sensorset {
 	public void setActivatedSensorsId(ArrayList<Integer> activatedSensorsId) {
 		this.activatedSensorsId = activatedSensorsId;
 	}
-
-	public Integer getDurationUsingDistribution(Random rndD) {
-		Integer pos=rndD.nextInt(100);
-		return this.durationDistribution.get(pos);
-	}
 	
+	public Integer getDurationUsingDistribution(){
+		Random randomDistrTimeSS=new Random();
+		float p_t=randomDistrTimeSS.nextFloat();
+		int t=(int) Math.ceil(this.expValTimeDist*Math.log(1-p_t));
+		return t;
+	}
 	
 }

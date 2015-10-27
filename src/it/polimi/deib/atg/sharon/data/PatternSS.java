@@ -22,7 +22,7 @@
 
 package it.polimi.deib.atg.sharon.data;
 
-import it.polimi.deib.atg.sharon.configs.ActivityManager;
+import it.polimi.deib.atg.sharon.configs.ParamsManager;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
 
 import java.io.IOException;
@@ -181,7 +181,7 @@ public class PatternSS {
 		Float[][] pm=this.getProbMatrix();
 		
 
-		List<Float> listCoeff=ActivityManager.getInsatnce().getRhythmCoeffByIdAct(activityId);
+		List<Float> listCoeff=ParamsManager.getInsatnce().getRhythmCoeffByIdAct(activityId);
 		Integer N=listCoeff.size();
 		Integer n=(int) ((Math.floor(((actualSecond*N)/activityTotalduration))+1) % N);
 		
@@ -200,13 +200,9 @@ public class PatternSS {
 			//System.out.print();
 			//prob transition from actualSS to idSS
 			Float pr=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idSS)];
-			Float p2=(float) pr;
 			if(idSS.equals(actualSS)){
 				//transition from actual to actual
-				pr=(float) (pr*xn);
-				/*if(actualSecond<50){
-					System.out.println("ti: "+ti+" patt name:"+pattName+" second: "+actualSecond+" - ssCurrent: "+actualSS+" - considerSS: "+idSS+" - n:"+n+" - xn: "+xn+" -probMatrix: "+p2.floatValue()+" -probAfter:"+pr);
-				}*/				
+				pr=(float) (pr*xn);			
 			}else{
 				//transition from actual to new SS
 				pr=(float) (pr*kn);
@@ -214,6 +210,28 @@ public class PatternSS {
 			
 			sSid.add(idSS);
 			sSprob.add(pr);
+		}
+		
+		return this.pseudoRandomchoice(rndm,sSid, sSprob);
+	}
+	
+	public Integer getNextSS(Random rndm,Integer ti,String pattName,Integer actualSS, Integer activityId, Integer actualSecond, Integer activityTotalduration){
+		Float[][] pm=this.getProbMatrix();
+		ArrayList<Integer> sSid=new ArrayList<Integer>();
+		ArrayList<Float> sSprob=new ArrayList<Float>();
+		
+		for(Integer idSS: this.getSsIds()){
+			//System.out.print();
+			//prob transition from actualSS to idSS
+			Float pr=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idSS)];
+			if(idSS.equals(actualSS)){
+				//transition from actual to actual
+				pr=(float) 0;			
+			}else{
+				//transition from actual to new SS
+				sSid.add(idSS);
+				sSprob.add(pr);
+			}	
 		}
 		
 		return this.pseudoRandomchoice(rndm,sSid, sSprob);
