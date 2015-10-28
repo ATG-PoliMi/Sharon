@@ -98,8 +98,8 @@ public class ParamsManager {
 				this.sid=new int[chunks.length];
 				for(int i=0;i<chunks.length;i++){
 					this.sid[i]=Integer.parseInt(chunks[i]);
+					numSensors++;
 				}
-				numSensors++;
 			}
 
 			System.out.println("Imported "+numSensors.toString()+" sensors");
