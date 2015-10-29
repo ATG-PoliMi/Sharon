@@ -33,10 +33,10 @@ public class Sensorset {
 		this.activatedSensorsId = activatedSensorsId;
 	}
 	
-	public Integer getDurationUsingDistribution(Float expValTimeDist){
+	public Integer getDurationUsingDistribution(Float expValTimeDist,Integer scheduledTime){
 		Random randomDistrTimeSS=new Random();
 		float p_t=randomDistrTimeSS.nextFloat();
-		int t=(int) Math.ceil(expValTimeDist*Math.log(1-p_t));
+		int t=(int) Math.ceil(scheduledTime*(-expValTimeDist*Math.log(1-p_t)));
 		return t;
 	}
 	
