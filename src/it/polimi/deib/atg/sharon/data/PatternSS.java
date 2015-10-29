@@ -31,17 +31,17 @@ import java.util.List;
 import java.util.Random;
 
 public class PatternSS {
-
-    private int id;
+	private int id;
     private Integer idAct;
     private String name;
     private String nameAct;
     private Float prob;
     private ArrayList<Integer> ssIds;
+    private ArrayList<Float> expVss;
     private ArrayList<Float> initialProb;
     private Float[][] probMatrix;
 
-    public PatternSS(Integer id,Integer idAct,String name,String nameAct, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
+    public PatternSS(Integer id,Integer idAct,String name,String nameAct, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> expVss,ArrayList<Float> initialProb, Float[][] probMatrix) {
         super();
         this.id = id;
         this.idAct=idAct;
@@ -51,6 +51,7 @@ public class PatternSS {
         this.initialProb = initialProb;
         this.probMatrix = probMatrix;
         this.ssIds = ssIds;
+        this.expVss=expVss;
     }
 
     public int getId() {
@@ -268,5 +269,23 @@ public class PatternSS {
 	public void setNameAct(String nameAct) {
 		this.nameAct = nameAct;
 	}
-	
+    public ArrayList<Float> getExpVss() {
+		return expVss;
+	}
+
+	public void setExpVss(ArrayList<Float> expVss) {
+		this.expVss = expVss;
+	}
+
+	public Float getExpValue(Integer idSensorset) {
+		int pos=0;
+		for(Integer ids:this.ssIds){
+			if(ids.equals(idSensorset)){
+				return this.expVss.get(pos);
+			}
+			pos++;
+		}
+		return (float)0;
+	}
+
 }

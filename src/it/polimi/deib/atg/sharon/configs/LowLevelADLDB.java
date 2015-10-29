@@ -208,20 +208,25 @@ public class LowLevelADLDB {
                 	//id of the sensorset of the patter
                 	ssIds.add(Integer.parseInt(chunks[m]));
                 }
-                ArrayList<Float> iniProb=new ArrayList<Float>();
+                ArrayList<Float> expVss=new ArrayList<Float>();
                 for(int m = 4+nSS; m < 4+nSS+nSS; m++ ){
+                	//id of the sensorset of the patter
+                	expVss.add(Float.parseFloat(chunks[m]));
+                }
+                ArrayList<Float> iniProb=new ArrayList<Float>();
+                for(int m = 4+nSS+nSS; m < 4+nSS+nSS+nSS; m++ ){
                 	//id of the sensorset of the patter
                 	iniProb.add(Float.parseFloat(chunks[m]));
                 }
                 Float[][] probMatrix=new Float[nSS][nSS];
                 for(int row = 0; row < nSS; row++ ){
                 	for(int col = 0; col < nSS; col++ ){
-                		int m=4+(2*nSS)+(row*nSS)+col;
+                		int m=4+(3*nSS)+(row*nSS)+col;
                         probMatrix[row][col]= Float.parseFloat(chunks[m]);
                     }
                 }
                 String nameAct=HighLevelADLDB.getInstance().getADLById(act_ID).getName();
-                PatternSS patternSS=new PatternSS(patternId,act_ID,chunks[2],nameAct,Float.parseFloat(chunks[1]),ssIds,iniProb,probMatrix);
+                PatternSS patternSS=new PatternSS(patternId,act_ID,chunks[2],nameAct,Float.parseFloat(chunks[1]),ssIds,expVss,iniProb,probMatrix);
                 patternMap.put(patternId, new LowLevelSSADL(act_ID, chunks[2], patternSS));
                 patternSSs.add(patternSS);
             }

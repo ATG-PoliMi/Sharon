@@ -168,7 +168,8 @@ public class HMMSensorSimulationThread implements Runnable {
 								// time counters set to zero
 								currentTimeSS = 0;
 								currentTimePattern = 0;
-								plannedSSDuration= currentSS.getDurationUsingDistribution();
+								Float expVfromPatt=currentPattern.getExpValue(currentSS.getIdSensorset());
+								plannedSSDuration= currentSS.getDurationUsingDistribution(expVfromPatt);
 								
 								if(printConsoleActPatternSS){
 									String sssids=" ids of SSs: ";
@@ -207,7 +208,8 @@ public class HMMSensorSimulationThread implements Runnable {
 								if(!newSSId.equals(currentSS.getIdSensorset())){
 									currentTimeSS=0;
 									currentSS=SensorsetManager.getInstance().getSensorsetByID(newSSId);
-									plannedSSDuration= currentSS.getDurationUsingDistribution();
+									Float expVfromPatt=currentPattern.getExpValue(newSSId);
+									plannedSSDuration= currentSS.getDurationUsingDistribution(expVfromPatt);
 								}
 							}
 						}
