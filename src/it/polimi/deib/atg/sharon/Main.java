@@ -46,7 +46,7 @@ public class Main {
     public static final boolean ENABLE_SENSORS_ACTIVITY = true;    //False: Only High Level, True: High Level + Low Level (Experimental!)
     public static final boolean PRINT_LOG = false;//False: no log
     public static final boolean DISABLE_DIJKSTRA = true;
-    public static final boolean USE_DRIFTS = false;// activates drifts
+    public static final boolean USE_DRIFTS = true;// activates drifts
     public static final boolean USE_HMM_LL = true;// activates LowLevel Based on HMM
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY_";	//this file is heavy. Open it from explorer.

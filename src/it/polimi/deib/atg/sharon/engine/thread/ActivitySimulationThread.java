@@ -32,7 +32,7 @@ import java.util.concurrent.BlockingQueue;
 
 import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
-
+import it.polimi.deib.atg.sharon.configs.NeedsViewer;
 import it.polimi.deib.atg.sharon.data.Day;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.engine.ADLEffect;
@@ -112,6 +112,7 @@ public class ActivitySimulationThread implements Runnable {
 				}
 			}
 		}
+		NeedsViewer.getInstance().printFile();
 		System.out.println("Producer Thread ends");
 		if (Main.PRINT_LOG) {
 			hist.refineHistogram(simulatedDays);	//normalized for days number
@@ -175,6 +176,9 @@ public class ActivitySimulationThread implements Runnable {
 		Map<Integer, ADL> adlmap = HighLevelADLDB.getInstance().getAdlmap();
 
 		double needs[] = Needs.getInstance().getStatus();
+		for (int i=0;i<needs.length;i++){
+			NeedsViewer.getInstance().addNeed(i+1, (float) needs[i]);
+		}
 		for (ADL a : HighLevelADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
 			active = a.getActive() ? 1 : 0.8;

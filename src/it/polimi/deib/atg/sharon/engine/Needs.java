@@ -31,6 +31,8 @@ import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+
+import it.polimi.deib.atg.sharon.configs.NeedsViewer;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 
 /**
@@ -185,10 +187,12 @@ public class Needs {
 		}
 		
 		Iterator<String[]> itr = distribution.iterator();
+		NeedsViewer.getInstance();
 		while(itr.hasNext()){
 			need = itr.next();
 			if(Arrays.asList(need).size() == 3 || Arrays.asList(need).size() == 4){
 				id.add(Integer.parseInt(need[0]));
+				NeedsViewer.getInstance().addNeed(Integer.parseInt(need[0]));
 				name.add(need[1].toLowerCase());
 				constant.add(Double.parseDouble(need[2]));
 				if(Arrays.asList(need).size() == 4){
