@@ -37,24 +37,48 @@ public class NeedsViewer {
 	}
 	
 	public void printFile(){
+		printComplete();
+		//printNeed(1);
+	}
+	
+	public void printNeed(int need){
 		try {
 			File folder = new File("data");
 			if (!folder.exists()) {
 				throw new NotDirectoryException(null);
 			}
-			File currentFile = new File("data/needsView.txt");
+			File currentFile = new File("data/needs"+need+"View.txt");
 			FileOutputStream fos = new FileOutputStream(currentFile);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-			for(Entry<Integer, List<Float>> n:needsGraph.entrySet()){
-				String line="";
-				for(Float f:n.getValue()){
-					line+=f.toString()+",";
+			List<Float> lf=needsGraph.get(need);
+				for(Float f:lf){
+					bw.write(f.toString());
+					bw.newLine();
 				}
-				line=line.substring(0,line.length()-1);
-				bw.write(line);
-				bw.newLine();
-			}
 			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void printComplete(){
+		try {
+			File folder = new File("data");
+			if (!folder.exists()) {
+				throw new NotDirectoryException(null);
+			}
+			
+			for(Entry<Integer, List<Float>> n:needsGraph.entrySet()){
+				File currentFile = new File("data/needs"+n.getKey().toString()+"View.txt");
+				FileOutputStream fos = new FileOutputStream(currentFile);
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+				for(Float f:n.getValue()){
+					bw.write(f.toString());
+					bw.newLine();
+				}
+				bw.close();
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

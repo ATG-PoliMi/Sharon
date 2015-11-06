@@ -86,6 +86,7 @@ public class Parameters {
 			while (ItrDrifts.hasNext()) {
                 NeedsDrift CurrentDrift = ItrDrifts.next();
                 if (time == CurrentDrift.getTime()) {
+                	System.out.println("DRIFT -> "+CurrentDrift.getId()+" changed to "+CurrentDrift.getNewValue());
                     setNeedParameter(Needs.getInstance().searchIndex(CurrentDrift.getId()), CurrentDrift.getNewValue());
                 }
             }

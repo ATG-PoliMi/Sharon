@@ -217,6 +217,7 @@ public class HMMSensorSimulationThread implements Runnable {
 					}
 
 					if ((timeInstant % 86400 == 0) && (timeInstant > 0)) {
+						System.out.println("Computed day "+(int) timeInstant / 86400);
 						out.close();
 						out = new PrintWriter(new FileWriter(simulationOutputPrefix
 								+ (int) timeInstant / 86400 + ".txt"));

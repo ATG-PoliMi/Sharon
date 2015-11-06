@@ -174,7 +174,7 @@ public class ActivitySimulationThread implements Runnable {
 	private static void computeADLRank(int minute) {
 		double r, active;
 		Map<Integer, ADL> adlmap = HighLevelADLDB.getInstance().getAdlmap();
-
+		
 		double needs[] = Needs.getInstance().getStatus();
 		for (int i=0;i<needs.length;i++){
 			NeedsViewer.getInstance().addNeed(i+1, (float) needs[i]);
