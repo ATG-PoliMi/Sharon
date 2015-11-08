@@ -147,7 +147,7 @@ public class ActivitySimulationThread implements Runnable {
 				ongoingAdl = bestAdl;
 				ongoingAdl.setActive(true);
 				elapsed_time = 0;
-                //this.printVerboseOnConsole();
+                this.printVerboseOnConsole();
 				return X;
 			}
 		}
@@ -182,12 +182,27 @@ public class ActivitySimulationThread implements Runnable {
 		for (ADL a : HighLevelADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
 			active = a.getActive() ? 1 : 0.8;
+			/*if(a.getName().equals("sleeping")){
+            	System.out.println("----");
+			}*/
 			for (int i = 0; i<needs.length; i++) {
 				r += needsContribution(a, i) * needs[i];
+				/*if(a.getName().equals("sleeping")){
+	            	System.out.println("need "+i);
+	            	System.out.println(needsContribution(a, i));
+	            	System.out.println(needs[i]);
+				}*/
 			}
-
+			
             r *= ((Math.random() < a.getTimeDescription(minute / 60)) ? 1 : (a.getTimeDescription(minute / 60))) * (a.getDayWeight(Day.getInstance().getWeekDay() % 7) *
                     active);
+            /*if(a.getName().equals("sleeping")){
+            	System.out.println("----");
+            	System.out.println(a.getTimeDescription(minute / 60));
+            	System.out.println(a.getDayWeight(Day.getInstance().getWeekDay() % 7));
+            	System.out.println(active);
+            	System.out.println(r);
+			}*/
 			a.setRank(r);
 			adlmap.put(a.getId(), a);
 		}
@@ -237,6 +252,7 @@ public class ActivitySimulationThread implements Runnable {
 	private static void updateNeeds(int times) {
 		Parameters.getInstance().update(timeInstant);
 		HighLevelADLDB.getInstance().update(timeInstant);
+		
 		for (int i=0; i<times; i++) {
 			Iterator<Double> ItrStatus = Arrays.asList(Needs.getInstance().getStatusWrapped()).iterator();
 			Iterator<Double> ItrParam = Arrays.asList(Parameters.getInstance().getNeedsParameters()).iterator();

@@ -36,6 +36,7 @@ import java.util.Iterator;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.engine.ADLEffect;
 import it.polimi.deib.atg.sharon.engine.Needs;
+import it.polimi.deib.atg.sharon.utils.Time;
 
 /**
  * This class represent a drift of an ADL during the simulation, it contains several members:
@@ -194,14 +195,14 @@ public class HighLevelADLDrift {
 		while(itrName.hasNext()){
 			String name = itrName.next();
 			String effect = itrEffects.next();
-			if(name.contains("Effects")){
+			if(name.contains("Weights")){ //TODO here change
 				Iterator<String> ItrNeeds = Arrays.asList(effect.split(",")).iterator();
 				ArrayList<String> needs = new ArrayList<String>();
 				while(ItrNeeds.hasNext()){
 					needs.add(ItrNeeds.next());
 				}
 				outdateADL.setNeeds(needs);
-			} else	if(name.contains("Weights")){
+			} else	if(name.contains("Effects")){ //TODO here change
 				Iterator<String> ItrWeights = Arrays.asList(effect.split(",")).iterator();
 				ArrayList<Double> Weights = new ArrayList<Double>();
 				ArrayList<ADLEffect> effects = new ArrayList<ADLEffect>();
@@ -232,6 +233,7 @@ public class HighLevelADLDrift {
 				if(StringSplitted.length == 1){
 					timeDependency = CreateTd(Float.parseFloat(StringSplitted[0]));
 				} else if(StringSplitted.length == 1440){
+					//System.out.println(effect);
 					for(int j = 0; j < 1440; j++){
 						timeDependency[j] = Float.parseFloat(StringSplitted[j]);
 					}
@@ -255,4 +257,61 @@ public class HighLevelADLDrift {
 		}
 		return td;
 	}
+	
+	private static Float[] CreateTd(String[] Edges) throws Exception {
+        int tkn=0;
+        Float[] td = new Float[1440];
+        for(int k = 0 ; k < 1440 ; k++){
+            td[k] = 0F;
+        }
+        while(tkn<Edges.length){
+            Integer begin = 0;
+            Integer end = 1439;
+            if(Edges[tkn].equals("RS")){
+                begin = new Time(Edges[tkn + 1]).getMinuteS();
+                if(Edges[tkn+2].equals("RE")){
+                    end = new Time(Edges[tkn + 3]).getMinuteS();
+                }else {
+                    throw new Exception("Wrong Timeprofile parameters");
+                }
+                float delta = 1F/((float)(end - begin));
+                for (int i = begin; i < end; i++){
+                    if(i>0){
+                        td[i] = td[i-1] + delta;
+                    }else{
+                        td[i] = delta;
+                    }
+                }
+            }
+            if((Edges[tkn].equals("R") || Edges[tkn].equals("RE")) && tkn<(Edges.length-3)){
+                begin = new Time(Edges[tkn + 1]).getMinuteS();
+                if(Edges[tkn+2].equals("F") || Edges[tkn+2].equals("FS")) {
+                    end = new Time(Edges[tkn + 3]).getMinuteS();
+                }else{
+                    // FIXME: this exception must not be thrown in warp around cases, not implemented!
+                    //throw new Exception("Wrong Timeprofile parameters");
+                }
+                for (int i = begin; i < end; i++){
+                    td[i] = 1F;
+                }
+            }
+            if(Edges[tkn].equals("FS")){
+                if(tkn==0) {
+                    throw new Exception("Wrong Timeprofile parameters");
+                }
+                begin = new Time(Edges[tkn + 1]).getMinuteS();
+                if(Edges[tkn+2].equals("FE")){
+                    end = new Time(Edges[tkn + 3]).getMinuteS();
+                }else {
+                    throw new Exception("Wrong Timeprofile parameters");
+                }
+                float delta = 1F/((float)(end - begin));
+                for (int i = begin; i < end; i++){
+                    td[i] = td[i-1] - delta;
+                }
+            }
+            tkn+=2;
+        }
+        return td;
+    }
 }
