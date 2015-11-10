@@ -111,9 +111,6 @@ public class HighLevelADLDrift {
 		String NameADL = null;
 		ModeOfDrift Mode;
 		long UpdateTime = 0;
-		ArrayList<String> paramName = new ArrayList<String> ();
-		ArrayList<String> paramValue = new ArrayList<String> ();
-		
 		BufferedReader reader = null;
 		
 		
@@ -141,6 +138,8 @@ public class HighLevelADLDrift {
 		while(itrFile.hasNext()){
 			File CurrentFile = itrFile.next();
 			ArrayList<String> distribuction = new ArrayList<String>();
+			ArrayList<String> paramName = new ArrayList<String> ();
+			ArrayList<String> paramValue = new ArrayList<String> ();
 			try{
 				reader = new BufferedReader(new FileReader(CurrentFile));
 				String line = null;
@@ -196,7 +195,7 @@ public class HighLevelADLDrift {
 		while(itrName.hasNext()){
 			String name = itrName.next();
 			String effect = itrEffects.next();
-			if(name.contains("Weights")){ //TODO here change
+			if(name.contains("Weights")){
 				Iterator<String> ItrNeeds = Arrays.asList(effect.split(",")).iterator();
 				ArrayList<String> needs = new ArrayList<String>();
 				while(ItrNeeds.hasNext()){
@@ -238,7 +237,13 @@ public class HighLevelADLDrift {
 					for(int j = 0; j < 1440; j++){
 						timeDependency[j] = Float.parseFloat(StringSplitted[j]);
 					}
-				}
+				}else {
+	                try {
+	                    timeDependency = CreateTd(StringSplitted);
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                }}
+//		TODO			throw new
 				outdateADL.setTimeDescription(timeDependency);
 			}else if(name.contains("MinDuration")){
 				outdateADL.setMinTime(Integer.parseInt(effect));

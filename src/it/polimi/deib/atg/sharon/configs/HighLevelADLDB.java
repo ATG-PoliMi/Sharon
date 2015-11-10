@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import it.polimi.deib.atg.sharon.engine.ADLEffect;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.engine.Needs;
@@ -271,7 +272,13 @@ public class HighLevelADLDB {
 		while(itrDrifts.hasNext()){
 			HighLevelADLDrift currentDrift = itrDrifts.next();
 			if(time == currentDrift.updateTime){
+            	System.out.println(time+ " ACTIVITY DRIFT -> "+currentDrift.nameADL+" changed ");
 				HighLevelADLDrift.applyDrift(currentDrift, adlmap.get(currentDrift.idADL));
+				/*System.out.println();
+				for (Float f:adlmap.get(currentDrift.idADL).getTimeDescription()){
+					System.out.print(f.toString()+"-");
+				}
+				System.out.println();*/
 			}
 		}
 	}
