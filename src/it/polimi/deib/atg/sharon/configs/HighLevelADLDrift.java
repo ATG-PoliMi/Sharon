@@ -116,7 +116,7 @@ public class HighLevelADLDrift {
 		
 		BufferedReader reader = null;
 		
-		ArrayList<String> distribuction = new ArrayList<String>();
+		
 		FilenameFilter ActDriftFilter = new FilenameFilter(){
 			@Override
 			public boolean accept(File dir, String name) {
@@ -140,6 +140,7 @@ public class HighLevelADLDrift {
 		Iterator<File> itrFile = fileList.iterator();
 		while(itrFile.hasNext()){
 			File CurrentFile = itrFile.next();
+			ArrayList<String> distribuction = new ArrayList<String>();
 			try{
 				reader = new BufferedReader(new FileReader(CurrentFile));
 				String line = null;
