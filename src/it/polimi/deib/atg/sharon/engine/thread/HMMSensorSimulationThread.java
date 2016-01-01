@@ -22,6 +22,8 @@
 
 package it.polimi.deib.atg.sharon.engine.thread;
 
+import it.polimi.deib.atg.sharon.configs.ActivityViewer;
+import it.polimi.deib.atg.sharon.configs.NeedsViewer;
 import it.polimi.deib.atg.sharon.configs.ParamsManager;
 import it.polimi.deib.atg.sharon.configs.HouseMap;
 import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
@@ -35,6 +37,9 @@ import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
@@ -62,9 +67,15 @@ public class HMMSensorSimulationThread implements Runnable {
 	 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 *
 	 */
+		private static Boolean printStatistic=true;
 		private static Boolean printConsoleActPatternSS=false;
 		private static Integer fileHumanReadable=1; // 1- ARAS Format, 2-Human readable format, 3-simple format
 		private static Boolean shortPrint=false;
+		private static Boolean printAnalytics=true;
+		
+		//TODO move this in a configuration file
+		private  List<Integer> analyzedActivities= new ArrayList<Integer>();
+		
 		int[][] worldMapMatrix;
 
 		// ADL Handling
@@ -72,7 +83,7 @@ public class HMMSensorSimulationThread implements Runnable {
 		LowLevelADLDB lLADL;
 		// Map<Integer, ADLMatch> matchADL;
 		HouseMap houseMap;
-
+			
 		// Sensorset Handling
 		SensorsetManager ssManager;
 		ParamsManager pManager;
@@ -94,6 +105,7 @@ public class HMMSensorSimulationThread implements Runnable {
 		// Utils
 		static long timeInstant = 0;
 		static long usedTime = 0;
+		static long deltaTime=0;
 
 		// TARGETS
 		private Integer llADLIndex;
@@ -128,13 +140,26 @@ public class HMMSensorSimulationThread implements Runnable {
 						+ "0.txt"));
 				
 				//initialization phase
-				action=3;//sleep
+				action=1;//sleep
 				currentPattern=lLADL.getPatternSS(lLADL.getMatch(action).getPatternID());
 				initialSS = currentPattern.getInitialSSIdAPriori();
-				//System.out.println("initial ss "+initialSS);
 				currentSS=SensorsetManager.getInstance().getSensorsetByID(initialSS);
 				previousSS=currentSS;
 				
+				//TODO move this in a configuration file
+				if(printAnalytics){
+					//TODO insert here the activities to be analyzed
+					analyzedActivities.add(4);
+					System.out.println("Analyzing activity: 4");
+					
+					if(analyzedActivities.contains(action)){
+						System.out.println("activity: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName());
+						System.out.println("Time: 0 - Initial situation: "+printActiveSensorsAnalyzer(action,currentSS));
+					}
+				}			
+						
+				int previousAction=action;
+				int durationAction=0;
 				//loop for every second
 				for (timeInstant = 0; timeInstant < (86400 * simulatedDays) ; timeInstant++) {
 					
@@ -148,18 +173,28 @@ public class HMMSensorSimulationThread implements Runnable {
 							} else {
 								CADL = queue.take();
 								action = CADL.getADLId();
-								totalTimePattern = (int) (long) CADL.getTime();
+								totalTimePattern = (int) (long) CADL.getTime();			
 								
 								//choose the pattern according to the last sensorset and the probability
 								llADLIndex = lLADL.getPatternIDSS(currentSS,action);
 								
 								// chosen pattern for the activity
 								currentPattern = lLADL.getPatternSS(llADLIndex);
-
+								
 								// chosen ss to start the pattern
 								//System.out.println("searching ss id "+currentSS.getIdSensorset());
 								initialSS = currentPattern.getInitialSSIdAPrioriAndTransitionMatrix(currentSS.getIdSensorset());
 								currentSS = SensorsetManager.getInstance().getSensorsetByID(initialSS);
+								
+								//TODO
+								if(printAnalytics){
+									if(analyzedActivities.contains(action)){
+										deltaTime=timeInstant;
+										System.out.println("activity: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName());
+										System.out.println("Time: "+timeInstant+" - Initial situation: "+printActiveSensorsAnalyzer(action,currentSS));
+									}
+								}	
+								
 								
 								//initializing distr prob for the pattern
 								randomDistrSSInPattern=new Random();
@@ -210,17 +245,36 @@ public class HMMSensorSimulationThread implements Runnable {
 									currentSS=SensorsetManager.getInstance().getSensorsetByID(newSSId);
 									Float expVfromPatt=currentPattern.getExpValue(newSSId);
 									plannedSSDuration= currentSS.getDurationUsingDistribution(expVfromPatt,totalTimePattern);
+									//TODO
+									if(printAnalytics){
+										if(analyzedActivities.contains(action)){
+											System.out.println("Time: "+timeInstant+" (difference to last: "+(timeInstant-deltaTime)+") - change situation: "+printActiveSensorsAnalyzer(action,currentSS));
+											deltaTime=timeInstant;
+										}
+									}	
+									
 								}
 							}
 						}
 						break;
 					}
-
+	
+					if(action==previousAction){
+						durationAction++;
+					}else{
+						ActivityViewer.getInstance().addActivity(previousAction, durationAction);
+						durationAction=0;
+						previousAction=action;
+					}
+					
 					if ((timeInstant % 86400 == 0) && (timeInstant > 0)) {
-						System.out.println("Computed day "+(int) timeInstant / 86400);
+						//System.out.println("Computed day "+(int) timeInstant / 86400);
 						out.close();
-						out = new PrintWriter(new FileWriter(simulationOutputPrefix
-								+ (int) timeInstant / 86400 + ".txt"));
+						out = new PrintWriter(new FileWriter(simulationOutputPrefix+ (int) timeInstant / 86400 + ".txt"));
+						ActivityViewer.getInstance().addActivity(action, durationAction);
+						durationAction=0;
+						previousAction=action;
+						ActivityViewer.getInstance().initDay((int) timeInstant / 86400);
 					}
 					
 					if((!shortPrint)||(!previousSS.equals(currentSS))){
@@ -243,6 +297,10 @@ public class HMMSensorSimulationThread implements Runnable {
 				e.printStackTrace();
 			}
 			System.out.println("Not scheduled seconds:"+notScheduledSeconds.toString());
+			if(printStatistic){
+				NeedsViewer.getInstance().printFile();
+				ActivityViewer.getInstance().printFile();
+			}
 		}
 		
 		public String printActiveSensorsStandard(int action,Sensorset currentSS){
@@ -288,6 +346,14 @@ public class HMMSensorSimulationThread implements Runnable {
 
 			// and ground truth
 			activeSensors += "-----   "+pattName;
+			return activeSensors;
+		}
+		
+		public String printActiveSensorsAnalyzer(int action,Sensorset currentSS) {
+			String activeSensors = "";
+			for(Integer i:currentSS.getActivatedSensorsId()){
+				activeSensors +=this.houseMap.getSensorById(i).getName()+", ";
+			}
 			return activeSensors;
 		}
 	}

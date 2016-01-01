@@ -59,7 +59,7 @@ public class Parameters {
 	private static Parameters instance;
 
 	//Histogram
-	public static int ADLCOUNT = 17;
+	public static int ADLCOUNT = 14;
 	//Behavior Simulator
 	Double[] NeedsParameters;
 	
@@ -86,7 +86,7 @@ public class Parameters {
 			while (ItrDrifts.hasNext()) {
                 NeedsDrift CurrentDrift = ItrDrifts.next();
                 if (time == CurrentDrift.getTime()) {
-                	System.out.println("DRIFT -> "+CurrentDrift.getId()+" changed to "+CurrentDrift.getNewValue());
+                	System.out.println(time+ " NEED DRIFT -> "+CurrentDrift.getId()+" changed to "+CurrentDrift.getNewValue());
                     setNeedParameter(Needs.getInstance().searchIndex(CurrentDrift.getId()), CurrentDrift.getNewValue());
                 }
             }

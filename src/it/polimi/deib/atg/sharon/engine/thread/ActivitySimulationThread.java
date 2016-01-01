@@ -101,8 +101,6 @@ public class ActivitySimulationThread implements Runnable {
 					try {
 						if (Main.ENABLE_SENSORS_ACTIVITY)
 							queue.put(ADLQ);
-
-						//TODO Andrea comment System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
                         ADL adl = HighLevelADLDB.getInstance().getADLById(ADLQ.getADLId());
                         outFile.println(timeInstant+","+ ongoingAdl.getId()+","+ ongoingAdl.getName()+","+new Time(timeInstant % 86400) );
 
@@ -112,14 +110,13 @@ public class ActivitySimulationThread implements Runnable {
 				}
 			}
 		}
-		NeedsViewer.getInstance().printFile();
 		System.out.println("Producer Thread ends");
 		if (Main.PRINT_LOG) {
 			hist.refineHistogram(simulatedDays);	//normalized for days number
 			//hist.normalizationTo1Histogram(); 	//normalized to 1
 
 			hist.printToFile("data/OutputHistogram.txt",2);
-			Distributions.loadDistributions("data/OutputHistogram.txt", "data/t/norm1_7d.txt");
+			//Distributions.loadDistributions("data/OutputHistogram.txt", "data/t/norm1_7d.txt");
 			//Distributions.loadDistributions("data/t/norm1_23d.txt","data/t/norm1_7d.txt");
 		}
 	}
@@ -147,7 +144,7 @@ public class ActivitySimulationThread implements Runnable {
 				ongoingAdl = bestAdl;
 				ongoingAdl.setActive(true);
 				elapsed_time = 0;
-                this.printVerboseOnConsole();
+                //this.printVerboseOnConsole();
 				return X;
 			}
 		}
@@ -182,27 +179,12 @@ public class ActivitySimulationThread implements Runnable {
 		for (ADL a : HighLevelADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
 			active = a.getActive() ? 1 : 0.8;
-			/*if(a.getName().equals("sleeping")){
-            	System.out.println("----");
-			}*/
 			for (int i = 0; i<needs.length; i++) {
 				r += needsContribution(a, i) * needs[i];
-				/*if(a.getName().equals("sleeping")){
-	            	System.out.println("need "+i);
-	            	System.out.println(needsContribution(a, i));
-	            	System.out.println(needs[i]);
-				}*/
 			}
 			
             r *= ((Math.random() < a.getTimeDescription(minute / 60)) ? 1 : (a.getTimeDescription(minute / 60))) * (a.getDayWeight(Day.getInstance().getWeekDay() % 7) *
                     active);
-            /*if(a.getName().equals("sleeping")){
-            	System.out.println("----");
-            	System.out.println(a.getTimeDescription(minute / 60));
-            	System.out.println(a.getDayWeight(Day.getInstance().getWeekDay() % 7));
-            	System.out.println(active);
-            	System.out.println(r);
-			}*/
 			a.setRank(r);
 			adlmap.put(a.getId(), a);
 		}
