@@ -134,11 +134,12 @@ public class HMMSensorSimulationThread implements Runnable {
 		public void run() {
 			Integer notScheduledSeconds=0;
 			PrintWriter out;
+			PrintWriter outAnalyzer;
 			try {
 				Thread.sleep(1000);
 				out = new PrintWriter(new FileWriter(simulationOutputPrefix
 						+ "0.txt"));
-				
+				outAnalyzer=new PrintWriter(new FileWriter("data/outAnalyzer.txt"));
 				//initialization phase
 				action=1;//sleep
 				currentPattern=lLADL.getPatternSS(lLADL.getMatch(action).getPatternID());
@@ -149,12 +150,16 @@ public class HMMSensorSimulationThread implements Runnable {
 				//TODO move this in a configuration file
 				if(printAnalytics){
 					//TODO insert here the activities to be analyzed
-					analyzedActivities.add(4);
-					System.out.println("Analyzing activity: 4");
+					analyzedActivities.add(4);//LUNCH
+					outAnalyzer.println("Analyzing activity: LUNCH");
+					analyzedActivities.add(6);//SHOWER
+					outAnalyzer.println("Analyzing activity: SHOWER");
+					analyzedActivities.add(9);//CLEANING
+					outAnalyzer.println("Analyzing activity: CLEANING");
 					
 					if(analyzedActivities.contains(action)){
-						System.out.println("activity: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName());
-						System.out.println("Time: 0 - Initial situation: "+printActiveSensorsAnalyzer(action,currentSS));
+						outAnalyzer.println("activity: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName());
+						outAnalyzer.println("Time: 0 - Initial situation: "+printActiveSensorsAnalyzer(action,currentSS));
 					}
 				}			
 						
@@ -190,8 +195,8 @@ public class HMMSensorSimulationThread implements Runnable {
 								if(printAnalytics){
 									if(analyzedActivities.contains(action)){
 										deltaTime=timeInstant;
-										System.out.println("activity: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName());
-										System.out.println("Time: "+timeInstant+" - Initial situation: "+printActiveSensorsAnalyzer(action,currentSS));
+										outAnalyzer.println("activity: "+currentPattern.getNameAct()+" pattern: "+currentPattern.getName());
+										outAnalyzer.println("Time: "+timeInstant+" - Initial situation: "+printActiveSensorsAnalyzer(action,currentSS));
 									}
 								}	
 								
@@ -248,7 +253,7 @@ public class HMMSensorSimulationThread implements Runnable {
 									//TODO
 									if(printAnalytics){
 										if(analyzedActivities.contains(action)){
-											System.out.println("Time: "+timeInstant+" (difference to last: "+(timeInstant-deltaTime)+") - change situation: "+printActiveSensorsAnalyzer(action,currentSS));
+											outAnalyzer.println("Time: "+timeInstant+" (difference to last: "+(timeInstant-deltaTime)+") - change situation: "+printActiveSensorsAnalyzer(action,currentSS));
 											deltaTime=timeInstant;
 										}
 									}	
@@ -293,6 +298,7 @@ public class HMMSensorSimulationThread implements Runnable {
 					previousSS=currentSS;
 				}
 				out.close();
+				outAnalyzer.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
