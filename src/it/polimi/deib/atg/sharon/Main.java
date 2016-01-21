@@ -95,6 +95,7 @@ public class Main {
 			Integer days=0;
 			activityImportationThread = new ActivityImportationThread(queue,days,"data/ActivityInput/");
 			simulatedDays=days.intValue();
+			System.out.println(simulatedDays);
 			new Thread(activityImportationThread).start();
 			System.out.println("Simulator correctly instantiated... Beginning to import of activities");
 		}
