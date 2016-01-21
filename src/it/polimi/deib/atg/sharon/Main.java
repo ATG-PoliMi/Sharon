@@ -92,7 +92,9 @@ public class Main {
 			System.out.println("Simulator correctly instantiated... Beginning the simulation");
 		}else{
 			//IMPORT ACTIVITY SCHEDULING
-			activityImportationThread = new ActivityImportationThread(queue,"data/ActivityInput/");
+			Integer days=0;
+			activityImportationThread = new ActivityImportationThread(queue,days,"data/ActivityInput/");
+			simulatedDays=days.intValue();
 			new Thread(activityImportationThread).start();
 			System.out.println("Simulator correctly instantiated... Beginning to import of activities");
 		}

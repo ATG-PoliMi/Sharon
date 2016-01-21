@@ -17,10 +17,12 @@ import java.util.concurrent.BlockingQueue;
 public class ActivityImportationThread implements Runnable {
 	private BlockingQueue<ADLQueue> q;
 	private String url;
+	private Integer numd;
 
-    public ActivityImportationThread(BlockingQueue<ADLQueue> q, String url){
+    public ActivityImportationThread(BlockingQueue<ADLQueue> q, Integer numd, String url){
 		this.q=q;
         this.url = url;
+        this.numd=numd;
 	}
 
 	@Override
@@ -40,6 +42,7 @@ public class ActivityImportationThread implements Runnable {
 	                        String filename = name.subSequence(0, lastIndexUnSl).toString();
 	                        String extension = name.substring(lastIndexDot);
 	                        if(filename.equals("DAY") && extension.equals(".txt")){
+	                        	this.numd++;
 	                            return true;
 	                        }
 	                }
