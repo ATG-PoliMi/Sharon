@@ -42,7 +42,6 @@ public class ActivityImportationThread implements Runnable {
 	                        String filename = name.subSequence(0, lastIndexUnSl).toString();
 	                        String extension = name.substring(lastIndexDot);
 	                        if(filename.equals("DAY") && extension.equals(".txt")){
-	                        	this.numd++;
 	                            return true;
 	                        }
 	                }
@@ -59,6 +58,7 @@ public class ActivityImportationThread implements Runnable {
 	        	for (File CurrentFile : fileList) {
 	        		if(CurrentFile.getName().equals("DAY_"+i.toString()+".txt")){
 	        			orderedList.add(CurrentFile);
+	        			this.numd++;
 	        		}
 	        	}
 	        }
