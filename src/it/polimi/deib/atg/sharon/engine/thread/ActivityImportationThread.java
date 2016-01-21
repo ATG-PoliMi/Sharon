@@ -18,55 +18,65 @@ public class ActivityImportationThread implements Runnable {
 	private BlockingQueue<ADLQueue> q;
 	private String url;
 	private Integer numd;
+	private ArrayList<File> orderedList;
 
-    public ActivityImportationThread(BlockingQueue<ADLQueue> q, Integer numd, String url){
+    public ActivityImportationThread(BlockingQueue<ADLQueue> q, String url){
 		this.q=q;
         this.url = url;
-        this.numd=numd;
+        this.numd=0;
 	}
+    
+    
+    public int numberOfDays(){
+    	try{
+    	File folder = new File(url);
+        if(!folder.exists()){
+            throw new NotDirectoryException(null);
+        }
+
+        FilenameFilter ActFilter = (dir, name) -> {
+            if(name.lastIndexOf('.')>0){
+                if(name.contains("_")){
+                        int lastIndexDot = name.lastIndexOf('.');
+                        int lastIndexUnSl = name.lastIndexOf('_');
+                        String filename = name.subSequence(0, lastIndexUnSl).toString();
+                        String extension = name.substring(lastIndexDot);
+                        if(filename.equals("DAY") && extension.equals(".txt")){
+                            return true;
+                        }
+                }
+            }
+            return false;
+        };
+        ArrayList<File> fileList = new ArrayList<File>(Arrays.asList(folder.listFiles(ActFilter)));
+        if(fileList.isEmpty()){
+            throw new FileNotFoundException(null);
+        }
+        //order the file list
+        orderedList=new ArrayList<File>();
+        for(Integer i=0;i<=fileList.size();i++){
+        	for (File CurrentFile : fileList) {
+        		if(CurrentFile.getName().equals("DAY_"+i.toString()+".txt")){
+        			orderedList.add(CurrentFile);
+        			this.numd++;
+        		}
+        	}
+        }
+        if(fileList.size()!=(orderedList.size())){
+        	throw new Exception("Dimension of list of files wrong");
+        }
+        fileList=null;
+        
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return numd;
+    }
 
 	@Override
 	public void run() {		
-		try{
-			File folder = new File(url);
-	        if(!folder.exists()){
-	            throw new NotDirectoryException(null);
-	        }
-	        BufferedReader reader = null;
-
-	        FilenameFilter ActFilter = (dir, name) -> {
-	            if(name.lastIndexOf('.')>0){
-	                if(name.contains("_")){
-	                        int lastIndexDot = name.lastIndexOf('.');
-	                        int lastIndexUnSl = name.lastIndexOf('_');
-	                        String filename = name.subSequence(0, lastIndexUnSl).toString();
-	                        String extension = name.substring(lastIndexDot);
-	                        if(filename.equals("DAY") && extension.equals(".txt")){
-	                            return true;
-	                        }
-	                }
-	            }
-	            return false;
-	        };
-	        ArrayList<File> fileList = new ArrayList<File>(Arrays.asList(folder.listFiles(ActFilter)));
-	        if(fileList.isEmpty()){
-	            throw new FileNotFoundException(null);
-	        }
-	        //order the file list
-	        ArrayList<File> orderedList=new ArrayList<File>();
-	        for(Integer i=0;i<=fileList.size();i++){
-	        	for (File CurrentFile : fileList) {
-	        		if(CurrentFile.getName().equals("DAY_"+i.toString()+".txt")){
-	        			orderedList.add(CurrentFile);
-	        			this.numd++;
-	        		}
-	        	}
-	        }
-	        if(fileList.size()!=(orderedList.size())){
-	        	throw new Exception("Dimension of list of files wrong");
-	        }
-	        fileList=null;
-	        Integer nFile=0;
+		try{BufferedReader reader = null;
+			Integer nFile=0;
 	        for (File CurrentFile : orderedList) {
 	     	   nFile++;
 	             ArrayList<String> configLines = new ArrayList<String>();
