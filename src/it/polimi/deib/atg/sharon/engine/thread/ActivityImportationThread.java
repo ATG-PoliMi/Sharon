@@ -101,15 +101,17 @@ public class ActivityImportationThread implements Runnable {
 	             String startSec=null;
 	             String endSec=null;
 	             String idAct=null;
+	             String oldID=null;
 	             for(String pattern:configLines){
 	                String[] inf=pattern.split(",");
-	                if(startSec!=null){
-	                	long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
-	                	ADLQueue a=new ADLQueue(Integer.parseInt(idAct),diff);
-	                	q.add(a);
-	                }
 	                endSec=inf[0];
 	                idAct=inf[1];
+	                if(startSec!=null){
+	                	long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
+	                	ADLQueue a=new ADLQueue(Integer.parseInt(oldID),diff);
+	                	q.add(a);
+	                } 
+	                oldID=idAct;
 	                startSec=endSec.toString();
 	             }
 	             System.out.println("Finished importing day: "+CurrentFile.getName());
