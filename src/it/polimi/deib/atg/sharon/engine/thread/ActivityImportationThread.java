@@ -108,7 +108,7 @@ public class ActivityImportationThread implements Runnable {
 	                idAct=inf[1];
 	                if(startSec!=null){
 	                	long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
-	                	ADLQueue a=new ADLQueue(Integer.parseInt(oldID),diff);
+	                	ADLQueue a=new ADLQueue(Integer.parseInt(oldID),diff-1);
 	                	q.add(a);
 	                } 
 	                oldID=idAct;
