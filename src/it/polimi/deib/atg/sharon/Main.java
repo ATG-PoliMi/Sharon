@@ -26,6 +26,7 @@ import it.polimi.deib.atg.sharon.configs.NeedsDrift;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.engine.Needs;
 import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
+import it.polimi.deib.atg.sharon.engine.thread.ActivityImportationThread;
 import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
 import it.polimi.deib.atg.sharon.engine.thread.HMMSensorSimulationThread;
 import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
@@ -48,6 +49,7 @@ public class Main {
     public static final boolean DISABLE_DIJKSTRA = true;
     public static final boolean USE_DRIFTS = false;// activates drifts
     public static final boolean USE_HMM_LL = true;// activates LowLevel Based on HMM
+	public static final boolean GENERATE_HL_SCHEDULUNG	= false; //true to generate, false to import from file
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY_";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY_";	//this file is heavy. Open it from explorer.
@@ -55,7 +57,9 @@ public class Main {
 
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
-    private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(100); //ADL QUEUE
+	private static ActivityImportationThread activityImportationThread;
+	//private static SensorSimulationThread sensorSimulationThread;
+	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(400); //ADL QUEUE
 
 	public static void main(String[] args) {
 
@@ -80,15 +84,24 @@ public class Main {
 		}else{
 			simulatedDays = def_simulatedDays;
 		}
-		activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
-		new Thread(activitySimulationThread).start();
-		System.out.println("Simulator correctly instantiated... Beginning the simulation");
+
+		if(GENERATE_HL_SCHEDULUNG){
+			//GENERATE ACTIVITY SCHEDULING
+			activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
+			new Thread(activitySimulationThread).start();
+			System.out.println("Simulator correctly instantiated... Beginning the simulation");
+		}else{
+			//IMPORT ACTIVITY SCHEDULING
+			activityImportationThread = new ActivityImportationThread(queue,"data/ActivityInput/");
+			new Thread(activityImportationThread).start();
+			System.out.println("Simulator correctly instantiated... Beginning to import of activities");
+		}
         Runnable sensorSimulationThread;
         //LOW LEVEL SIMULATION
 		try {
 			if (ENABLE_SENSORS_ACTIVITY) {
 				if (USE_HMM_LL)
-
+					
 					sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
 
 				else
