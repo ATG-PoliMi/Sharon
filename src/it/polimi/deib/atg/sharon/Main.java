@@ -95,7 +95,7 @@ public class Main {
 			activityImportationThread = new ActivityImportationThread(queue,"data/ActivityInput/");
 			simulatedDays=activityImportationThread.numberOfDays();
 			new Thread(activityImportationThread).start();
-			System.out.println("Simulator correctly instantiated... Beginning to import of activities");
+			System.out.println("Simulator correctly instantiated... Beginning to import activities");
 		}
 
 		//LOW LEVEL SIMULATION
