@@ -110,8 +110,7 @@ public class ActivityImportationThread implements Runnable {
 	                	Long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
 	                	long stinday=Long.parseLong(startSec)%86400;
 	                	long eninday=Long.parseLong(endSec)%86400;
-	                	System.out.println("The activity "+oldID+" start at "+startSec+" ("+stinday+") finish at"+endSec+" ("+eninday+"). Tot duration"+diff.toString());
-	       
+	                	//System.out.println("The activity "+oldID+" start at "+startSec+" ("+stinday+") finish at"+endSec+" ("+eninday+"). Tot duration"+diff.toString());
 	                	ADLQueue a=new ADLQueue(Integer.parseInt(oldID),diff-1);
 	                	q.add(a);
 	                } 
@@ -123,11 +122,10 @@ public class ActivityImportationThread implements Runnable {
 	            Long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
              	long stinday=Long.parseLong(startSec)%86400;
              	long eninday=Long.parseLong(endSec)%86400;
-             	System.out.println("The activity "+oldID+" start at "+startSec+" ("+stinday+") finish at"+endSec+" ("+eninday+"). Tot duration"+diff.toString());
-    
+             	//System.out.println("The activity "+oldID+" start at "+startSec+" ("+stinday+") finish at"+endSec+" ("+eninday+"). Tot duration"+diff.toString());
              	ADLQueue a=new ADLQueue(Integer.parseInt(oldID),diff-1);
              	q.add(a);
-	             System.out.println("Finished importing day: "+CurrentFile.getName());
+	            System.out.println("Finished importing day: "+CurrentFile.getName());
 	         } 
 		}catch(Exception e){
 			e.printStackTrace();
