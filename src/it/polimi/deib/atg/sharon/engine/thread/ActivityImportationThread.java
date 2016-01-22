@@ -107,7 +107,11 @@ public class ActivityImportationThread implements Runnable {
 	                endSec=inf[0];
 	                idAct=inf[1];
 	                if(startSec!=null){
-	                	long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
+	                	Long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
+	                	long stinday=Long.parseLong(startSec)%86400;
+	                	long eninday=Long.parseLong(endSec)%86400;
+	                	System.out.println("The activity "+oldID+" start at "+startSec+" ("+stinday+") finish at"+endSec+" ("+eninday+"). Tot duration"+diff.toString());
+	       
 	                	ADLQueue a=new ADLQueue(Integer.parseInt(oldID),diff-1);
 	                	q.add(a);
 	                } 
