@@ -118,6 +118,8 @@ public class ActivityImportationThread implements Runnable {
 	                oldID=idAct;
 	                startSec=endSec.toString();
 	             }
+	            Long end=(long) 86400*nFile;
+	            endSec=end.toString();
 	            Long diff=Long.parseLong(endSec)-Long.parseLong(startSec);
              	long stinday=Long.parseLong(startSec)%86400;
              	long eninday=Long.parseLong(endSec)%86400;
