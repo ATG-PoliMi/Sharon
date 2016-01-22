@@ -1,3 +1,190 @@
 Analyzing activity: LUNCH
 Analyzing activity: SHOWER
 Analyzing activity: CLEANING
+activity: shower pattern: Patt_2
+Time: 23400 - Initial situation: 
+Time: 23439 (difference to last: 39) - change situation: Shower Door, 
+Time: 23441 (difference to last: 2) - change situation: 
+Time: 23444 (difference to last: 3) - change situation: Shower Door, 
+Time: 23479 (difference to last: 35) - change situation: 
+Time: 23489 (difference to last: 10) - change situation: Bathroom Door, 
+Time: 23510 (difference to last: 21) - change situation: 
+Time: 23515 (difference to last: 5) - change situation: Shower Door, 
+Time: 23517 (difference to last: 2) - change situation: 
+Time: 23559 (difference to last: 42) - change situation: Bathroom Door, 
+Time: 23565 (difference to last: 6) - change situation: Shower Door, 
+Time: 23572 (difference to last: 7) - change situation: 
+Time: 23595 (difference to last: 23) - change situation: Bathroom Door, 
+Time: 23609 (difference to last: 14) - change situation: 
+Time: 23612 (difference to last: 3) - change situation: Shower Door, 
+Time: 23626 (difference to last: 14) - change situation: 
+Time: 23634 (difference to last: 8) - change situation: Bathroom Door, 
+Time: 23641 (difference to last: 7) - change situation: 
+Time: 23646 (difference to last: 5) - change situation: Bathroom Door, 
+Time: 23651 (difference to last: 5) - change situation: Bathroom Door, Shower Door, 
+Time: 23659 (difference to last: 8) - change situation: Bathroom Door, 
+Time: 23685 (difference to last: 26) - change situation: 
+Time: 23690 (difference to last: 5) - change situation: Shower Door, 
+Time: 23697 (difference to last: 7) - change situation: 
+Time: 23702 (difference to last: 5) - change situation: Bathroom Door, 
+Time: 23721 (difference to last: 19) - change situation: 
+Time: 23760 (difference to last: 39) - change situation: Bathroom Door, 
+Time: 23799 (difference to last: 39) - change situation: 
+Time: 23803 (difference to last: 4) - change situation: Shower Door, 
+Time: 23831 (difference to last: 28) - change situation: 
+Time: 23883 (difference to last: 52) - change situation: Bathroom Door, 
+Time: 23908 (difference to last: 25) - change situation: 
+Time: 23972 (difference to last: 64) - change situation: Bathroom Door, 
+Time: 23981 (difference to last: 9) - change situation: Bathroom Door, Shower Door, 
+Time: 24048 (difference to last: 67) - change situation: Bathroom Door, 
+Time: 24155 (difference to last: 107) - change situation: 
+Time: 24184 (difference to last: 29) - change situation: Bathroom Door, 
+Time: 24187 (difference to last: 3) - change situation: 
+Time: 24192 (difference to last: 5) - change situation: Shower Door, 
+Time: 24213 (difference to last: 21) - change situation: 
+Time: 24224 (difference to last: 11) - change situation: Shower Door, 
+Time: 24226 (difference to last: 2) - change situation: 
+Time: 24247 (difference to last: 21) - change situation: Bathroom Door, 
+Time: 24262 (difference to last: 15) - change situation: 
+Time: 24270 (difference to last: 8) - change situation: Shower Door, 
+Time: 24285 (difference to last: 15) - change situation: 
+Time: 24319 (difference to last: 34) - change situation: Shower Door, 
+Time: 24356 (difference to last: 37) - change situation: 
+Time: 24395 (difference to last: 39) - change situation: Bathroom Door, 
+Time: 24423 (difference to last: 28) - change situation: 
+Time: 24437 (difference to last: 14) - change situation: Bathroom Door, 
+Time: 24449 (difference to last: 12) - change situation: 
+Time: 24455 (difference to last: 6) - change situation: Shower Door, 
+Time: 24517 (difference to last: 62) - change situation: 
+Time: 24562 (difference to last: 45) - change situation: Bathroom Door, 
+Time: 24564 (difference to last: 2) - change situation: 
+Time: 24567 (difference to last: 3) - change situation: Bathroom Door, 
+Time: 24591 (difference to last: 24) - change situation: 
+Time: 24607 (difference to last: 16) - change situation: Bathroom Door, 
+Time: 24615 (difference to last: 8) - change situation: 
+Time: 24631 (difference to last: 16) - change situation: Bathroom Door, 
+Time: 24640 (difference to last: 9) - change situation: Shower Door, 
+activity: lunch pattern: Patt_5
+Time: 43260 - Initial situation: Hall, 
+Time: 43261 (difference to last: 1) - change situation: 
+Time: 43291 (difference to last: 30) - change situation: Kitchen, 
+Time: 43345 (difference to last: 54) - change situation: 
+Time: 43350 (difference to last: 5) - change situation: Chair, 
+Time: 43351 (difference to last: 1) - change situation: 
+Time: 43400 (difference to last: 49) - change situation: Kitchen, 
+Time: 43422 (difference to last: 22) - change situation: 
+Time: 43582 (difference to last: 160) - change situation: Hall, 
+Time: 43583 (difference to last: 1) - change situation: 
+Time: 43597 (difference to last: 14) - change situation: Fridge, 
+Time: 43612 (difference to last: 15) - change situation: 
+Time: 43627 (difference to last: 15) - change situation: Kitchen, 
+Time: 43634 (difference to last: 7) - change situation: 
+Time: 43722 (difference to last: 88) - change situation: Hall, 
+Time: 43723 (difference to last: 1) - change situation: 
+Time: 43849 (difference to last: 126) - change situation: Kitchen, 
+Time: 43851 (difference to last: 2) - change situation: 
+Time: 43911 (difference to last: 60) - change situation: Kitchen, 
+Time: 43922 (difference to last: 11) - change situation: 
+Time: 43960 (difference to last: 38) - change situation: Chair, 
+Time: 43961 (difference to last: 1) - change situation: 
+Time: 44012 (difference to last: 51) - change situation: Kitchen, 
+Time: 44014 (difference to last: 2) - change situation: 
+Time: 44134 (difference to last: 120) - change situation: Hall, 
+Time: 44135 (difference to last: 1) - change situation: 
+Time: 44175 (difference to last: 40) - change situation: Kitchen, 
+Time: 44186 (difference to last: 11) - change situation: 
+Time: 44206 (difference to last: 20) - change situation: Hall, 
+Time: 44207 (difference to last: 1) - change situation: 
+Time: 44231 (difference to last: 24) - change situation: Kitchen, 
+Time: 44252 (difference to last: 21) - change situation: 
+Time: 44331 (difference to last: 79) - change situation: Kitchen, 
+Time: 44356 (difference to last: 25) - change situation: 
+Time: 44556 (difference to last: 200) - change situation: Hall, 
+Time: 44557 (difference to last: 1) - change situation: 
+Time: 44586 (difference to last: 29) - change situation: Fridge, 
+Time: 44603 (difference to last: 17) - change situation: 
+Time: 44668 (difference to last: 65) - change situation: Fridge, 
+Time: 44688 (difference to last: 20) - change situation: 
+Time: 44839 (difference to last: 151) - change situation: Kitchen, 
+Time: 44850 (difference to last: 11) - change situation: 
+Time: 44859 (difference to last: 9) - change situation: Hall, 
+Time: 44860 (difference to last: 1) - change situation: 
+Time: 44905 (difference to last: 45) - change situation: Kitchen, 
+Time: 44908 (difference to last: 3) - change situation: 
+Time: 44916 (difference to last: 8) - change situation: Kitchen, 
+Time: 44919 (difference to last: 3) - change situation: 
+Time: 45056 (difference to last: 137) - change situation: Hall, 
+Time: 45057 (difference to last: 1) - change situation: 
+Time: 45063 (difference to last: 6) - change situation: Kitchen, 
+Time: 45067 (difference to last: 4) - change situation: 
+Time: 45212 (difference to last: 145) - change situation: Kitchen, 
+Time: 45226 (difference to last: 14) - change situation: 
+Time: 45271 (difference to last: 45) - change situation: Fridge, 
+Time: 45323 (difference to last: 52) - change situation: 
+Time: 45414 (difference to last: 91) - change situation: Kitchen, 
+activity: shower pattern: Patt_2
+Time: 79200 - Initial situation: 
+Time: 79206 (difference to last: 6) - change situation: Shower Door, 
+Time: 79216 (difference to last: 10) - change situation: 
+Time: 79238 (difference to last: 22) - change situation: Bathroom Door, 
+Time: 79259 (difference to last: 21) - change situation: Bathroom Door, Shower Door, 
+Time: 79271 (difference to last: 12) - change situation: Bathroom Door, 
+Time: 79282 (difference to last: 11) - change situation: Bathroom Door, Shower Door, 
+Time: 79285 (difference to last: 3) - change situation: Bathroom Door, 
+Time: 79345 (difference to last: 60) - change situation: 
+Time: 79353 (difference to last: 8) - change situation: Shower Door, 
+Time: 79369 (difference to last: 16) - change situation: 
+Time: 79390 (difference to last: 21) - change situation: Shower Door, 
+Time: 79429 (difference to last: 39) - change situation: 
+Time: 79436 (difference to last: 7) - change situation: Shower Door, 
+Time: 79440 (difference to last: 4) - change situation: 
+Time: 79444 (difference to last: 4) - change situation: Shower Door, 
+Time: 79465 (difference to last: 21) - change situation: 
+Time: 79502 (difference to last: 37) - change situation: Shower Door, 
+Time: 79514 (difference to last: 12) - change situation: 
+Time: 79517 (difference to last: 3) - change situation: Bathroom Door, 
+Time: 79555 (difference to last: 38) - change situation: 
+Time: 79559 (difference to last: 4) - change situation: Shower Door, 
+Time: 79564 (difference to last: 5) - change situation: 
+Time: 79578 (difference to last: 14) - change situation: Shower Door, 
+Time: 79584 (difference to last: 6) - change situation: 
+Time: 79593 (difference to last: 9) - change situation: Shower Door, 
+Time: 79604 (difference to last: 11) - change situation: 
+Time: 79617 (difference to last: 13) - change situation: Bathroom Door, 
+Time: 79678 (difference to last: 61) - change situation: 
+Time: 79705 (difference to last: 27) - change situation: Shower Door, 
+Time: 79714 (difference to last: 9) - change situation: 
+Time: 79726 (difference to last: 12) - change situation: Bathroom Door, 
+Time: 79756 (difference to last: 30) - change situation: 
+Time: 79766 (difference to last: 10) - change situation: Shower Door, 
+Time: 79786 (difference to last: 20) - change situation: 
+Time: 79798 (difference to last: 12) - change situation: Shower Door, 
+Time: 79817 (difference to last: 19) - change situation: 
+Time: 79832 (difference to last: 15) - change situation: Bathroom Door, 
+Time: 79926 (difference to last: 94) - change situation: 
+Time: 79931 (difference to last: 5) - change situation: Bathroom Door, 
+Time: 79964 (difference to last: 33) - change situation: Bathroom Door, Shower Door, 
+Time: 79966 (difference to last: 2) - change situation: Bathroom Door, 
+Time: 79968 (difference to last: 2) - change situation: 
+Time: 79988 (difference to last: 20) - change situation: Bathroom Door, 
+Time: 80002 (difference to last: 14) - change situation: 
+Time: 80031 (difference to last: 29) - change situation: Shower Door, 
+Time: 80040 (difference to last: 9) - change situation: 
+Time: 80049 (difference to last: 9) - change situation: Bathroom Door, 
+Time: 80109 (difference to last: 60) - change situation: Bathroom Door, Shower Door, 
+Time: 80127 (difference to last: 18) - change situation: Bathroom Door, 
+Time: 80187 (difference to last: 60) - change situation: 
+Time: 80205 (difference to last: 18) - change situation: Shower Door, 
+Time: 80227 (difference to last: 22) - change situation: 
+Time: 80229 (difference to last: 2) - change situation: Shower Door, 
+Time: 80241 (difference to last: 12) - change situation: 
+Time: 80245 (difference to last: 4) - change situation: Shower Door, 
+Time: 80254 (difference to last: 9) - change situation: 
+Time: 80257 (difference to last: 3) - change situation: Shower Door, 
+Time: 80263 (difference to last: 6) - change situation: 
+Time: 80267 (difference to last: 4) - change situation: Bathroom Door, 
+Time: 80322 (difference to last: 55) - change situation: 
+Time: 80333 (difference to last: 11) - change situation: Bathroom Door, 
+Time: 80395 (difference to last: 62) - change situation: 
+Time: 80397 (difference to last: 2) - change situation: Bathroom Door, 
+Time: 80425 (difference to last: 28) - change situation: 
