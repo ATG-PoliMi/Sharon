@@ -83,7 +83,7 @@ public class ActivityImportationThread implements Runnable {
 	             try {
 	                 reader = new BufferedReader(new FileReader(CurrentFile));
 	                 String line = null;
-	                 //line=reader.readLine();
+	                 line=reader.readLine();
 	                 while ((line = reader.readLine()) != null) {
 	                     configLines.add(line);
 	                 }
