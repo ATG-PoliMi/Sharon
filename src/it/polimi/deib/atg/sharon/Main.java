@@ -38,8 +38,8 @@ import java.util.concurrent.BlockingQueue;
 public class Main {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int def_simulatedDays 	= 3; 	//Days to simulate
-	//***** END PARAMETERS *****
+    private static int def_simulatedDays = 5;    //Days to simulate
+    //***** END PARAMETERS *****
 	
 	Parameters param = Parameters.getInstance();
 

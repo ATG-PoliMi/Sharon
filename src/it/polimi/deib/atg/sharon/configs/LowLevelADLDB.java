@@ -110,23 +110,24 @@ public class LowLevelADLDB {
 
                 if (chunks.length < 6){
                     // TODO throw proper exception
-                }
-                Integer act_ID = Integer.parseInt(chunks[0]);
-                if(!probList.containsKey(act_ID)){
-                    probList.put(act_ID,new ArrayList<Float>());
-                }
-                probList.get(act_ID).add(Float.parseFloat(chunks[1]));
-                Integer patternId = Integer.parseInt(chunks[2]);
-                if(!patternIdList.containsKey(act_ID)){
-                    patternIdList.put(act_ID,new ArrayList<Integer>());
-                }
-                patternIdList.get(act_ID).add(patternId);
+                } else {
+                    Integer act_ID = Integer.parseInt(chunks[0]);
+                    if (!probList.containsKey(act_ID)) {
+                        probList.put(act_ID, new ArrayList<Float>());
+                    }
+                    probList.get(act_ID).add(Float.parseFloat(chunks[1]));
+                    Integer patternId = Integer.parseInt(chunks[2]);
+                    if (!patternIdList.containsKey(act_ID)) {
+                        patternIdList.put(act_ID, new ArrayList<Integer>());
+                    }
+                    patternIdList.get(act_ID).add(patternId);
 
-                ArrayList<PatternPlace> places = new ArrayList<>();
-                for(int m = 4; m < chunks.length; m=m+2 ){
-                    places.add(new PatternPlace(Integer.parseInt(chunks[m]), Float.parseFloat(chunks[m + 1])));
+                    ArrayList<PatternPlace> places = new ArrayList<>();
+                    for (int m = 4; m < chunks.length; m = m + 2) {
+                        places.add(new PatternPlace(Integer.parseInt(chunks[m]), Float.parseFloat(chunks[m + 1])));
+                    }
+                    patternMap.put(patternId, new LowLevelADL(act_ID, chunks[3], places));
                 }
-                patternMap.put(patternId, new LowLevelADL(act_ID, chunks[3], places));
             }
         }
 

@@ -34,7 +34,7 @@ public class Sensor {
     private String name;
 
     public Sensor(String name, int value, int x, int y) {
-        this(name, value, x, y, 100, 1);
+        this(name, value, x, y, 20, 1);
     }
 
     public Sensor(String name, int value, int x, int y, int range, double prob) {
@@ -61,6 +61,9 @@ public class Sensor {
     }
 
     public boolean isActivatedBy(int tgt_x, int tgt_y) {
+        if (this.getName().contains("Shower")) {
+            String a = null;
+        }
         if (areax == null) {
             return (geoDist(x, y, tgt_x, tgt_y) <= range);
         } else {
