@@ -14,7 +14,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -39,28 +38,27 @@ import java.util.concurrent.BlockingQueue;
 public class Main {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int def_simulatedDays 	= 3; 	//Days to simulate
+	private static int def_simulatedDays 	= 31; 	//Days to simulate
 	//***** END PARAMETERS *****
 	
 	Parameters param = Parameters.getInstance();
 
 	// Extra parameters - not to touch
-	public static final boolean ENABLE_SENSORS_ACTIVITY = true;	//0: only High Level, 1: High Level + Low Level (Experimental!)
-	public static final boolean PRINT_LOG 				= false;	//0: no log print, 1: print (histograms...)
-	public static final boolean DISABLE_DIJKSTRA        = true;	//0: ENABLE_DIJKSTRA (slow), 1: DISABLE_DIJKSTRA
-	public static final boolean USE_DRIFTS				= false;		// activates drifts
-    public static final boolean USE_HMM_LL = false;// activates LowLevel Based on HMM
-	public static final boolean GENERATE_HL_SCHEDULUNG	= false; //true to generate, false to import from file
+    public static final boolean ENABLE_SENSORS_ACTIVITY = true;    //False: Only High Level, True: High Level + Low Level (Experimental!)
+    public static final boolean PRINT_LOG = false;//False: no log
+    public static final boolean DISABLE_DIJKSTRA = true;
+    public static final boolean USE_DRIFTS = false;// activates drifts
+    public static final boolean USE_HMM_LL = true;// activates LowLevel Based on HMM
+	public static final boolean GENERATE_HL_SCHEDULING = false; //true to generate, false to import from file
 
-	private static String sensorOutputPrefix = "data/SensorOutput/DAY";	//this file is heavy. Open it from explorer.
-	private static String activityOutputPrefix = "data/ActivityOutput/DAY";	//this file is heavy. Open it from explorer.
+	private static String sensorOutputPrefix = "data/SensorOutput/DAY_";	//this file is heavy. Open it from explorer.
+	private static String activityOutputPrefix = "data/ActivityOutput/DAY_";	//this file is heavy. Open it from explorer.
 	//
 
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
 	private static ActivityImportationThread activityImportationThread;
 	//private static SensorSimulationThread sensorSimulationThread;
-	private static SensorsetSimulationThread sensorsetSimulationThread;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(400); //ADL QUEUE
 
 	public static void main(String[] args) {
@@ -86,6 +84,7 @@ public class Main {
 		}else{
 			simulatedDays = def_simulatedDays;
 		}
+
 //<<<<<<< HEAD
 //		activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
 //		new Thread(activitySimulationThread).start();
@@ -104,8 +103,8 @@ public class Main {
 //            new Thread(sensorSimulationThread).start();
 //			System.out.println("LowLevel Starts");
 //=======
-		
-		if(GENERATE_HL_SCHEDULUNG){
+
+		if(GENERATE_HL_SCHEDULING){
 			//GENERATE ACTIVITY SCHEDULING
 			activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
 			new Thread(activitySimulationThread).start();
@@ -117,23 +116,20 @@ public class Main {
 			new Thread(activityImportationThread).start();
 			System.out.println("Simulator correctly instantiated... Beginning to import activities");
 		}
-
-		//LOW LEVEL SIMULATION
-		if (ENABLE_SENSORS_ACTIVITY) {
-            //Simulation by sensorset
-            try{
-                if(USE_HMM_LL) {
-                    sensorsetSimulationThread = new SensorsetSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-                    new Thread(sensorsetSimulationThread).start();
-                }else{
-                    //Simulation by sensor
-                    sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-                    new Thread(sensorSimulationThread).start();
-                    System.out.println("Consumer Starts");
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-		}			
+        Runnable sensorSimulationThread;
+        //LOW LEVEL SIMULATION
+		try {
+			if (ENABLE_SENSORS_ACTIVITY) {
+				if (USE_HMM_LL)
+					sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
+				else
+					sensorSimulationThread = new SensorSimulationThread(queue,simulatedDays, sensorOutputPrefix);
+				
+				new Thread(sensorSimulationThread).start();
+				System.out.println("LowLevel Starts");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

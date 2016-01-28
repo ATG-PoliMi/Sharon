@@ -15,8 +15,7 @@ public class SensorsetManager {
 	private ArrayList<Sensorset> sensorsets;
 	private Float[][] transitionProb;
 	private BufferedReader reader;
-	private static final String CONFIG_ENV = ConfigurationManager.getInstance()
-			.getCONFIG_ENV();
+	private static final String CONFIG_ENV = ConfigurationManager.getInstance().getCONFIG_ENV();
 
 	private SensorsetManager() throws IOException {
 		super();
@@ -36,19 +35,15 @@ public class SensorsetManager {
 
 	public Sensorset getSensorsetByID(Integer idSensorset) {
 		for (Sensorset ss : sensorsets) {
-			if (ss.getIdSensorset() == idSensorset) {
+			if (ss.getIdSensorset().equals(idSensorset)) {
 				return ss;
 			}
 		}
-		return new Sensorset(idSensorset);
+		return null;
 	}
 
-	public void addSensorset(Integer idSensorset, Integer minTime,
-			Integer maxTime, ArrayList<Integer> activatedSensorsId) {
-		Sensorset ss = this.getSensorsetByID(idSensorset);
-		ss.setMinTime(minTime);
-		ss.setMaxTime(maxTime);
-		ss.setActivatedSensorsId(activatedSensorsId);
+	public void addSensorset(Integer idSensorset, ArrayList<Integer> activatedSensorsId) {
+		Sensorset ss=new Sensorset(idSensorset, activatedSensorsId);
 		sensorsets.add(ss);
 	}
 
@@ -74,25 +69,25 @@ public class SensorsetManager {
 		Integer numLine = 0;
 		for (String pattern : configLines) {
 			numLine++;
-			// idSensorset, mintime, maxtime, list of the ids of the activated
-			// sensors
-
+			// idSensorset, list of the ids of the activated sensors
 			String[] chunks = pattern.split(",");
 
 			if (chunks.length < 3) {
 				// TODO throw proper exception
 			}
-
 			Integer ss_ID = Integer.parseInt(chunks[0]);
-			Integer minTime = Integer.parseInt(chunks[1]);
-			Integer maxTime = Integer.parseInt(chunks[2]);
+			
 			ArrayList<Integer> actSensorId=new ArrayList<Integer>();
-			if(chunks.length>3){
-				for(int pos=4; pos<chunks.length;pos++){
+			//System.out.println("New sensorset id: "+ss_ID);
+				for(int pos=1; pos<chunks.length;pos++){
 					actSensorId.add(Integer.parseInt(chunks[pos]));
+				//	System.out.print(chunks[pos]);
 				}
-			}
-			this.addSensorset(ss_ID, minTime, maxTime, actSensorId);
+			
+				
+				this.addSensorset(ss_ID, actSensorId);
+			//System.out.println();
+			//System.out.println("---");
 		}
 
 	}
@@ -119,12 +114,24 @@ public class SensorsetManager {
 		Integer row = 0;
 		for (String pattern : configLines) {
 			String[] chunks = pattern.split(",");
+			if(chunks.length!=this.getSensorsets().size()){
+				System.out.println("Unexpected number of parameters in the row");
+				System.out.println("row: "+row.toString());
+				System.out.println("Number of elements in the row: "+chunks.length);
+				System.out.println("Expected number = number of ss = "+this.getSensorsets().size());
+				//Throw the Exception
+			}
 			for(int col=0; col<chunks.length;col++){
-				this.transitionProb[row][col]=Float.parseFloat(chunks[col]);
+				Float f=(float) 0.0;
+				try{
+					f=Float.parseFloat(chunks[col]);
+				}catch(Exception e){
+					
+				}
+				this.transitionProb[row][col]=f;
 			}
 			row++;
 		}
-
 	}
 
 	public Float[][] getTransitionProb() {
@@ -133,6 +140,14 @@ public class SensorsetManager {
 
 	public void setTransitionProb(Float[][] transitionProb) {
 		this.transitionProb = transitionProb;
+	}
+
+	public ArrayList<Sensorset> getSensorsets() {
+		return sensorsets;
+	}
+
+	public void setSensorsets(ArrayList<Sensorset> sensorsets) {
+		this.sensorsets = sensorsets;
 	}
 	
 	

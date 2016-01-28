@@ -22,8 +22,6 @@
 
 package it.polimi.deib.atg.sharon.engine;
 
-import com.sun.org.apache.xpath.internal.functions.FuncFalse;
-
 import java.util.ArrayList;
 
 public class ADL {

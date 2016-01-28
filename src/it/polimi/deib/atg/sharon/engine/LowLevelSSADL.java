@@ -22,10 +22,7 @@
 
 package it.polimi.deib.atg.sharon.engine;
 
-import it.polimi.deib.atg.sharon.data.PatternPlace;
 import it.polimi.deib.atg.sharon.data.PatternSS;
-
-import java.util.ArrayList;
 
 public class LowLevelSSADL {
 	

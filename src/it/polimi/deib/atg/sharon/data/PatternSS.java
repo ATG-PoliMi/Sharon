@@ -22,23 +22,26 @@
 
 package it.polimi.deib.atg.sharon.data;
 
+import it.polimi.deib.atg.sharon.configs.ParamsManager;
 import it.polimi.deib.atg.sharon.configs.SensorsetManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class PatternSS {
-
-    private int id;
+	private int id;
     private Integer idAct;
     private String name;
     private String nameAct;
     private Float prob;
     private ArrayList<Integer> ssIds;
+    private ArrayList<Float> expVss;
     private ArrayList<Float> initialProb;
     private Float[][] probMatrix;
 
-    public PatternSS(Integer id,Integer idAct,String name,String nameAct, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> initialProb, Float[][] probMatrix) {
+    public PatternSS(Integer id,Integer idAct,String name,String nameAct, Float prob, ArrayList<Integer> ssIds, ArrayList<Float> expVss,ArrayList<Float> initialProb, Float[][] probMatrix) {
         super();
         this.id = id;
         this.idAct=idAct;
@@ -48,6 +51,7 @@ public class PatternSS {
         this.initialProb = initialProb;
         this.probMatrix = probMatrix;
         this.ssIds = ssIds;
+        this.expVss=expVss;
     }
 
     public int getId() {
@@ -82,14 +86,14 @@ public class PatternSS {
 		this.initialProb = initialProb;
 	}
 	
-	private Integer pseudoRandomchoice(ArrayList<Integer> ids,ArrayList<Float> probs) {
+	private Integer pseudoRandomchoice(Random rndmn,ArrayList<Integer> ids,ArrayList<Float> probs) {
 		try {
 			if (ids.size() > 0) {
 				Float maxProb = (float) 0;
 				for (Float p : probs) {
 					maxProb += p;
 				}
-				float rnd = (float) Math.random() * maxProb;
+				float rnd = (float) rndmn.nextDouble() * maxProb;
 				float cumulativeProb = 0;
 				int position = 0;
 				for (Float p : probs) {
@@ -114,7 +118,7 @@ public class PatternSS {
 	}
 	
 	public Integer getInitialSSIdAPriori(){
-		return this.pseudoRandomchoice(this.getSsIds(),this.initialProb);
+		return this.pseudoRandomchoice(new Random(),this.getSsIds(),this.initialProb);
 	}
 	
 	public Integer getInitialSSIdAPrioriAndTransitionMatrix(Integer previousSSId){	
@@ -143,39 +147,23 @@ public class PatternSS {
 			}
 		}
 		//pseudo Random choice of the SS with highest transition probability according to their apriori initial prob
-		return this.pseudoRandomchoice(maxSSid, maxSSprob);
+		return this.pseudoRandomchoice(new Random(),maxSSid, maxSSprob);
 	}
 	
 	public Integer getPosOfIdInList(ArrayList<Integer> l,Integer id){
 		int pos=0;
 		for(Integer num:l){
-			if (num==id){
+			if (num.equals(id)){
 				return pos;
 			}
 			pos++;
 		}
-		return 0;
+		return null;
 	}
 	
-	public Integer getDifferentSS(Integer actualSS){
-		Float[][] pm=this.getProbMatrix();
-		ArrayList<Integer> sSid=new ArrayList<Integer>();
-		ArrayList<Float> sSprob=new ArrayList<Float>();
-		for(Integer idss:this.getSsIds()){
-			//here I am not considering the probability to stay in the same ss
-			if(!actualSS.equals(idss)){
-				sSid.add(idss);
-				sSprob.add(pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idss)]);
-			}
-		}
-		Integer returned=this.pseudoRandomchoice(sSid, sSprob);
-		if (returned==null){
-			returned=getNextSS(actualSS);
-		}
-		return returned;
-	}
 	
-	public Integer getNextSS(Integer actualSS){
+	
+	public Integer getNextSS(Random rndm,Integer actualSS){
 		Float[][] pm=this.getProbMatrix();
 		ArrayList<Integer> sSid=new ArrayList<Integer>();
 		ArrayList<Float> sSprob=new ArrayList<Float>();
@@ -187,7 +175,67 @@ public class PatternSS {
 				e.printStackTrace();
 			}
 		}
-		return this.pseudoRandomchoice(sSid, sSprob);
+		return this.pseudoRandomchoice(rndm,sSid, sSprob);
+	}
+	
+	public Integer getNextSSRhythm(Random rndm,Integer ti,String pattName,Integer actualSS, Integer activityId, Integer actualSecond, Integer activityTotalduration){
+		Float[][] pm=this.getProbMatrix();
+		
+
+		List<Float> listCoeff=ParamsManager.getInsatnce().getRhythmCoeffByIdAct(activityId);
+		Integer N=listCoeff.size();
+		Integer n=(int) ((Math.floor(((actualSecond*N)/activityTotalduration))+1) % N);
+		
+		Double xn= ((1/Math.sqrt(N))*(listCoeff.get(0))*(Math.cos(0)));
+		for(Integer i=1;i<N;i++){
+			xn+=(Math.sqrt((double) 2/N))*(listCoeff.get(i))*(Math.cos(((Math.PI)*((2*n)-1)*(i))/(2*N)));
+		}
+		
+		Float pself=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),actualSS)];
+		Double kn=(1-(pself*xn))/(1-pself);
+		
+		ArrayList<Integer> sSid=new ArrayList<Integer>();
+		ArrayList<Float> sSprob=new ArrayList<Float>();
+		
+		for(Integer idSS: this.getSsIds()){
+			//System.out.print();
+			//prob transition from actualSS to idSS
+			Float pr=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idSS)];
+			if(idSS.equals(actualSS)){
+				//transition from actual to actual
+				pr=(float) (pr*xn);			
+			}else{
+				//transition from actual to new SS
+				pr=(float) (pr*kn);
+			}
+			
+			sSid.add(idSS);
+			sSprob.add(pr);
+		}
+		
+		return this.pseudoRandomchoice(rndm,sSid, sSprob);
+	}
+	
+	public Integer getNextSS(Random rndm,Integer ti,String pattName,Integer actualSS, Integer activityId, Integer actualSecond, Integer activityTotalduration){
+		Float[][] pm=this.getProbMatrix();
+		ArrayList<Integer> sSid=new ArrayList<Integer>();
+		ArrayList<Float> sSprob=new ArrayList<Float>();
+		
+		for(Integer idSS: this.getSsIds()){
+			//System.out.print();
+			//prob transition from actualSS to idSS
+			Float pr=pm[getPosOfIdInList(this.getSsIds(),actualSS)][getPosOfIdInList(this.getSsIds(),idSS)];
+			if(idSS.equals(actualSS)){
+				//transition from actual to actual
+				pr=(float) 0;			
+			}else{
+				//transition from actual to new SS
+				sSid.add(idSS);
+				sSprob.add(pr);
+			}	
+		}
+		
+		return this.pseudoRandomchoice(rndm,sSid, sSprob);
 	}
 
 	public String getName() {
@@ -221,5 +269,23 @@ public class PatternSS {
 	public void setNameAct(String nameAct) {
 		this.nameAct = nameAct;
 	}
-	
+    public ArrayList<Float> getExpVss() {
+		return expVss;
+	}
+
+	public void setExpVss(ArrayList<Float> expVss) {
+		this.expVss = expVss;
+	}
+
+	public Float getExpValue(Integer idSensorset) {
+		int pos=0;
+		for(Integer ids:this.ssIds){
+			if(ids.equals(idSensorset)){
+				return this.expVss.get(pos);
+			}
+			pos++;
+		}
+		return (float)0;
+	}
+
 }

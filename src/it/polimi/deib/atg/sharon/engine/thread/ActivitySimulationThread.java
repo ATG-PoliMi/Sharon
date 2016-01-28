@@ -32,12 +32,10 @@ import java.util.concurrent.BlockingQueue;
 
 import it.polimi.deib.atg.sharon.Main;
 import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
-import it.polimi.deib.atg.sharon.configs.LowLevelADLDB;
-import it.polimi.deib.atg.sharon.engine.LowLevelADL;
+import it.polimi.deib.atg.sharon.configs.NeedsViewer;
 import it.polimi.deib.atg.sharon.data.Day;
 import it.polimi.deib.atg.sharon.engine.ADL;
 import it.polimi.deib.atg.sharon.engine.ADLEffect;
-import it.polimi.deib.atg.sharon.engine.ADLMatch;
 import it.polimi.deib.atg.sharon.engine.Needs;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
@@ -76,7 +74,7 @@ public class ActivitySimulationThread implements Runnable {
 
         //	HighLevelADLDB.getInstance().getAdlmap()		= 	HighLevelADLDB.getInstance().getAdlmap();
 		//lLADL 		= 	LowLevelADLDB.getInstance();
-		ongoingAdl = 	HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
+		ongoingAdl = HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
 	}
  
 	@Override
@@ -103,8 +101,6 @@ public class ActivitySimulationThread implements Runnable {
 					try {
 						if (Main.ENABLE_SENSORS_ACTIVITY)
 							queue.put(ADLQ);
-
-						//TODO Andrea comment System.out.println("TIME: "+ timeInstant + ", ID: "+ADLQ.getADLId());
                         ADL adl = HighLevelADLDB.getInstance().getADLById(ADLQ.getADLId());
                         outFile.println(timeInstant+","+ ongoingAdl.getId()+","+ ongoingAdl.getName()+","+new Time(timeInstant % 86400) );
 
@@ -120,7 +116,7 @@ public class ActivitySimulationThread implements Runnable {
 			//hist.normalizationTo1Histogram(); 	//normalized to 1
 
 			hist.printToFile("data/OutputHistogram.txt",2);
-			Distributions.loadDistributions("data/OutputHistogram.txt", "data/t/norm1_7d.txt");
+			//Distributions.loadDistributions("data/OutputHistogram.txt", "data/t/norm1_7d.txt");
 			//Distributions.loadDistributions("data/t/norm1_23d.txt","data/t/norm1_7d.txt");
 		}
 	}
@@ -148,7 +144,7 @@ public class ActivitySimulationThread implements Runnable {
 				ongoingAdl = bestAdl;
 				ongoingAdl.setActive(true);
 				elapsed_time = 0;
-                //TODO andrea comment this.printVerboseOnConsole();
+                //this.printVerboseOnConsole();
 				return X;
 			}
 		}
@@ -175,15 +171,18 @@ public class ActivitySimulationThread implements Runnable {
 	private static void computeADLRank(int minute) {
 		double r, active;
 		Map<Integer, ADL> adlmap = HighLevelADLDB.getInstance().getAdlmap();
-
+		
 		double needs[] = Needs.getInstance().getStatus();
+		for (int i=0;i<needs.length;i++){
+			NeedsViewer.getInstance().addNeed(i+1, (float) needs[i]);
+		}
 		for (ADL a : HighLevelADLDB.getInstance().getAdlmap().values()) {
 			r = 0;
 			active = a.getActive() ? 1 : 0.8;
 			for (int i = 0; i<needs.length; i++) {
 				r += needsContribution(a, i) * needs[i];
 			}
-
+			
             r *= ((Math.random() < a.getTimeDescription(minute / 60)) ? 1 : (a.getTimeDescription(minute / 60))) * (a.getDayWeight(Day.getInstance().getWeekDay() % 7) *
                     active);
 			a.setRank(r);
@@ -235,6 +234,7 @@ public class ActivitySimulationThread implements Runnable {
 	private static void updateNeeds(int times) {
 		Parameters.getInstance().update(timeInstant);
 		HighLevelADLDB.getInstance().update(timeInstant);
+		
 		for (int i=0; i<times; i++) {
 			Iterator<Double> ItrStatus = Arrays.asList(Needs.getInstance().getStatusWrapped()).iterator();
 			Iterator<Double> ItrParam = Arrays.asList(Parameters.getInstance().getNeedsParameters()).iterator();
