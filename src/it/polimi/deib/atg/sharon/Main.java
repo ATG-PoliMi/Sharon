@@ -64,7 +64,7 @@ public class Main {
 	private static ActivitySimulationThread activitySimulationThread;
 	private static ActivityImportationThread activityImportationThread;
 	//private static SensorSimulationThread sensorSimulationThread;
-	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(400); //ADL QUEUE
+	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(2000); //ADL QUEUE enough for 90 days
 
 	public static void main(String[] args) {
 
