@@ -208,7 +208,6 @@ public class SensorSimulationThread implements Runnable{
             activeSensors += timeInstant + " ";
         }
 
-
         for (Sensor aSensorsArray : sensorsArray) {
             if (aSensorsArray.isActivatedBy(actor.getX(), actor.getY())) {
                 if (Math.random() < aSensorsArray.getProb()) {
