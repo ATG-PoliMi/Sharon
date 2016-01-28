@@ -43,8 +43,9 @@ public class HouseMap {
     private static final String PLACES_FILENAME = "places.conf";
 
 	private int map [][];
-    public static int scale = 1;
-	private Sensor[] s;
+    public static int spacing = 1;
+    public static int ppm = 1;
+    private Sensor[] s;
     private Place[] p;
 
 	private static HouseMap instance;
@@ -73,7 +74,9 @@ public class HouseMap {
                 for( int k = 0; k < cols; k++){
                     Integer elem = Integer.parseInt(chunks[k]);
                     if (elem > 1) {
-                        scale = elem;
+                        ppm = elem;
+                        // TODO we are here working in cm, check if everywhere is cm
+                        spacing = 100 / ppm;
                         rows--;
                         break;
                     }
@@ -85,8 +88,8 @@ public class HouseMap {
             ListIterator<Integer> itAsList = asList.listIterator();
             // The map reproduced as seen has x on cols and y on rows
             map = new int[cols][rows];
-            for(int x=0; x<cols; x++){
-                for(int y=0; y<rows; y++){
+            for (int y = 0; y < rows; y++) {
+                for (int x = 0; x < cols; x++) {
                     map[x][y]=itAsList.next();
                 }
             }
@@ -115,25 +118,25 @@ public class HouseMap {
                 String[] chunks = line.split(",");
                 switch (chunks.length) {
                     case 3: {
-                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
-                                , (Integer.parseInt(chunks[2]) * scale) / 100));
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]))
+                                , (Integer.parseInt(chunks[2]))));
                     }
                     break;
                     case 5: {
-                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
-                                , (Integer.parseInt(chunks[2]) * scale) / 100, (Integer.parseInt(chunks[3]) * scale) / 100,
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]))
+                                , (Integer.parseInt(chunks[2])), (Integer.parseInt(chunks[3])),
                                 Double.parseDouble(chunks[4])));
                     }
                     break;
                     case 8: {
                         int[] areax = new int[2];
                         int[] areay = new int[2];
-                        areax[0] = (Integer.parseInt(chunks[3]) * scale) / 100;
-                        areax[1] = (Integer.parseInt(chunks[4]) * scale) / 100;
-                        areay[0] = (Integer.parseInt(chunks[5]) * scale) / 100;
-                        areay[1] = (Integer.parseInt(chunks[6]) * scale) / 100;
-                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]) * scale) / 100
-                                , (Integer.parseInt(chunks[2]) * scale) / 100, areax, areay,
+                        areax[0] = (Integer.parseInt(chunks[3]));
+                        areax[1] = (Integer.parseInt(chunks[4]));
+                        areay[0] = (Integer.parseInt(chunks[5]));
+                        areay[1] = (Integer.parseInt(chunks[6]));
+                        sAsList.add(new Sensor(chunks[0], 2, (Integer.parseInt(chunks[1]))
+                                , (Integer.parseInt(chunks[2])), areax, areay,
                                 Double.parseDouble(chunks[7])));
                     }
                     break;
@@ -163,8 +166,8 @@ public class HouseMap {
             line = reader.readLine();
             while (line != null) {
                 String[] chunks = line.split(",");
-                pAsList.add(new Place(chunks[0], (Integer.parseInt(chunks[1]) * scale) / 100,
-                        (Integer.parseInt(chunks[2]) * scale) / 100));
+                pAsList.add(new Place(chunks[0], (Integer.parseInt(chunks[1])),
+                        (Integer.parseInt(chunks[2]))));
                 line = reader.readLine();
             }
         } catch (IOException e) {

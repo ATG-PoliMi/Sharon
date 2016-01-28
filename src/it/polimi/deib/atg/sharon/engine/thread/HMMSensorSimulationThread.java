@@ -339,7 +339,6 @@ public class HMMSensorSimulationThread implements Runnable {
 		}
 		
 		public String printActiveSensors2(int action,Sensorset currentSS,String pattName,String aname) {
-
 			String activeSensors = "";
 
 			activeSensors += timeInstant % 86400;

@@ -41,14 +41,14 @@ public class ADLMatch {
 	public Integer getPatternID(){
 		float rnd=(float) Math.random();	
 		float cumulativeProb=0;
-		int position=0;
-		for(Float p:LLadlProbability){
+        int index = 0;
+        for(Float p:LLadlProbability){
 			cumulativeProb+=p.floatValue();
 			if(rnd<cumulativeProb){
-				return this.getLLadl().get(position);
-			}
-			position++;
-		}
+                return this.getLLadl().get(index);
+            }
+            index++;
+        }
 		return this.getLLadl().get(this.getLLadl().size()-1);
 	}
 

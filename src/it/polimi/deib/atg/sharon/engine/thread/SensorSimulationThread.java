@@ -29,32 +29,33 @@ import it.polimi.deib.atg.sharon.data.Coordinate;
 import it.polimi.deib.atg.sharon.data.Place;
 import it.polimi.deib.atg.sharon.data.Sensor;
 import it.polimi.deib.atg.sharon.utils.CumulateHistogram;
-import it.polimi.deib.atg.sharon.utils.dijsktra.DijkstraEngine;
+import it.polimi.deib.atg.sharon.utils.PathEngine;
+import it.polimi.deib.atg.sharon.utils.astar.AstarEngine;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
+import static it.polimi.deib.atg.sharon.utils.Methods.geoDist;
+
 public class SensorSimulationThread implements Runnable{
 
 
-	private Coordinate actor = new Coordinate (10,10);
-	private Coordinate Target = new Coordinate(15, 25);
-	private DijkstraEngine DE;
-	int[][] worldMapMatrix;
-	private ArrayList<String> path = new ArrayList<String>();
-	private String delims = ",";
+    private Coordinate actor = new Coordinate(100, 100);
+    private Coordinate target = new Coordinate(100, 100);
+    private PathEngine pathEngine;
+    private ArrayList<Coordinate> path = new ArrayList<Coordinate>();
+    private String delims = ",";
 
 	//ADL Handling
     //Map<Integer, ADL> hLADL;
     //Map<Integer, ADLMatch> matchADL;
     LowLevelADLDB lLADL;
-    HouseMap houseMap;
 
 	//User actions
 	static int agentStatus	=	1; //1: extracting; 2: acting;
-	static int idling 		= 	0;	
+    static int currentTimeElapsed = 0;
 
 	//Utils
 	static long timeInstant = 0;
@@ -78,40 +79,32 @@ public class SensorSimulationThread implements Runnable{
 		this.simulatedDays = simulatedDays;
 		this.simulationOutputPrefix = sOutput;
 
-        houseMap = HouseMap.getInstance();
-		lLADL = LowLevelADLDB.getInstance();
-		//matchADL = ADLMatcher.getInstance();
+        lLADL = LowLevelADLDB.getInstance();
+        pathEngine = new AstarEngine(HouseMap.getMap(), HouseMap.spacing);
 
-	}
+    }
 
 	@Override
 	public void run() {
 		int emptyN=0;
 		PrintWriter out;
 		try {
-			Thread.sleep(1000);
-			out = new PrintWriter(new FileWriter(simulationOutputPrefix + "0.txt"));
-			
-			for (timeInstant =0; timeInstant < (86400*simulatedDays)-5000; timeInstant++) {
+            Thread.sleep(5000);
+            out = new PrintWriter(new FileWriter(simulationOutputPrefix + "0.txt"));
 
-				idling++;
-				switch (agentStatus) {
+            for (timeInstant = 0; timeInstant < (86400 * simulatedDays); timeInstant++) {
+                currentTimeElapsed++;
+                switch (agentStatus) {
 				case 1: //Extracting + computing
 					ADLQueue CADL;
 					try {
 						if (queue.isEmpty()) {
-							//CADL = new ADLQueue((int)((Math.random() * 10) + 1), 500);
-							//Fake ADLS for demo: start demo:		//queue.put(new ADLQueue(8, 300));queue.put(new ADLQueue(6, 300));queue.put(new ADLQueue(3, 666));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));queue.put(new ADLQueue(2, 300));				//end demo
-							System.out.println("***** A: EMPTY queue *****");
-							timeInstant--;
 							emptyN++;
 
 						} else {
 							CADL = queue.take();
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
-
-                         //   llADLIndex = lLADL.getMatch(CADL.getADLId()).getLLadl().get(0); // this gives back the first pattern
                             llADLIndex = lLADL.getMatch(action).getPatternID(); //this choose the pattern "randomly" according to the specified probabilities
                             tTime.clear();
 
@@ -119,7 +112,6 @@ public class SensorSimulationThread implements Runnable{
                                 tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage()));
                             }
                             agentStatus = 2;
-
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -129,46 +121,43 @@ public class SensorSimulationThread implements Runnable{
 
 				case 2:	//Walking+Acting
 					if (!tTime.isEmpty()) {	//tTime contains timings for each station
-						if (idling < tTime.get(0)) {
-							if (Main.DISABLE_DIJKSTRA) {
-                                Place[] p = HouseMap.getP();
-                                Target = new Coordinate(p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
-                                        p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getY());
-                                int count = HouseMap.scale;
+                        if (currentTimeElapsed < tTime.get(0)) {
+                            Place[] p = HouseMap.getP();
+                            target = new Coordinate(p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
+                                    p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getY());
+                            if (Main.DISABLE_PATH) {
+                                int count = (int) (HouseMap.ppm * Main.WALK_SPEED);
                                 while (count > 0) {
-                                    if (Target.getX() > actor.getX())
+                                    if (target.getX() > actor.getX())
                                         actor.setX(actor.getX() + 1);
-                                    if (Target.getX() < actor.getX())
+                                    if (target.getX() < actor.getX())
                                         actor.setX(actor.getX() - 1);
 
-                                    if (Target.getY() > actor.getY())
+                                    if (target.getY() > actor.getY())
                                         actor.setY(actor.getY() + 1);
-                                    if (Target.getY() < actor.getY())
+                                    if (target.getY() < actor.getY())
                                         actor.setY(actor.getY() - 1);
                                     count--;
                                 }
 
 							} else {
-								if (path.isEmpty()) {	//New station case
-                                    newTarget(lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId());
+                                if (actor.eqs(target) || path.size() == 0) {
+                                    computePath();
                                 }
-
                                 if (path.size() > 0) {    //Given a target the actor moves toward that direction
-                                    String x = path.get(0);
-									//System.out.println(x);	//TODO: row log 
-
-									path.remove(0);
-									String[] tokens = x.split(delims);
-									Coordinate target = new Coordinate(Integer.parseInt(tokens[0]),Integer.parseInt(tokens[1]));
-									if (!target.equals(actor)) {
-										actor.setX(target.getX());
-										actor.setY(target.getY());
-									}
-								}
-							}
-
+                                    double stepLength = 0;
+                                    Coordinate nextPathPoint = null;
+                                    Coordinate lastPathPoint = actor.copy();
+                                    while (path.size() > 0 && stepLength < (Main.WALK_SPEED * 100)) { // TODO Fix mess of cm and m
+                                        nextPathPoint = path.remove(0);
+                                        stepLength += geoDist(lastPathPoint, nextPathPoint);
+                                        lastPathPoint = nextPathPoint.copy();
+                                    }
+                                    doWalk(nextPathPoint);
+                                }
+                            }
                         } else {    //Time at the place ended
-                            idling=0;
+                            currentTimeElapsed = 0;
                             placesCounter++;
                             tTime.remove(0);
 						}					
@@ -182,38 +171,28 @@ public class SensorSimulationThread implements Runnable{
 				
 				if ((timeInstant %86400==0)&&(timeInstant >0)) {
 					out.close();
-					out = new PrintWriter(new FileWriter(simulationOutputPrefix +(int) timeInstant /86400+".txt"));
-				}
-				out.println(printActiveSensors(action));	//TODO: Log row
-			}
+                    out = new PrintWriter(new FileWriter(simulationOutputPrefix + (int) timeInstant / 86400 + ".txt"));
+                }
+                out.println(printActiveSensors(action));    //TODO: Log row
+            }
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//System.out.println("Empty ticks: "+emptyN);
-		//System.out.println("Consumer Thread ends");
 
 	}
 
 
-	public void newTarget(int indexSensor) {
-		DE = new DijkstraEngine();
-		worldMapMatrix = HouseMap.getMap();
-		DE.buildAdjacencyMatrix(worldMapMatrix);
-
-		Sensor [] s= HouseMap.getS();
-
-		Target = new Coordinate(s[indexSensor].getX(), s[indexSensor].getY());
-
-		// Start point:
-		DE.setInitial(actor.getX() + ","+ actor.getY());
-
-		// End point:
-		path = DE.computePath(Target.getX()+","+Target.getY());
-		//System.out.println("PATH:"+path);
+    public void computePath() {
+        Place[] p = HouseMap.getP();
+        path = pathEngine.computePath(actor, target);
 
 	}
+
+    public void doWalk(Coordinate point) {
+        actor.setX(point.getX());
+        actor.setY(point.getY());
+    }
 
 	/**
 	 * printActiveSensors computes the values for each sensor of the house and returns a String in the following format:
@@ -225,28 +204,29 @@ public class SensorSimulationThread implements Runnable{
 		String activeSensors = "";
 
 		Sensor[] sensorsArray = HouseMap.getS();
-
-		activeSensors += timeInstant;
-		activeSensors += ", ";
+        if (!Main.MIMIC_ARAS) {
+            activeSensors += timeInstant + " ";
+        }
 
         for (Sensor aSensorsArray : sensorsArray) {
             if (aSensorsArray.isActivatedBy(actor.getX(), actor.getY())) {
                 if (Math.random() < aSensorsArray.getProb()) {
-                    activeSensors += "1, ";
+                    activeSensors += "1 ";
                 } else {
-                    activeSensors += "0, ";
+                    activeSensors += "0 ";
                 }
             } else {
-                activeSensors += "0, ";
+                activeSensors += "0 ";
             }
         }
 
         //TODO Change this so it is possible to choose whether to have position and ground truth
         activeSensors += action;
-        activeSensors += ", ";
-        activeSensors += (int)actor.getX() * (HouseMap.scale);
-        activeSensors += ", ";
-        activeSensors += (int)actor.getY() * (HouseMap.scale);
+        if (Main.MIMIC_ARAS) {
+            activeSensors += " 1 ";// padding just for compatibility
+        } else {
+            activeSensors += " " + actor.getX() + " " + actor.getY();
+        }
 
 		return activeSensors;
 	}

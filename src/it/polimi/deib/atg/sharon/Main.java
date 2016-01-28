@@ -38,18 +38,23 @@ import java.util.concurrent.BlockingQueue;
 public class Main {
 
 	//*****SIMULATION PARAMETERS:*****
-	private static int def_simulatedDays 	= 31; 	//Days to simulate
-	//***** END PARAMETERS *****
-	
+    private static int def_simulatedDays = 5;    //Days to simulate
+    //***** END PARAMETERS *****
+
 	Parameters param = Parameters.getInstance();
 
 	// Extra parameters - not to touch
     public static final boolean ENABLE_SENSORS_ACTIVITY = true;    //False: Only High Level, True: High Level + Low Level (Experimental!)
     public static final boolean PRINT_LOG = false;//False: no log
-    public static final boolean DISABLE_DIJKSTRA = true;
+    public static final boolean DISABLE_PATH = false;
     public static final boolean USE_DRIFTS = false;// activates drifts
     public static final boolean USE_HMM_LL = true;// activates LowLevel Based on HMM
 	public static final boolean GENERATE_HL_SCHEDULING = false; //true to generate, false to import from file
+    public static final boolean MIMIC_ARAS = true; // output same format as ARAS Dataset
+
+    //***** TEMPORARY CONFIG - TO BE RELOCATED WHEN INTRODUCING AGENT ******
+    public static final double WALK_SPEED = 1.2; // m/s
+    //***** END TEMP CONF
 
 	private static String sensorOutputPrefix = "data/SensorOutput/DAY_";	//this file is heavy. Open it from explorer.
 	private static String activityOutputPrefix = "data/ActivityOutput/DAY_";	//this file is heavy. Open it from explorer.
