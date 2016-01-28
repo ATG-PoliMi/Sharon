@@ -78,7 +78,7 @@ public class ActivitySimulationThread implements Runnable {
 		//lLADL 		= 	LowLevelADLDB.getInstance();
 		ongoingAdl = 	HighLevelADLDB.getInstance().defaultADL(); //Initial ADL: Sleeping
 	}
-
+ 
 	@Override
 	public void run() {		
 		for (timeInstant =0; timeInstant < 86400*simulatedDays; timeInstant++){
