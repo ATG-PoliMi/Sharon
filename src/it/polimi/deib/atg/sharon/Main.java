@@ -59,7 +59,6 @@ public class Main {
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
     private static ActivityImportThread activityImportationThread;
-    //private static SensorSimulationThread sensorSimulationThread;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(2000); //ADL QUEUE enough for 90 days
 
 	public static void main(String[] args) {
@@ -86,25 +85,6 @@ public class Main {
 			simulatedDays = def_simulatedDays;
 		}
 
-//<<<<<<< HEAD
-//		activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
-//		new Thread(activitySimulationThread).start();
-//		System.out.println("Simulator correctly instantiated... Beginning the simulation");
-//        Runnable sensorSimulationThread;
-//        //LOW LEVEL SIMULATION
-//        if (ENABLE_SENSORS_ACTIVITY) {
-//            if (USE_HMM_LL)
-//                try {
-//                    sensorSimulationThread = new HMMSensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            else
-//                sensorSimulationThread = new SensorSimulationThread(queue, simulatedDays, sensorOutputPrefix);
-//            new Thread(sensorSimulationThread).start();
-//			System.out.println("LowLevel Starts");
-//=======
-
 		if(GENERATE_HL_SCHEDULING){
 			//GENERATE ACTIVITY SCHEDULING
 			activitySimulationThread = new ActivitySimulationThread(queue, simulatedDays, activityOutputPrefix);
@@ -112,7 +92,7 @@ public class Main {
 			System.out.println("Simulator correctly instantiated... Beginning the simulation");
 		}else{
 			//IMPORT ACTIVITY SCHEDULING
-            activityImportationThread = new ActivityImportThread(queue, "data/ActivityInput/");
+            activityImportationThread = new ActivityImportThread(queue, "config/ActivityInput/");
             simulatedDays=activityImportationThread.numberOfDays();
 			new Thread(activityImportationThread).start();
 			System.out.println("Simulator correctly instantiated... Beginning to import activities");
