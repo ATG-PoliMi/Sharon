@@ -100,7 +100,6 @@ public class SensorSimulationThread implements Runnable{
 					try {
 						if (queue.isEmpty()) {
 							emptyN++;
-
 						} else {
 							CADL = queue.take();
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
@@ -164,8 +163,8 @@ public class SensorSimulationThread implements Runnable{
 					} else {	//	ADL completed
 						agentStatus = 1;
                         placesCounter = 0;
-                        action = 0; //(Walking)
-					}
+                        //action = 0; //(Walking)
+                    }
 					break;
 				}
 				
