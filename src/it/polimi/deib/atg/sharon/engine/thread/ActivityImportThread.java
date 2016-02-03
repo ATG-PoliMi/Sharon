@@ -1,27 +1,20 @@
 package it.polimi.deib.atg.sharon.engine.thread;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 
 
-
-
-public class ActivityImportationThread implements Runnable {
-	private BlockingQueue<ADLQueue> q;
+public class ActivityImportThread implements Runnable {
+    private BlockingQueue<ADLQueue> q;
 	private String url;
 	private Integer numd;
 	private ArrayList<File> orderedList;
 
-    public ActivityImportationThread(BlockingQueue<ADLQueue> q, String url){
-		this.q=q;
+    public ActivityImportThread(BlockingQueue<ADLQueue> q, String url) {
+        this.q=q;
         this.url = url;
         this.numd=0;
 	}

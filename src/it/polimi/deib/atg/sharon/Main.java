@@ -25,11 +25,7 @@ import it.polimi.deib.atg.sharon.configs.HighLevelADLDB;
 import it.polimi.deib.atg.sharon.configs.NeedsDrift;
 import it.polimi.deib.atg.sharon.configs.Parameters;
 import it.polimi.deib.atg.sharon.engine.Needs;
-import it.polimi.deib.atg.sharon.engine.thread.ADLQueue;
-import it.polimi.deib.atg.sharon.engine.thread.ActivityImportationThread;
-import it.polimi.deib.atg.sharon.engine.thread.ActivitySimulationThread;
-import it.polimi.deib.atg.sharon.engine.thread.HMMSensorSimulationThread;
-import it.polimi.deib.atg.sharon.engine.thread.SensorSimulationThread;
+import it.polimi.deib.atg.sharon.engine.thread.*;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -62,8 +58,8 @@ public class Main {
 
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
-	private static ActivityImportationThread activityImportationThread;
-	//private static SensorSimulationThread sensorSimulationThread;
+    private static ActivityImportThread activityImportationThread;
+    //private static SensorSimulationThread sensorSimulationThread;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(2000); //ADL QUEUE enough for 90 days
 
 	public static void main(String[] args) {
@@ -116,8 +112,8 @@ public class Main {
 			System.out.println("Simulator correctly instantiated... Beginning the simulation");
 		}else{
 			//IMPORT ACTIVITY SCHEDULING
-			activityImportationThread = new ActivityImportationThread(queue,"data/ActivityInput/");
-			simulatedDays=activityImportationThread.numberOfDays();
+            activityImportationThread = new ActivityImportThread(queue, "data/ActivityInput/");
+            simulatedDays=activityImportationThread.numberOfDays();
 			new Thread(activityImportationThread).start();
 			System.out.println("Simulator correctly instantiated... Beginning to import activities");
 		}
