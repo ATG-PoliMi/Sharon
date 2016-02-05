@@ -58,7 +58,7 @@ public class Main {
 
 	//Thread
 	private static ActivitySimulationThread activitySimulationThread;
-    private static ActivityImportThread activityImportationThread;
+    private static ActivityImportThread activityImportatThread;
 	private static BlockingQueue<ADLQueue> queue = new ArrayBlockingQueue<>(2000); //ADL QUEUE enough for 90 days
 
 	public static void main(String[] args) {
@@ -92,9 +92,9 @@ public class Main {
 			System.out.println("Simulator correctly instantiated... Beginning the simulation");
 		}else{
 			//IMPORT ACTIVITY SCHEDULING
-            activityImportationThread = new ActivityImportThread(queue, "config/ActivityInput/");
-            simulatedDays=activityImportationThread.numberOfDays();
-			new Thread(activityImportationThread).start();
+            activityImportatThread = new ActivityImportThread(queue, "config/ActivityInput/");
+            simulatedDays= activityImportatThread.numberOfDays();
+			new Thread(activityImportatThread).start();
 			System.out.println("Simulator correctly instantiated... Beginning to import activities");
 		}
         Runnable sensorSimulationThread;

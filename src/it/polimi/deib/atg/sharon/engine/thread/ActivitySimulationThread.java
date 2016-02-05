@@ -110,6 +110,7 @@ public class ActivitySimulationThread implements Runnable {
 				}
 			}
 		}
+		outFile.close();
 		System.out.println("Producer Thread ends");
 		if (Main.PRINT_LOG) {
 			hist.refineHistogram(simulatedDays);	//normalized for days number
