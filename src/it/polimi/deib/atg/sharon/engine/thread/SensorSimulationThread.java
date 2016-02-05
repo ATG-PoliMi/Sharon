@@ -62,7 +62,7 @@ public class SensorSimulationThread implements Runnable{
 	static long usedTime = 0;
 
 	//TARGETS
-	private Integer llADLIndex; 
+	private Integer llPatternIndex;
 	private ArrayList<Integer> tTime = new ArrayList<Integer>();
     private static int placesCounter = 0; //Place Counter
 
@@ -104,16 +104,21 @@ public class SensorSimulationThread implements Runnable{
 							CADL = queue.take();
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
-                            llADLIndex = lLADL.getMatch(action).getPatternID(); //this choose the pattern "randomly" according to the specified probabilities
+                            llPatternIndex = lLADL.getMatch(action).getPatternID(); //this choose the pattern "randomly" according to the specified probabilities
                             tTime.clear();
                             double csum = 0;
-                            for (int i = 0; i < lLADL.get(llADLIndex).getPlaces().size(); i++) {
-                                double newtime = Math.floor(CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage());
+                            for (int i = 0; i < lLADL.get(llPatternIndex).getPlaces().size(); i++) {
+                                double newtime = Math.floor(CADL.getTime() * lLADL.get(llPatternIndex).getPlaces().get(i).getTimePercentage());
                                 csum += newtime;
                                 tTime.add((int) newtime);
                             }
                             if ( CADL.getTime() != csum )
                                 tTime.set( tTime.size()-1, tTime.get(tTime.size()-1) + (int) CADL.getTime() - (int) csum );
+                                if (Math.abs(CADL.getTime() - csum) > 2)
+                                    System.out.println("Warning! Time shift! There might be something wrong with pattern " +
+                                            llPatternIndex + " (difference = " + (CADL.getTime() - csum) + " seconds);" +
+                                            " for the moment we patched this error and" +
+                                            " let the run complete, be sure to fix configuration!"); //TODO Remove this and check when loading
                             agentStatus = 2;
 						}
 					} catch (InterruptedException e) {
@@ -126,8 +131,8 @@ public class SensorSimulationThread implements Runnable{
 					if (!tTime.isEmpty()) {	//tTime contains timings for each station
                         if (currentTimeElapsed < tTime.get(0)) {
                             Place[] p = HouseMap.getP();
-                            target = new Coordinate(p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
-                                    p[lLADL.get(llADLIndex).getPlaces().get(placesCounter).getId() - 1].getY());
+                            target = new Coordinate(p[lLADL.get(llPatternIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
+                                    p[lLADL.get(llPatternIndex).getPlaces().get(placesCounter).getId() - 1].getY());
                             if (Main.DISABLE_PATH) {
                                 int count = (int) (HouseMap.ppm * Main.WALK_SPEED);
                                 while (count > 0) {
