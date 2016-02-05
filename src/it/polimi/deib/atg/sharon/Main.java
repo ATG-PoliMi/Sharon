@@ -45,7 +45,7 @@ public class Main {
     public static final boolean DISABLE_PATH = false;
     public static final boolean USE_DRIFTS = false;// activates drifts
     public static final boolean USE_HMM_LL = false;// activates LowLevel Based on HMM
-    public static final boolean GENERATE_HL_SCHEDULING = false; //true to generate, false to import from file
+    public static final boolean GENERATE_HL_SCHEDULING = true; //true to generate, false to import from file
     public static final boolean MIMIC_ARAS = true; // output same format as ARAS Dataset
 
     //***** TEMPORARY CONFIG - TO BE RELOCATED WHEN INTRODUCING AGENT ******

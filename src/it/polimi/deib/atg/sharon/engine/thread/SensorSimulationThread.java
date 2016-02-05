@@ -99,17 +99,21 @@ public class SensorSimulationThread implements Runnable{
 					ADLQueue CADL;
 					try {
 						if (queue.isEmpty()) {
-							emptyN++;
+
 						} else {
 							CADL = queue.take();
 							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
 							action=CADL.getADLId();
                             llADLIndex = lLADL.getMatch(action).getPatternID(); //this choose the pattern "randomly" according to the specified probabilities
                             tTime.clear();
-
+                            double csum = 0;
                             for (int i = 0; i < lLADL.get(llADLIndex).getPlaces().size(); i++) {
-                                tTime.add((int) (CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage()));
+                                double newtime = Math.floor(CADL.getTime() * lLADL.get(llADLIndex).getPlaces().get(i).getTimePercentage());
+                                csum += newtime;
+                                tTime.add((int) newtime);
                             }
+                            if ( CADL.getTime() != csum )
+                                tTime.set( tTime.size()-1, tTime.get(tTime.size()-1) + (int) CADL.getTime() - (int) csum );
                             agentStatus = 2;
 						}
 					} catch (InterruptedException e) {
