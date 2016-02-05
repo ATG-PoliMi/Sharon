@@ -49,12 +49,7 @@ public class SensorSimulationThread implements Runnable{
     private String delims = ",";
 
 	//ADL Handling
-    //Map<Integer, ADL> hLADL;
-    //Map<Integer, ADLMatch> matchADL;
     LowLevelADLDB lLADL;
-
-	//User actions
-	static int agentStatus	=	1; //1: extracting; 2: acting;
     static int currentTimeElapsed = 0;
 
 	//Utils
@@ -87,23 +82,24 @@ public class SensorSimulationThread implements Runnable{
 	@Override
 	public void run() {
 		int emptyN=0;
+        boolean doPlan = true;
 		PrintWriter out;
 		try {
             Thread.sleep(5000);
             out = new PrintWriter(new FileWriter(simulationOutputPrefix + "0.txt"));
-
             for (timeInstant = 0; timeInstant < (86400 * simulatedDays); timeInstant++) {
                 currentTimeElapsed++;
-                switch (agentStatus) {
-				case 1: //Extracting + computing
-					ADLQueue CADL;
-					try {
-						if (queue.isEmpty()) {
-
-						} else {
-							CADL = queue.take();
-							//System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
-							action=CADL.getADLId();
+                if (doPlan) {
+                    ADLQueue CADL;
+                    try {
+                        if (queue.isEmpty()) {
+                            if ((timeInstant % 86400==0) && (timeInstant >0)) {
+                                break;
+                            }
+                        } else {
+                            CADL = queue.take();
+                            //System.out.println("A: NOT EMPTY taken: "+ CADL.getADLId()+" lasting "+CADL.getTime()); //TODO: Log row
+                            action = CADL.getADLId();
                             llPatternIndex = lLADL.getMatch(action).getPatternID(); //this choose the pattern "randomly" according to the specified probabilities
                             tTime.clear();
                             double csum = 0;
@@ -112,72 +108,66 @@ public class SensorSimulationThread implements Runnable{
                                 csum += newtime;
                                 tTime.add((int) newtime);
                             }
-                            if ( CADL.getTime() != csum )
-                                tTime.set( tTime.size()-1, tTime.get(tTime.size()-1) + (int) CADL.getTime() - (int) csum );
-                                if (Math.abs(CADL.getTime() - csum) > 2)
-                                    System.out.println("Warning! Time shift! There might be something wrong with pattern " +
-                                            llPatternIndex + " (difference = " + (CADL.getTime() - csum) + " seconds);" +
-                                            " for the moment we patched this error and" +
-                                            " let the run complete, be sure to fix configuration!"); //TODO Remove this and check when loading
-                            agentStatus = 2;
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						System.out.println("QUEUE ERROR!");
-					}
-					break;
-
-				case 2:	//Walking+Acting
-					if (!tTime.isEmpty()) {	//tTime contains timings for each station
-                        if (currentTimeElapsed < tTime.get(0)) {
-                            Place[] p = HouseMap.getP();
-                            target = new Coordinate(p[lLADL.get(llPatternIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
-                                    p[lLADL.get(llPatternIndex).getPlaces().get(placesCounter).getId() - 1].getY());
-                            if (Main.DISABLE_PATH) {
-                                int count = (int) (HouseMap.ppm * Main.WALK_SPEED);
-                                while (count > 0) {
-                                    if (target.getX() > actor.getX())
-                                        actor.setX(actor.getX() + 1);
-                                    if (target.getX() < actor.getX())
-                                        actor.setX(actor.getX() - 1);
-
-                                    if (target.getY() > actor.getY())
-                                        actor.setY(actor.getY() + 1);
-                                    if (target.getY() < actor.getY())
-                                        actor.setY(actor.getY() - 1);
-                                    count--;
-                                }
-
-							} else {
-                                if (actor.eqs(target) || path.size() == 0) {
-                                    computePath();
-                                }
-                                if (path.size() > 0) {    //Given a target the actor moves toward that direction
-                                    double stepLength = 0;
-                                    Coordinate nextPathPoint = null;
-                                    Coordinate lastPathPoint = actor.copy();
-                                    while (path.size() > 0 && stepLength < (Main.WALK_SPEED * 100)) { // TODO Fix mess of cm and m
-                                        nextPathPoint = path.remove(0);
-                                        stepLength += geoDist(lastPathPoint, nextPathPoint);
-                                        lastPathPoint = nextPathPoint.copy();
-                                    }
-                                    doWalk(nextPathPoint);
-                                }
-                            }
-                        } else {    //Time at the place ended
-                            currentTimeElapsed = 0;
-                            placesCounter++;
-                            tTime.remove(0);
-						}					
-					} else {	//	ADL completed
-						agentStatus = 1;
-                        placesCounter = 0;
-                        //action = 0; //(Walking)
+                            if (CADL.getTime() != csum)
+                                tTime.set(tTime.size() - 1, tTime.get(tTime.size() - 1) + (int) CADL.getTime() - (int) csum);
+                            if (Math.abs(CADL.getTime() - csum) > 2)
+                                System.out.println("Warning! Time shift! There might be something wrong with pattern " +
+                                        llPatternIndex + " (difference = " + (csum - CADL.getTime()) + " seconds);" +
+                                        " for the moment we conveniently patched this error and" +
+                                        " let the run complete, be sure to fix configuration!"); //TODO Remove this and check when loading
+                            doPlan = false;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        System.out.println("QUEUE ERROR!");
                     }
-					break;
-				}
-				
-				if ((timeInstant %86400==0)&&(timeInstant >0)) {
+                }
+                if (!tTime.isEmpty()) {	//tTime contains timings for each station
+                    if (currentTimeElapsed < tTime.get(0)) {
+                        Place[] p = HouseMap.getP();
+                        target = new Coordinate(p[lLADL.get(llPatternIndex).getPlaces().get(placesCounter).getId() - 1].getX(),
+                                p[lLADL.get(llPatternIndex).getPlaces().get(placesCounter).getId() - 1].getY());
+                        if (Main.DISABLE_PATH) {
+                            int count = (int) (HouseMap.ppm * Main.WALK_SPEED);
+                            while (count > 0) {
+                                if (target.getX() > actor.getX())
+                                    actor.setX(actor.getX() + 1);
+                                if (target.getX() < actor.getX())
+                                    actor.setX(actor.getX() - 1);
+
+                                if (target.getY() > actor.getY())
+                                    actor.setY(actor.getY() + 1);
+                                if (target.getY() < actor.getY())
+                                    actor.setY(actor.getY() - 1);
+                                count--;
+                            }
+
+                        } else {
+                            if (actor.eqs(target) || path.size() == 0) {
+                                computePath();
+                            }
+                            if (path.size() > 0) {    //Given a target the actor moves toward that direction
+                                double stepLength = 0;
+                                Coordinate nextPathPoint = null;
+                                Coordinate lastPathPoint = actor.copy();
+                                while (path.size() > 0 && stepLength < (Main.WALK_SPEED * 100)) { // TODO Fix mess of cm and m
+                                    nextPathPoint = path.remove(0);
+                                    stepLength += geoDist(lastPathPoint, nextPathPoint);
+                                    lastPathPoint = nextPathPoint.copy();
+                                }
+                                doWalk(nextPathPoint);
+                            }
+                        }
+                    } else {    //Time at the place ended
+                        currentTimeElapsed = 0;
+                        placesCounter++;
+                        tTime.remove(0);
+                    }
+                } else {	//	ADL completed
+                    doPlan = true;
+                    placesCounter = 0;
+                }
+				if ((timeInstant % 86400==0) && (timeInstant >0)) {
 					out.close();
                     out = new PrintWriter(new FileWriter(simulationOutputPrefix + (int) timeInstant / 86400 + ".txt"));
                 }
