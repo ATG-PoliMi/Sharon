@@ -27,7 +27,7 @@ public class LowLevelADLDB {
 
     private Map<Integer,LowLevelADL> patternMap;
     private Map<Integer,LowLevelSSADL> patternSSMap;
-    private Map<Integer, ADLMatch> matcher = new HashMap<>();
+    private Map<Integer,ADLMatch> matcher = new HashMap<>();
     private ArrayList<PatternSS> patternSSs;
 
     private static final String CONFIG_PATH =ConfigurationManager.getInstance().getCONFIG_PATH();
